@@ -1,0 +1,128 @@
+body {
+  background-image: url(mppictures/meteors.jpg);
+  background-size: 105% auto;
+}
+
+.titletext {
+    position: absolute;
+    left: 31.5%;
+    width: 35%;
+    height: 15%;
+    background-color: #7fedf9;
+    border: 3px solid rgb(0, 100,255);
+    color: black;
+    font-style: italic;
+    font-size: 1.5vw;
+    font-weight: bold;
+    color: black;
+}
+
+.topcentered {
+  position: relative;
+  text-align: center;
+}
+
+.link1 {
+ position: absolute;
+ top: 15%;
+ left: 15%;
+ width: 20%;
+ height: 20%;
+ border: 3px solid rgb(0, 100,255);
+}
+
+.text1 {
+  position: absolute;
+  top:30%;
+  left:20.5%;
+  font-style: italic;
+  font-size: 1vw;
+  font-weight: bold;
+  text-align: center;
+  color: #00bfdc;
+  background: rgba(0, 100, 255, 0.25);
+}
+
+.link2 {
+ position: absolute;
+ top: 35%;
+ left: 5%;
+ width: 20%;
+ height: 20%;
+ border: 3px solid rgb(0, 100,255);
+}
+
+.text2 {
+  position: absolute;
+  top:50%;
+  left:11%;
+  font-style: italic;
+  font-size: 1vw;
+  font-weight: bold;
+  text-align: center;
+  color: #00bfdc;
+  background: rgba(0, 100, 255, 0.25);
+}
+
+.link3 {
+ position: absolute;
+ top: 65%;
+ left: 5%;
+ width: 20%;
+ height: 20%;
+ border: 3px solid rgb(0, 100,255);
+}
+
+.text3 {
+  position: absolute;
+  top:80%;
+  left:10.5%;
+  font-style: italic;
+  font-size: 1vw;
+  font-weight: bold;
+  text-align: center;
+  color: #00bfdc;
+  background: rgba(0, 100, 255, 0.25);
+}
+
+.link4 {
+ position: absolute;
+ top: 15%;
+ right: 40%;
+ width: 20%;
+ height: 20%;
+ border: 3px solid rgb(0, 100,255);
+}
+
+.text4 {
+  position: absolute;
+  top: 30%;
+  left: 44.5%;
+  font-style: italic;
+  font-size: 1vw;
+  font-weight: bold;
+  text-align: center;
+  color: #00bfdc;
+  background: rgba(0, 100, 255, 0.25);
+}
+
+.link5 {
+ position: absolute;
+ top: 45%;
+ right: 40%;
+ width: 20%;
+ height: 20%;
+ border: 3px solid rgb(0, 100,255);
+}
+
+.text5 {
+  position: absolute;
+  top: 60%;
+  left: 43.5%;
+  font-style: italic;
+  font-size: 1vw;
+  font-weight: bold;
+  text-align: center;
+  color: #00bfdc;
+  background: rgba(0, 100, 255, 0.25);
+}
