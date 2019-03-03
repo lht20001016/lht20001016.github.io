@@ -4,7 +4,30 @@ body, html {
     height: 100%;
     overflow: hidden;
 }
+
 ::-webkit-scrollbar {
     display: none;
 }
- 
+
+.gametitle {
+    position: absolute;
+    left: 40%;
+    width: 14.5%;
+    height: 5%;
+    background-color: #7fedf9;
+    border: 3px solid rgb(0, 100, 255);
+    color: black;
+    font-style: italic;
+    font-size: 1.5vw;
+    font-weight: bold;
+    color: black;
+}
+
+.begingame {
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    width: 100%;
+    height: 100%;
+    border: 3px solid rgb(0, 100,255);
+   }
