@@ -29,6 +29,7 @@ let bgSound;
 
 function preload() {
   soundFormats("mp3", "wav");
+  bgSound = loadSound("assets/bgmusic.mp3");
   flashSound = loadSound("assets/flashsound.mp3");
   ghostSound = loadSound("assets/ghost.wav");
   character = loadImage("assets/character.PNG");
@@ -102,6 +103,8 @@ function loadData() {
   timer = 0;
   flash = true;
   ghost = true;
+  bgSound.setVolume(0.1);
+  bgSound.loop();
 }
 
 function determineVelocity() {
@@ -112,10 +115,10 @@ function determineVelocity() {
 }
 
 function characterMovement() {
-  if (charx + vx >= 75 && charx + vx <= windowWidth - windowWidth / 16 - 75) {
+  if (charx + vx <= windowWidth - windowWidth / 16 - 75) {
     charx += vx;
   }
-  if (chary + vy >= 125 && chary + vy <= windowHeight - windowHeight / 8) {
+  if (chary + vy <= windowHeight - windowHeight / 8) {
     chary += vy;
   }
 }
@@ -126,7 +129,7 @@ function updateTimer() {
   textSize(24);
   stroke(255, 255, 255);
   fill(0, 255, 180);
-  text(timer, windowWidth / 15 * 14, windowHeight / 10 * 9);
+  text(timer, windowWidth / 15, windowHeight / 10);
   if (frameCount % 60 === 0) {
     timer++;
   }
