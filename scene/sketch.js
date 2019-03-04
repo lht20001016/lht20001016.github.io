@@ -17,10 +17,17 @@ let timer;
 let flash;
 let flashAbility;
 let flashCd;
+let ghost;
+let ghostAbility;
+let ghostCd;
+let velocityRatio;
+let bg;
 
 function preload() {
   character = loadImage('assets/character.PNG');
   flashAbility = loadImage('assets/flash.jpg');
+  ghostAbility = loadImage('assets/ghost.png');
+  bg = loadImage('assets/gamebackground.jpg')
 }
 
 function setup() {
@@ -38,7 +45,7 @@ function draw() {
 }
 
 function characterPosition() {
-  background(250);
+  background(bg);
   image(character, charx, chary, windowWidth / 16, windowHeight / 8);
 }
 
@@ -56,9 +63,15 @@ function keyTyped() {
     dex = charx;
     dey = chary;
   }
+  if (key === 'g' && ghost === true) {
+    ghost = false;
+    ghostCd = timer;
+    velocityRatio = 30;
+  }
 }
 
 function loadData() {
+  velocityRatio = 60;
   charx = windowWidth / 2;
   chary = windowHeight / 2;
   dex = charx;
@@ -67,12 +80,13 @@ function loadData() {
   vy = 0;
   timer = 0;
   flash = true;
+  ghost = true;
 }
 
 function determineVelocity() {
   if (charx !== dex) {
-    vx = (dex - charx) / 60;
-    vy = (dey - chary) / 60;
+    vx = (dex - charx) / velocityRatio;
+    vy = (dey - chary) / velocityRatio;
   }
 }
 
@@ -87,7 +101,10 @@ function characterMovement() {
 
 function updateTimer() {
   textAlign(CENTER, CENTER);
+  textStyle(ITALIC);
   textSize(24);
+  stroke(255, 255, 255);
+  fill(0, 255, 180);
   text(timer, windowWidth / 15, windowHeight / 10);
   if (frameCount % 60 === 0) {
     timer++;
@@ -96,12 +113,21 @@ function updateTimer() {
 
 function showAbilities() {
   if (flash === true) {
-    image(flashAbility, 50, 100, 60, 60)
+    image(flashAbility, 100, 150, 60, 60);
+  }
+  if (ghost === true) {
+    image(ghostAbility, 100, 250, 60, 60);
   }
 }
 
 function countCooldown() {
-  if (flash === false && timer - flashCd >= 5) {
+  if (flash === false && timer - flashCd >= 45) {
     flash = true;
+  }
+  if (ghost === false && timer - ghostCd >= 5) {
+    velocityRatio = 60;
+  }
+  if (ghost === false && timer - ghostCd >= 20) {
+    ghost = true;
   }
 }
