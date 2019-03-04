@@ -23,8 +23,14 @@ let ghostCd;
 let velocityRatio;
 let bg;
 let tower;
+let flashSound;
+let ghostSound;
+let bgSound;
 
 function preload() {
+  soundFormats("mp3", "wav");
+  flashSound = loadSound("assets/flashsound.mp3");
+  ghostSound = loadSound("assets/ghost.wav");
   character = loadImage("assets/character.PNG");
   flashAbility = loadImage("assets/flash.jpg");
   ghostAbility = loadImage("assets/ghost.png");
@@ -67,6 +73,8 @@ function mouseClicked() {
 
 function keyTyped() {
   if (key === "f" && flash === true) {
+    flashSound.setVolume(0.1);
+    flashSound.play();
     flash = false;
     flashCd = timer;
     charx = mouseX;
@@ -75,9 +83,11 @@ function keyTyped() {
     dey = chary;
   }
   if (key === "g" && ghost === true) {
+    ghostSound.setVolume(0.1);
+    ghostSound.play();
     ghost = false;
     ghostCd = timer;
-    velocityRatio = 30;
+    velocityRatio = 20;
   }
 }
 
