@@ -22,12 +22,14 @@ let ghostAbility;
 let ghostCd;
 let velocityRatio;
 let bg;
+let tower;
 
 function preload() {
-  character = loadImage('assets/character.PNG');
-  flashAbility = loadImage('assets/flash.jpg');
-  ghostAbility = loadImage('assets/ghost.png');
-  bg = loadImage('assets/gamebackground.jpg')
+  character = loadImage("assets/character.PNG");
+  flashAbility = loadImage("assets/flash.jpg");
+  ghostAbility = loadImage("assets/ghost.png");
+  bg = loadImage("assets/gamebackground.jpg");
+  tower = loadImage("assets/tower.png");
 }
 
 function setup() {
@@ -41,6 +43,7 @@ function draw() {
   characterMovement();
   updateTimer();
   showAbilities();
+  showTowers();
   countCooldown();
 }
 
@@ -49,13 +52,23 @@ function characterPosition() {
   image(character, charx, chary, windowWidth / 16, windowHeight / 8);
 }
 
+function showTowers() {
+  image(tower, 0, 0, 75, 125);
+  image(tower, windowWidth / 4, 0, 75, 125);
+  image(tower, windowWidth / 2, 0, 75, 125);
+  image(tower, windowWidth / 4 * 3, 0, 75, 125);
+  image(tower, windowWidth - 75, 0, 75, 125);
+  image(tower, 0, windowHeight / 4, 75, 125);
+  image(tower, windowWidth - 75, windowHeight / 4, 75, 125);
+}
+
 function mouseClicked() {
   dex = mouseX;
   dey = mouseY;
 }
 
 function keyTyped() {
-  if (key === 'f' && flash === true) {
+  if (key === "f" && flash === true) {
     flash = false;
     flashCd = timer;
     charx = mouseX;
@@ -63,7 +76,7 @@ function keyTyped() {
     dex = charx;
     dey = chary;
   }
-  if (key === 'g' && ghost === true) {
+  if (key === "g" && ghost === true) {
     ghost = false;
     ghostCd = timer;
     velocityRatio = 30;
@@ -81,6 +94,8 @@ function loadData() {
   timer = 0;
   flash = true;
   ghost = true;
+  raySpeed = 10;
+  rayy= 0;
 }
 
 function determineVelocity() {
@@ -91,10 +106,10 @@ function determineVelocity() {
 }
 
 function characterMovement() {
-  if (vx <= 0 || charx <= dex - windowWidth / 16) {
+  if (charx + vx >= 75 && charx + vx <= windowWidth - windowWidth / 16- 75) {
     charx += vx;
   }
-  if (vy <= 0 || chary <= dey - windowHeight / 8) {
+  if (chary + vy >= 125 && chary + vy <= windowHeight - windowHeight / 8) {
     chary += vy;
   }
 }
@@ -105,7 +120,7 @@ function updateTimer() {
   textSize(24);
   stroke(255, 255, 255);
   fill(0, 255, 180);
-  text(timer, windowWidth / 15, windowHeight / 10);
+  text(timer, windowWidth / 15 * 14, windowHeight / 10 * 9);
   if (frameCount % 60 === 0) {
     timer++;
   }
@@ -113,10 +128,10 @@ function updateTimer() {
 
 function showAbilities() {
   if (flash === true) {
-    image(flashAbility, 100, 150, 60, 60);
+    image(flashAbility, windowWidth / 15 * 13, windowHeight / 10 * 9, 60, 60);
   }
   if (ghost === true) {
-    image(ghostAbility, 100, 250, 60, 60);
+    image(ghostAbility, windowWidth / 5 * 4, windowHeight / 10 * 9, 60, 60);
   }
 }
 
