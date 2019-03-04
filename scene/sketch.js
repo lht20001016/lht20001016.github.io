@@ -53,13 +53,11 @@ function characterPosition() {
 }
 
 function showTowers() {
-  image(tower, 0, 0, 75, 125);
-  image(tower, windowWidth / 4, 0, 75, 125);
-  image(tower, windowWidth / 2, 0, 75, 125);
-  image(tower, windowWidth / 4 * 3, 0, 75, 125);
   image(tower, windowWidth - 75, 0, 75, 125);
-  image(tower, 0, windowHeight / 4, 75, 125);
-  image(tower, windowWidth - 75, windowHeight / 4, 75, 125);
+  image(tower, windowWidth - 75, (windowHeight - 125) / 4, 75, 125);
+  image(tower, windowWidth - 75, (windowHeight - 125) / 2, 75, 125);
+  image(tower, windowWidth - 75, (windowHeight - 125) / 4 * 3, 75, 125);
+  image(tower, windowWidth - 75, windowHeight - 125, 75, 125);
 }
 
 function mouseClicked() {
@@ -94,8 +92,6 @@ function loadData() {
   timer = 0;
   flash = true;
   ghost = true;
-  raySpeed = 10;
-  rayy= 0;
 }
 
 function determineVelocity() {
@@ -106,7 +102,7 @@ function determineVelocity() {
 }
 
 function characterMovement() {
-  if (charx + vx >= 75 && charx + vx <= windowWidth - windowWidth / 16- 75) {
+  if (charx + vx >= 75 && charx + vx <= windowWidth - windowWidth / 16 - 75) {
     charx += vx;
   }
   if (chary + vy >= 125 && chary + vy <= windowHeight - windowHeight / 8) {
