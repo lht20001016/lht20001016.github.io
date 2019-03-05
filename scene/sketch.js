@@ -26,6 +26,9 @@ let tower;
 let flashSound;
 let ghostSound;
 let bgSound;
+let difficulty;
+let gameover;
+let Bullets = [];
 
 function preload() {
   soundFormats("mp3", "wav");
@@ -52,9 +55,48 @@ function draw() {
   showAbilities();
   showTowers();
   countCooldown();
+  createBullet();
+  moveBullet();
+  gameOverYet();
 }
 
+function createBullet() {
+  for (let i = 0; i < 1; i++) {
+    let randomvalue = random(0, difficulty - 20 * timer);
+    if (randomvalue <= 150) { 
+      Bullets.push(new Bullet());
+    }
+  }
+}
 
+function moveBullet() {
+  for (let i = 0; i < Bullets.length; i++) {
+    Bullets[i].move();
+    if (Bullets[i].x > 0) {
+      Bullets[i].display();
+    }
+    if (Bullets[i].x >= charx && Bullets[i].x <= charx + windowWidth / 16 && Bullets[i].y >= chary && Bullets[i].y <= chary + windowHeight / 8){
+      gameover = true;
+    }
+  }
+}
+
+class Bullet {
+  constructor() {
+    this.x = width;
+    this.y = random(0, height);
+    this.diameter = random(30, 45);
+    this.speed = 8 + floor(timer / 5);
+  }
+
+  move() {
+    this.x += random(-this.speed);
+  }
+
+  display() {
+    ellipse(this.x, this.y, this.diameter, this.diameter);
+  }
+}
 
 function characterPosition() {
   background(bg);
@@ -68,6 +110,7 @@ function characterMovement() {
   if (chary + vy <= windowHeight - windowHeight / 8) {
     chary += vy;
   }
+
 }
 
 function showTowers() {
@@ -81,6 +124,9 @@ function showTowers() {
 function mouseClicked() {
   dex = mouseX;
   dey = mouseY;
+  if (gameover) {
+    window.location = "index.html";
+  }
 }
 
 function keyTyped() {
@@ -89,13 +135,23 @@ function keyTyped() {
     flashSound.play();
     flash = false;
     flashCd = timer;
-    charx = mouseX;
-    chary = mouseY;
+    if (mouseX <= windowWidth - windowWidth / 16 - 75){
+      charx = mouseX;
+    }
+    else {
+      charx = windowWidth - windowWidth / 16 - 75;
+    }
+    if (mouseY <= windowHeight - windowHeight / 8) {
+      chary = mouseY;
+    }
+    else {
+      chary = windowHeight - windowHeight / 8;
+    }
     dex = charx;
     dey = chary;
   }
   if (key === "g" && ghost === true) {
-    ghostSound.setVolume(0.1);
+    ghostSound.setVolume(0.4);
     ghostSound.play();
     ghost = false;
     ghostCd = timer;
@@ -116,6 +172,8 @@ function loadData() {
   ghost = true;
   bgSound.setVolume(0.1);
   bgSound.loop();
+  gameover = false;
+  difficulty = 5000;
 }
 
 function determineVelocity() {
@@ -132,8 +190,21 @@ function updateTimer() {
   stroke(255, 255, 255);
   fill(0, 255, 180);
   text(timer, windowWidth / 15, windowHeight / 10);
-  if (frameCount % 60 === 0) {
+  if (frameCount % 60 === 0 && ! gameover) {
     timer++;
+  }
+}
+
+function gameOverYet() {
+  if (gameover) {
+    flash = false;
+    ghost = false;
+    bgSound.stop();
+    fill(0);
+    rect(0, 0, windowWidth, windowHeight);
+    stroke(255, 0 ,0);
+    fill(255, 120, 0);
+    text("GAME OVER! You survived " + timer + " seconds. Click to return to home screen.", windowWidth / 2, windowHeight / 2);
   }
 }
 
@@ -151,7 +222,7 @@ function countCooldown() {
     flash = true;
   }
   if (ghost === false && timer - ghostCd >= 5) {
-    velocityRatio = 60;
+    velocityRatio = 60 - floor(timer / 6);
   }
   if (ghost === false && timer - ghostCd >= 20) {
     ghost = true;
