@@ -4,7 +4,7 @@
 //
 // Extra for Experts:
 // - Added Sound
-// - Made Custom Shapes
+// - Attmpeted support for resizing windows
 
 let character;
 let charx;
@@ -54,9 +54,20 @@ function draw() {
   countCooldown();
 }
 
+
+
 function characterPosition() {
   background(bg);
   image(character, charx, chary, windowWidth / 16, windowHeight / 8);
+}
+
+function characterMovement() {
+  if (charx + vx <= windowWidth - windowWidth / 16 - 75) {
+    charx += vx;
+  }
+  if (chary + vy <= windowHeight - windowHeight / 8) {
+    chary += vy;
+  }
 }
 
 function showTowers() {
@@ -114,15 +125,6 @@ function determineVelocity() {
   }
 }
 
-function characterMovement() {
-  if (charx + vx <= windowWidth - windowWidth / 16 - 75) {
-    charx += vx;
-  }
-  if (chary + vy <= windowHeight - windowHeight / 8) {
-    chary += vy;
-  }
-}
-
 function updateTimer() {
   textAlign(CENTER, CENTER);
   textStyle(ITALIC);
@@ -154,4 +156,8 @@ function countCooldown() {
   if (ghost === false && timer - ghostCd >= 20) {
     ghost = true;
   }
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
 }
