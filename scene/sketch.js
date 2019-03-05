@@ -1,10 +1,10 @@
 // Let The Bullets Fly
 // Kyle Luo
-// February 26, 2019
+// March 4, 2019
 //
 // Extra for Experts:
-// - Added Sound
-// - Attmpeted support for resizing windows
+// - Added Sound(both background and sound effects)
+// - Utilized classes and constructors to create and track bullets (not listed as an extra of experts option but I think its worth putting in this section)
 
 let character;
 let charx;
@@ -227,8 +227,4 @@ function countCooldown() {
   if (ghost === false && timer - ghostCd >= 20) {
     ghost = true;
   }
-}
-
-function windowResized() {
-  resizeCanvas(windowWidth, windowHeight);
 }
