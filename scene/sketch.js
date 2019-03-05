@@ -156,7 +156,7 @@ function showAbilities() {
   }
 
   if (barrier) {
-    image(barrierAbility, windowWidth / 15 * 11, windowHeight / 10 * 9, 60, 60)
+    image(barrierAbility, windowWidth / 15 * 11, windowHeight / 10 * 9, 60, 60);
   }
 
 }
@@ -205,7 +205,7 @@ class Bullet {
   constructor() {
     this.x = width;
     this.y = random(0, height);
-    this.diameter = random(30, 45);
+    this.diameter = random(windowWidth / 25, windowHeight / 35);
     this.speed = random(3, 10 + floor(timer / 4));
   }
 
@@ -227,7 +227,7 @@ function createBullet() {
   //loop that cycles through every frame and, depending on the difficulty and timer, there is a possibility of generating a bullet according to the class code above, which is then pushed into an array defined at the beginning
   for (let i = 0; i < 1; i++) {
     let randomvalue = random(0, difficulty - 25 * timer);
-    if (randomvalue <= 80) { 
+    if (randomvalue <= 40) { 
       Bullets.push(new Bullet());
     }
   }
@@ -236,6 +236,8 @@ function createBullet() {
 
 //responsible for the individual movement of each bullet
 function moveBullet() {
+
+  stroke(0, 0, 255);
 
   //moves each bullet in the array Bullets, defined at the beginning, according to the class code above
   for (let i = 0; i < Bullets.length; i++) {
