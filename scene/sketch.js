@@ -142,6 +142,7 @@ function updateTimer() {
     timer++;
 
   }
+  
 }
 
 //responsible for showing the availability of the in-game abilities
