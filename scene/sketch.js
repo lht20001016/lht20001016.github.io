@@ -5,6 +5,7 @@
 // Extra for Experts:
 // - Added Sound(both background and sound effects)
 // - Utilized classes and constructors to create and track bullets (not listed as an extra of experts option in the assignment but I think its worth putting in this section)
+// - Added support to resizing windows during gameplay
 
 //define variables to be used
 let character;
@@ -250,7 +251,16 @@ function moveBullet() {
     }
 
     //gameover if the bullet is colliding with the character
-    if (Bullets[i].x >= charx && Bullets[i].x <= charx + width / 16 && Bullets[i].y >= chary && Bullets[i].y <= chary + height / 8 && ! invincibility){
+    if (Bullets[i].x - Bullets[i].diameter >= charx && Bullets[i].x - Bullets[i].diameter <= charx + width / 16 && Bullets[i].y >= chary && Bullets[i].y <= chary + height / 8 && ! invincibility){
+      gameover = true;
+    }
+    if (Bullets[i].x + Bullets[i].diameter >= charx && Bullets[i].x + Bullets[i].diameter <= charx + width / 16 && Bullets[i].y >= chary && Bullets[i].y <= chary + height / 8 && ! invincibility){
+      gameover = true;
+    }
+    if (Bullets[i].x >= charx && Bullets[i].x - Bullets[i] <= charx + width / 16 && Bullets[i].y + Bullets[i].diameter >= chary && Bullets[i].y + Bullets[i].diameter <= chary + height / 8 && ! invincibility){
+      gameover = true;
+    }
+    if (Bullets[i].x  >= charx && Bullets[i].x <= charx + width / 16 && Bullets[i].y - Bullets[i].diameter >= chary && Bullets[i].y - Bullets[i].diameter <= chary + height / 8 && ! invincibility){
       gameover = true;
     }
   }
