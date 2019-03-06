@@ -81,8 +81,8 @@ function draw() {
 function loadData() {
 
   velocityRatio = 60;
-  charx = windowWidth / 2;
-  chary = windowHeight / 2;
+  charx = width / 2;
+  chary = height / 2;
   dex = charx;
   dey = chary;
   vx = 0;
@@ -102,7 +102,7 @@ function loadData() {
 function characterPosition() {
 
   background(bg);
-  image(character, charx, chary, windowWidth / 16, windowHeight / 8);
+  image(character, charx, chary, width / 16, height / 8);
 
 }
 
@@ -119,11 +119,11 @@ function determineVelocity() {
 //responsible for moving the characters according to set restrictions (due to in game graphics) and velocities
 function characterMovement() {
 
-  if (charx + vx <= windowWidth - windowWidth / 16 - 75) {
+  if (charx + vx <= width - width / 16 - 75) {
     charx += vx;
   }
 
-  if (chary + vy <= windowHeight - windowHeight / 8) {
+  if (chary + vy <= height - height / 8) {
     chary += vy;
   }
 
@@ -137,7 +137,7 @@ function updateTimer() {
   textSize(24);
   stroke(255, 255, 255);
   fill(0, 255, 180);
-  text(timer, windowWidth / 15, windowHeight / 10);
+  text(timer, width / 15, height / 10);
   if (frameCount % 60 === 0 && ! gameover) {
     timer++;
 
@@ -149,15 +149,15 @@ function updateTimer() {
 function showAbilities() {
 
   if (flash) {
-    image(flashAbility, windowWidth / 15 * 13, windowHeight / 10 * 9, 60, 60);
+    image(flashAbility, width / 15 * 13, height / 10 * 9, 60, 60);
   }
 
   if (ghost) {
-    image(ghostAbility, windowWidth / 5 * 4, windowHeight / 10 * 9, 60, 60);
+    image(ghostAbility, width / 5 * 4, height / 10 * 9, 60, 60);
   }
 
   if (barrier) {
-    image(barrierAbility, windowWidth / 15 * 11, windowHeight / 10 * 9, 60, 60);
+    image(barrierAbility, width / 15 * 11, height / 10 * 9, 60, 60);
   }
 
 }
@@ -191,11 +191,11 @@ function countCooldown() {
 //displays the image of the towers, representing the side which hostile projectiles are launched
 function showTowers() {
 
-  image(tower, windowWidth - 75, 0, 75, 125);
-  image(tower, windowWidth - 75, (windowHeight - 125) / 4, 75, 125);
-  image(tower, windowWidth - 75, (windowHeight - 125) / 2, 75, 125);
-  image(tower, windowWidth - 75, (windowHeight - 125) / 4 * 3, 75, 125);
-  image(tower, windowWidth - 75, windowHeight - 125, 75, 125);
+  image(tower, width - 75, 0, 75, 125);
+  image(tower, width - 75, (height - 125) / 4, 75, 125);
+  image(tower, width - 75, (height - 125) / 2, 75, 125);
+  image(tower, width - 75, (height - 125) / 4 * 3, 75, 125);
+  image(tower, width - 75, height - 125, 75, 125);
 
 }
 
@@ -206,7 +206,7 @@ class Bullet {
   constructor() {
     this.x = width;
     this.y = random(0, height);
-    this.diameter = random(windowWidth / 25, windowHeight / 35);
+    this.diameter = random(width / 25, height / 35);
     this.speed = random(3, 10 + floor(timer / 4));
   }
 
@@ -250,7 +250,7 @@ function moveBullet() {
     }
 
     //gameover if the bullet is colliding with the character
-    if (Bullets[i].x >= charx && Bullets[i].x <= charx + windowWidth / 16 && Bullets[i].y >= chary && Bullets[i].y <= chary + windowHeight / 8 && ! invincibility){
+    if (Bullets[i].x >= charx && Bullets[i].x <= charx + width / 16 && Bullets[i].y >= chary && Bullets[i].y <= chary + height / 8 && ! invincibility){
       gameover = true;
     }
   }
@@ -265,10 +265,10 @@ function gameOverYet() {
     ghost = false;
     bgSound.stop();
     fill(0);
-    rect(0, 0, windowWidth, windowHeight);
+    rect(0, 0, width, height);
     stroke(255, 0 ,0);
     fill(255, 120, 0);
-    text("GAME OVER! You survived " + timer + " seconds. Press SPACEBAR to return to home screen.", windowWidth / 2, windowHeight / 2);
+    text("GAME OVER! You survived " + timer + " seconds. Press SPACEBAR to return to home screen.", width / 2, height / 2);
   }
 
 }
@@ -289,17 +289,17 @@ function keyTyped() {
     flashSound.play();
     flash = false;
     flashCd = timer;
-    if (mouseX <= windowWidth - windowWidth / 16 - 75){
+    if (mouseX <= width - width / 16 - 75){
       charx = mouseX;
     }
     else {
-      charx = windowWidth - windowWidth / 16 - 75;
+      charx = width - width / 16 - 75;
     }
-    if (mouseY <= windowHeight - windowHeight / 8) {
+    if (mouseY <= height - height / 8) {
       chary = mouseY;
     }
     else {
-      chary = windowHeight - windowHeight / 8;
+      chary = height - height / 8;
     }
     dex = charx;
     dey = chary;
@@ -325,5 +325,12 @@ function keyTyped() {
   if (key === " " && gameover) {
     window.location = "index.html";
   }
+
+}
+
+//provides some support for resizing windows during gameplay
+function windowResized() {
+
+  resizeCanvas(windowWidth, windowHeight);
 
 }
