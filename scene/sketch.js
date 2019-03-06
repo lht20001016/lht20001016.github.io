@@ -251,18 +251,22 @@ function moveBullet() {
     }
 
     //gameover if the bullet is colliding with the character
-    if (Bullets[i].x - Bullets[i].diameter >= charx && Bullets[i].x - Bullets[i].diameter <= charx + width / 16 && Bullets[i].y >= chary && Bullets[i].y <= chary + height / 8 && ! invincibility){
+    if (Bullets[i].x - 0.5 * Bullets[i].diameter >= charx && Bullets[i].x - 0.5 * Bullets[i].diameter <= charx + width / 16 && Bullets[i].y >= chary && Bullets[i].y <= chary + height / 8 && ! invincibility) {
       gameover = true;
     }
-    if (Bullets[i].x + Bullets[i].diameter >= charx && Bullets[i].x + Bullets[i].diameter <= charx + width / 16 && Bullets[i].y >= chary && Bullets[i].y <= chary + height / 8 && ! invincibility){
+
+    if (Bullets[i].x + 0.5 * Bullets[i].diameter >= charx && Bullets[i].x + 0.5 * Bullets[i].diameter <= charx + width / 16 && Bullets[i].y >= chary && Bullets[i].y <= chary + height / 8 && ! invincibility) {
       gameover = true;
     }
-    if (Bullets[i].x >= charx && Bullets[i].x - Bullets[i] <= charx + width / 16 && Bullets[i].y + Bullets[i].diameter >= chary && Bullets[i].y + Bullets[i].diameter <= chary + height / 8 && ! invincibility){
+
+    if (Bullets[i].x >= charx && Bullets[i].x <= charx + width / 16 && Bullets[i].y + 0.5 * Bullets[i].diameter >= chary && Bullets[i].y + 0.5 * Bullets[i].diameter <= chary + height / 8 && ! invincibility) {
       gameover = true;
     }
-    if (Bullets[i].x  >= charx && Bullets[i].x <= charx + width / 16 && Bullets[i].y - Bullets[i].diameter >= chary && Bullets[i].y - Bullets[i].diameter <= chary + height / 8 && ! invincibility){
+
+    if (Bullets[i].x >= charx && Bullets[i].x <= charx + width / 16 && Bullets[i].y - 0.5 * Bullets[i].diameter >= chary && Bullets[i].y - 0.5 * Bullets[i].diameter <= chary + height / 8 && ! invincibility) {
       gameover = true;
     }
+
   }
 
 }
@@ -299,20 +303,25 @@ function keyTyped() {
     flashSound.play();
     flash = false;
     flashCd = timer;
+
     if (mouseX <= width - width / 16 - 75){
       charx = mouseX;
     }
+    
     else {
       charx = width - width / 16 - 75;
     }
+
     if (mouseY <= height - height / 8) {
       chary = mouseY;
     }
+
     else {
       chary = height - height / 8;
     }
     dex = charx;
     dey = chary;
+
   }
 
   if (key === "g" && ghost) {
