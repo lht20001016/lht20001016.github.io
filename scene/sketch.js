@@ -95,7 +95,7 @@ function loadData() {
   bgSound.setVolume(0.1);
   bgSound.loop();
   gameover = false;
-  difficulty = 3000;
+  difficulty = 2500;
 
 }
 
@@ -228,7 +228,7 @@ function createBullet() {
 
   //loop that cycles through every frame and, depending on the difficulty and timer, there is a possibility of generating a bullet according to the class code above, which is then pushed into an array defined at the beginning
   for (let i = 0; i < 1; i++) {
-    let randomvalue = random(0, difficulty - 25 * timer);
+    let randomvalue = random(0, difficulty - 20 * timer);
     if (randomvalue <= 40) { 
       Bullets.push(new Bullet());
     }
