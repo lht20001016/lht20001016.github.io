@@ -92,7 +92,7 @@ function loadData() {
   flash = true;
   ghost = true;
   barrier = true;
-  bgSound.setVolume(0.1);
+  bgSound.setVolume(0.2);
   bgSound.loop();
   gameover = false;
   difficulty = 2500;
