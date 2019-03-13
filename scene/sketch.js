@@ -317,7 +317,7 @@ function resetGame() {
   bgSound.setVolume(0.2);
   bgSound.loop();
   difficulty = 2500;
-  bullets = []
+  bullets = [];
 
 }
 
