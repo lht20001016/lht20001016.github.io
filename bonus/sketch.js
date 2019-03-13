@@ -25,5 +25,5 @@ function loadData() {
   yspace = height / 9;
   ssize = width / 500;
   stroke(255);
-  strokeWeight(0.1)
+  strokeWeight(0.1);
 }
