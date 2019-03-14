@@ -67,6 +67,7 @@ function draw() {
 
   drawBackground();
   showMenus();
+  gameMusic();
   characterPosition();
   determineVelocity();
   characterMovement();
@@ -95,8 +96,6 @@ function loadData() {
   flash = true;
   ghost = true;
   barrier = true;
-  bgSound.setVolume(0.2);
-  bgSound.loop();
   difficulty = 2500;
 
 }
@@ -113,11 +112,18 @@ function showMenus() {
 
 }
 
+function gameMusic() {
+  if (state === "game" && ! bgSound.isPlaying()) {
+    bgSound.setVolume(0.2);
+    bgSound.play();  
+  }
+}
+
 //responsible for tracking and displaying the position of the character
 function characterPosition() {
 
   if (state === "game") {
-    image(character, charx, chary, width / 16, height / 8);  
+    image(character, charx, chary, width / 16, height / 8);
   }
 
 }
