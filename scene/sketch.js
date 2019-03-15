@@ -107,7 +107,13 @@ function drawBackground() {
 function showMenus() {
 
   if (state === "menu") {
-    ellipse(width / 2, height / 2, width / 20, width / 20);
+    textAlign(CENTER);
+    textSize(36);
+    stroke(0, 0, 255);
+    fill(0, 255, 255);
+    text("Let The Bullets Fly", width / 2, height / 8);
+    textSize(24);
+    text('The objective of this game is to avoid the incoming bullets at all costs. Good Luck!', width / 2, height / 5);
   }
 
 }
@@ -330,10 +336,10 @@ function resetGame() {
 //mouseclicks determine the destination of the character movement
 function mouseClicked() {
 
-  if (state === "menu") {
-    state = "game";
-    resetGame();
-  }
+  // if (state === "menu") {
+  //   state = "game";
+  //   resetGame();
+  // }
 
   if (state === "game") {
     dex = mouseX;
