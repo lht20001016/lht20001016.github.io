@@ -109,11 +109,21 @@ function showMenus() {
   if (state === "menu") {
     textAlign(CENTER);
     textSize(36);
-    stroke(0, 0, 255);
+    stroke(50, 0, 255);
     fill(0, 255, 255);
     text("Let The Bullets Fly", width / 2, height / 8);
     textSize(24);
-    text('The objective of this game is to avoid the incoming bullets at all costs. Good Luck!', width / 2, height / 5);
+    text("The objective of this game is to avoid the incoming bullets at all costs. Good Luck!", width / 2, height / 5);
+    rectMode(CENTER);
+    stroke(0, 0, 255);
+    if (mouseX >= width / 2 - width / 12 && mouseX <= width / 2 + width / 12 &&
+      mouseY >= height / 3 * 2 - height / 10 && mouseY <= height / 3 * 2 + height / 10) {
+      fill(0, 77, 255);
+    }
+    rect(width / 2, height / 3 * 2, width / 6, height / 5);
+    fill(0);
+    textSize(32);
+    text("Start", width / 2, height / 3 * 2);
   }
 
 }
@@ -336,10 +346,11 @@ function resetGame() {
 //mouseclicks determine the destination of the character movement
 function mouseClicked() {
 
-  // if (state === "menu") {
-  //   state = "game";
-  //   resetGame();
-  // }
+  if (state === "menu" && mouseX >= width / 2 - width / 12 && mouseX <= width / 2 + width / 12 &&
+    mouseY >= height / 3 * 2 - height / 10 && mouseY <= height / 3 * 2 + height / 10) {
+    state = "game";
+    resetGame();
+  }
 
   if (state === "game") {
     dex = mouseX;
