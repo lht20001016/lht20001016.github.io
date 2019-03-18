@@ -17,23 +17,11 @@ let vy;
 let dex;
 let dey;
 let timer;
-let flash;
-let flashAbility;
-let flashCd;
-let ghost;
-let ghostAbility;
-let ghostCd;
-let barrier;
-let barrierAbility;
-let barrierCd;
-let invincibility;
+let abilities;
 let velocityRatio;
 let bg;
 let tower;
-let flashSound;
-let ghostSound;
-let barrierSound;
-let bgSound;
+let sound;
 let difficulty;
 let bullets = [];
 
@@ -41,14 +29,18 @@ let bullets = [];
 function preload() {
 
   soundFormats("mp3", "wav");
-  bgSound = loadSound("assets/bgmusic.mp3");
-  flashSound = loadSound("assets/flashsound.mp3");
-  ghostSound = loadSound("assets/ghost.wav");
-  barrierSound = loadSound("assets/barrier.wav");
+  sound = {
+    bg : loadSound("assets/bgmusic.mp3"),
+    flash : loadSound("assets/flashsound.mp3"),
+    ghost : loadSound("assets/ghost.wav"),
+    barrier : loadSound("assets/barrier.wav"),
+  };
   character = loadImage("assets/character.PNG");
-  flashAbility = loadImage("assets/flash.jpg");
-  ghostAbility = loadImage("assets/ghost.png");
-  barrierAbility = loadImage("assets/barrier.jpg");
+  abilities = {
+    flash : loadImage("assets/flash.jpg"),
+    ghost : loadImage("assets/ghost.png"),
+    barrier : loadImage("assets/barrier.jpg"),
+  };
   bg = loadImage("assets/gamebackground.jpg");
   tower = loadImage("assets/tower.png");
 
@@ -93,9 +85,12 @@ function loadData() {
   vx = 0;
   vy = 0;
   timer = 0;
-  flash = true;
-  ghost = true;
-  barrier = true;
+  abilities ={
+    flashs : true,
+    ghosts : true,
+    barriers : true,
+    invincibilitys : false,
+  },
   difficulty = 2500;
 
 }
@@ -129,9 +124,9 @@ function showMenus() {
 }
 
 function gameMusic() {
-  if (state === "game" && ! bgSound.isPlaying()) {
-    bgSound.setVolume(0.2);
-    bgSound.play();  
+  if (state === "game" && ! sound.bg.isPlaying()) {
+    sound.bg.setVolume(0.2);
+    sound.bg.play();  
   }
 }
 
@@ -186,16 +181,16 @@ function updateTimer() {
 //responsible for showing the availability of the in-game abilities
 function showAbilities() {
   if (state ==="game") {
-    if (flash) {
-      image(flashAbility, width / 15 * 13, height / 10 * 9, 60, 60);
+    if (abilities.flashs) {
+      image(abilities.flash, windowWidth / 15 * 13, height / 10 * 9, 60, 60);
     }
 
-    if (ghost) {
-      image(ghostAbility, width / 5 * 4, height / 10 * 9, 60, 60);
+    if (abilities.ghosts) {
+      image(abilities.ghost, windowWidth / 5 * 4, height / 10 * 9, 60, 60);
     }
 
-    if (barrier) {
-      image(barrierAbility, width / 15 * 11, height / 10 * 9, 60, 60);
+    if (abilities.barriers) {
+      image(abilities.barrier, windowWidth / 15 * 11, height / 10 * 9, 60, 60);
     }
   }
 }
@@ -203,25 +198,25 @@ function showAbilities() {
 //responsible for keeping track of teh ability cooldowns in-game
 function countCooldown() {
   if (state === "game") {
-    if (! flash && timer - flashCd >= 30) {
-      flash = true;
+    if (! abilities.flashs && timer - abilities.flashcd >= 30) {
+      abilities.flashs = true;
     }
 
     //restores the original velocity (with some increase over time)
-    if (! ghost && timer - ghostCd >= 5) {
+    if (! abilities.ghosts && timer - abilities.ghostcd >= 5) {
       velocityRatio = 60 - floor(timer / 6);
     }
 
-    if (! ghost && timer - ghostCd >= 20) {
-      ghost = true;
+    if (! abilities.ghosts && timer - abilities.ghostcd >= 20) {
+      abilities.ghosts = true;
     }
 
-    if (! barrier && timer - barrierCd >= 2) {
-      invincibility = false;
+    if (! abilities.barriers && timer - abilities.barriercd >= 2) {
+      abilities.invincibilitys = false;
     }
 
-    if (! barrier && timer - barrierCd >= 60) {
-      barrier = true;
+    if (! abilities.barriers && timer - abilities.barriercd >= 60) {
+      abilities.barriers = true;
     }
   }
 }
@@ -293,19 +288,19 @@ function moveBullet() {
       }
 
       //gameover if the bullet is colliding with the character
-      if (bullets[i].x - 0.5 * bullets[i].diameter >= charx && bullets[i].x - 0.5 * bullets[i].diameter <= charx + width / 16 && bullets[i].y >= chary && bullets[i].y <= chary + height / 8 && ! invincibility) {
+      if (bullets[i].x - 0.5 * bullets[i].diameter >= charx && bullets[i].x - 0.5 * bullets[i].diameter <= charx + width / 16 && bullets[i].y >= chary && bullets[i].y <= chary + height / 8 && ! abilities.invincibilitys) {
         state = "gameover";
       }
 
-      if (bullets[i].x + 0.5 * bullets[i].diameter >= charx && bullets[i].x + 0.5 * bullets[i].diameter <= charx + width / 16 && bullets[i].y >= chary && bullets[i].y <= chary + height / 8 && ! invincibility) {
+      if (bullets[i].x + 0.5 * bullets[i].diameter >= charx && bullets[i].x + 0.5 * bullets[i].diameter <= charx + width / 16 && bullets[i].y >= chary && bullets[i].y <= chary + height / 8 && ! abilities.invincibilitys) {
         state = "gameover";
       }
 
-      if (bullets[i].x >= charx && bullets[i].x <= charx + width / 16 && bullets[i].y + 0.5 * bullets[i].diameter >= chary && bullets[i].y + 0.5 * bullets[i].diameter <= chary + height / 8 && ! invincibility) {
+      if (bullets[i].x >= charx && bullets[i].x <= charx + width / 16 && bullets[i].y + 0.5 * bullets[i].diameter >= chary && bullets[i].y + 0.5 * bullets[i].diameter <= chary + height / 8 && ! abilities.invincibilitys) {
         state = "gameover";
       }
 
-      if (bullets[i].x >= charx && bullets[i].x <= charx + width / 16 && bullets[i].y - 0.5 * bullets[i].diameter >= chary && bullets[i].y - 0.5 * bullets[i].diameter <= chary + height / 8 && ! invincibility) {
+      if (bullets[i].x >= charx && bullets[i].x <= charx + width / 16 && bullets[i].y - 0.5 * bullets[i].diameter >= chary && bullets[i].y - 0.5 * bullets[i].diameter <= chary + height / 8 && ! abilities.invincibilitys) {
         state = "gameover";
       }
 
@@ -317,7 +312,7 @@ function moveBullet() {
 function gameOverYet() {
 
   if (state === "gameover") {
-    bgSound.stop();
+    sound.bg.stop();
     text("GAME OVER! You survived " + timer + " seconds. Press SPACEBAR to return to home screen.", width / 2, height / 2);
   }
 
@@ -333,11 +328,11 @@ function resetGame() {
   vx = 0;
   vy = 0;
   timer = 0;
-  flash = true;
-  ghost = true;
-  barrier = true;
-  bgSound.setVolume(0.2);
-  bgSound.loop();
+  abilities.flashs = true;
+  abilities.ghosts = true;
+  abilities.barriers = true;
+  sound.bg.setVolume(0.2);
+  sound.bg.loop();
   difficulty = 2500;
   bullets = [];
 
@@ -363,11 +358,11 @@ function mouseClicked() {
 function keyTyped() {
 
   if (state === "game") {
-    if (key === "f" && flash) {
-      flashSound.setVolume(0.1);
-      flashSound.play();
-      flash = false;
-      flashCd = timer;
+    if (key === "f" && abilities.flashs) {
+      sound.flash.setVolume(0.1);
+      sound.flash.play();
+      abilities.flashs = false;
+      abilities.flashcd = timer;
 
       if (mouseX <= width - width / 16 - 75){
         charx = mouseX;
@@ -389,20 +384,20 @@ function keyTyped() {
 
     }
 
-    if (key === "g" && ghost) {
-      ghostSound.setVolume(0.4);
-      ghostSound.play();
-      ghost = false;
-      ghostCd = timer;
+    if (key === "g" && abilities.ghosts) {
+      sound.ghost.setVolume(0.4);
+      sound.ghost.play();
+      abilities.ghosts = false;
+      abilities.ghostcd = timer;
       velocityRatio = 20;
     }
 
-    if (key === "b" && barrier) {
-      barrierSound.setVolume(0.1);
-      barrierSound.play();
-      barrier = false;
-      barrierCd = timer;
-      invincibility = true;
+    if (key === "b" && abilities.barriers) {
+      sound.barrier.setVolume(0.1);
+      sound.barrier.play();
+      abilities.barriers = false;
+      abilities.barriercd = timer;
+      abilities.invincibilitys = true;
     }
   }
 
