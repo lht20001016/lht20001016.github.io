@@ -10,14 +10,14 @@
 //define variables to be used
 let state;
 let character;
-let charx;
-let chary;
-let vx;
-let vy;
-let dex;
-let dey;
+let charpos;
+let velocity;
+let destinationpos;
 let timer;
 let abilities;
+let flashp;
+let ghostp;
+let barrierp;
 let velocityRatio;
 let bg;
 let tower;
@@ -28,19 +28,11 @@ let bullets = [];
 //preload assets
 function preload() {
 
-  soundFormats("mp3", "wav");
-  sound = {
-    bg : loadSound("assets/bgmusic.mp3"),
-    flash : loadSound("assets/flashsound.mp3"),
-    ghost : loadSound("assets/ghost.wav"),
-    barrier : loadSound("assets/barrier.wav"),
-  };
+  loadSoundFiles();
   character = loadImage("assets/character.PNG");
-  abilities = {
-    flash : loadImage("assets/flash.jpg"),
-    ghost : loadImage("assets/ghost.png"),
-    barrier : loadImage("assets/barrier.jpg"),
-  };
+  flashp = loadImage("assets/flash.jpg");
+  ghostp = loadImage("assets/ghost.png");
+  barrierp = loadImage("assets/barrier.jpg");
   bg = loadImage("assets/gamebackground.jpg");
   tower = loadImage("assets/tower.png");
 
@@ -73,24 +65,40 @@ function draw() {
   
 }
 
+function loadSoundFiles() {
+  soundFormats("mp3", "wav");
+  sound = {
+    bg : loadSound("assets/bgmusic.mp3"),
+    flash : loadSound("assets/flashsound.mp3"),
+    ghost : loadSound("assets/ghost.wav"),
+    barrier : loadSound("assets/barrier.wav"),
+  };
+}
+
 //assign initial values and default stats to variables
 function loadData() {
 
   state = "menu";
   velocityRatio = 60;
-  charx = width / 2;
-  chary = height / 2;
-  dex = charx;
-  dey = chary;
-  vx = 0;
-  vy = 0;
-  timer = 0;
+  charpos = {
+    x : width / 2,
+    y : height / 2,
+  };
+  destinationpos = {
+    x : charpos.x,
+    y : charpos.y,
+  };
+  velocity = {
+    x : 0,
+    y : 0,
+  };
   abilities ={
     flashs : true,
     ghosts : true,
     barriers : true,
     invincibilitys : false,
-  },
+  };
+  timer = 0;
   difficulty = 2500;
 
 }
@@ -134,7 +142,7 @@ function gameMusic() {
 function characterPosition() {
 
   if (state === "game") {
-    image(character, charx, chary, width / 16, height / 8);
+    image(character, charpos.x, charpos.y, width / 16, height / 8);
   }
 
 }
@@ -142,9 +150,9 @@ function characterPosition() {
 //responsible for determining the relative velocity of the character's movement relative to its destination
 function determineVelocity() {
 
-  if (charx !== dex && state === "game") {
-    vx = (dex - charx) / velocityRatio;
-    vy = (dey - chary) / velocityRatio;
+  if (charpos.x !== destinationpos.x && state === "game") {
+    velocity.x = (destinationpos.x - charpos.x) / velocityRatio;
+    velocity.y = (destinationpos.y - charpos.y) / velocityRatio;
   }
 
 }
@@ -152,12 +160,12 @@ function determineVelocity() {
 //responsible for moving the characters according to set restrictions (due to in game graphics) and velocities
 function characterMovement() {
 
-  if (charx + vx <= width - width / 16 - 75 && state === "game") {
-    charx += vx;
+  if (charpos.x + velocity.x <= width - width / 16 - 75 && state === "game") {
+    charpos.x += velocity.x;
   }
 
-  if (chary + vy <= height - height / 8 && state === "game") {
-    chary += vy;
+  if (charpos.y + velocity.y <= height - height / 8 && state === "game") {
+    charpos.y += velocity.y;
   }
 
 }
@@ -182,15 +190,15 @@ function updateTimer() {
 function showAbilities() {
   if (state ==="game") {
     if (abilities.flashs) {
-      image(abilities.flash, windowWidth / 15 * 13, height / 10 * 9, 60, 60);
+      image(flashp, width / 15 * 13, height / 10 * 9, 60, 60);
     }
 
     if (abilities.ghosts) {
-      image(abilities.ghost, windowWidth / 5 * 4, height / 10 * 9, 60, 60);
+      image(ghostp, width / 5 * 4, height / 10 * 9, 60, 60);
     }
 
     if (abilities.barriers) {
-      image(abilities.barrier, windowWidth / 15 * 11, height / 10 * 9, 60, 60);
+      image(barrierp, width / 15 * 11, height / 10 * 9, 60, 60);
     }
   }
 }
@@ -288,19 +296,19 @@ function moveBullet() {
       }
 
       //gameover if the bullet is colliding with the character
-      if (bullets[i].x - 0.5 * bullets[i].diameter >= charx && bullets[i].x - 0.5 * bullets[i].diameter <= charx + width / 16 && bullets[i].y >= chary && bullets[i].y <= chary + height / 8 && ! abilities.invincibilitys) {
+      if (bullets[i].x - 0.5 * bullets[i].diameter >= charpos.x && bullets[i].x - 0.5 * bullets[i].diameter <= charpos.x + width / 16 && bullets[i].y >= charpos.y && bullets[i].y <= charpos.y + height / 8 && ! abilities.invincibilitys) {
         state = "gameover";
       }
 
-      if (bullets[i].x + 0.5 * bullets[i].diameter >= charx && bullets[i].x + 0.5 * bullets[i].diameter <= charx + width / 16 && bullets[i].y >= chary && bullets[i].y <= chary + height / 8 && ! abilities.invincibilitys) {
+      if (bullets[i].x + 0.5 * bullets[i].diameter >= charpos.x && bullets[i].x + 0.5 * bullets[i].diameter <= charpos.x + width / 16 && bullets[i].y >= charpos.y && bullets[i].y <= charpos.y + height / 8 && ! abilities.invincibilitys) {
         state = "gameover";
       }
 
-      if (bullets[i].x >= charx && bullets[i].x <= charx + width / 16 && bullets[i].y + 0.5 * bullets[i].diameter >= chary && bullets[i].y + 0.5 * bullets[i].diameter <= chary + height / 8 && ! abilities.invincibilitys) {
+      if (bullets[i].x >= charpos.x && bullets[i].x <= charpos.x + width / 16 && bullets[i].y + 0.5 * bullets[i].diameter >= charpos.y && bullets[i].y + 0.5 * bullets[i].diameter <= charpos.y + height / 8 && ! abilities.invincibilitys) {
         state = "gameover";
       }
 
-      if (bullets[i].x >= charx && bullets[i].x <= charx + width / 16 && bullets[i].y - 0.5 * bullets[i].diameter >= chary && bullets[i].y - 0.5 * bullets[i].diameter <= chary + height / 8 && ! abilities.invincibilitys) {
+      if (bullets[i].x >= charpos.x && bullets[i].x <= charpos.x + width / 16 && bullets[i].y - 0.5 * bullets[i].diameter >= charpos.y && bullets[i].y - 0.5 * bullets[i].diameter <= charpos.y + height / 8 && ! abilities.invincibilitys) {
         state = "gameover";
       }
 
@@ -321,18 +329,26 @@ function gameOverYet() {
 function resetGame() {
 
   velocityRatio = 60;
-  charx = width / 2;
-  chary = height / 2;
-  dex = charx;
-  dey = chary;
-  vx = 0;
-  vy = 0;
-  timer = 0;
-  abilities.flashs = true;
-  abilities.ghosts = true;
-  abilities.barriers = true;
+  charpos = {
+    x : width / 2,
+    y : height / 2,
+  };
+  destinationpos = {
+    x : charpos.x,
+    y : charpos.y,
+  };
+  velocity = {
+    x : 0,
+    y : 0,
+  };
+  abilities = {
+    flashs : true,
+    ghosts : true,
+    barriers : true,
+  };
   sound.bg.setVolume(0.2);
   sound.bg.loop();
+  timer = 0;
   difficulty = 2500;
   bullets = [];
 
@@ -348,8 +364,8 @@ function mouseClicked() {
   }
 
   if (state === "game") {
-    dex = mouseX;
-    dey = mouseY;
+    destinationpos.x = mouseX;
+    destinationpos.y = mouseY;
   }
 
 }
@@ -365,22 +381,22 @@ function keyTyped() {
       abilities.flashcd = timer;
 
       if (mouseX <= width - width / 16 - 75){
-        charx = mouseX;
+        charpos.x = mouseX;
       }
     
       else {
-        charx = width - width / 16 - 75;
+        charpos.x = width - width / 16 - 75;
       }
 
       if (mouseY <= height - height / 8) {
-        chary = mouseY;
+        charpos.y = mouseY;
       }
 
       else {
-        chary = height - height / 8;
+        charpos.y = height - height / 8;
       }
-      dex = charx;
-      dey = chary;
+      destinationpos.x = charpos.x;
+      destinationpos.y = charpos.y;
 
     }
 
