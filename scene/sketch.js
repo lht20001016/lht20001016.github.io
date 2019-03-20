@@ -1,13 +1,15 @@
 // Let The bullets Fly
 // Kyle Luo
-// March 4, 2019
+// March 25, 2019
+//
+// CURRENT LOADING FILES COUNT : 9
 //
 // Extra for Experts:
-// - Added Sound(both background and sound effects)
-// - Utilized classes and constructors to create and track bullets (not listed as an extra of experts option in the assignment but I think its worth putting in this section)
-// - Added support to resizing windows during gameplay
+// - Used Array to store objects in a class
+// - Callback Functions
 
 //define variables to be used
+let loadCount;
 let state;
 let character;
 let charpos;
@@ -28,13 +30,7 @@ let bullets = [];
 //preload assets
 function preload() {
 
-  loadSoundFiles();
-  character = loadImage("assets/character.PNG");
-  flashp = loadImage("assets/flash.jpg");
-  ghostp = loadImage("assets/ghost.png");
-  barrierp = loadImage("assets/barrier.jpg");
   bg = loadImage("assets/gamebackground.jpg");
-  tower = loadImage("assets/tower.png");
 
 }
 
@@ -43,7 +39,8 @@ function setup() {
 
   createCanvas(windowWidth, windowHeight);
   loadData();
-
+  loadSoundFiles();
+  loadAssets();
 }
 
 //game functions
@@ -65,20 +62,19 @@ function draw() {
   
 }
 
-function loadSoundFiles() {
-  soundFormats("mp3", "wav");
-  sound = {
-    bg : loadSound("assets/bgmusic.mp3"),
-    flash : loadSound("assets/flashsound.mp3"),
-    ghost : loadSound("assets/ghost.wav"),
-    barrier : loadSound("assets/barrier.wav"),
-  };
+function loadAssets() {
+  character = loadImage("assets/character.PNG", itemLoaded);
+  tower = loadImage("assets/tower.png", itemLoaded);
+  flashp = loadImage("assets/flash.jpg", itemLoaded);
+  ghostp = loadImage("assets/ghost.png", itemLoaded);
+  barrierp = loadImage("assets/barrier.jpg", itemLoaded);
 }
 
 //assign initial values and default stats to variables
 function loadData() {
 
   state = "menu";
+  loadCount = 0;
   velocityRatio = 60;
   charpos = {
     x : width / 2,
@@ -103,6 +99,20 @@ function loadData() {
 
 }
 
+function loadSoundFiles() {
+  soundFormats("mp3", "wav");
+  sound = {
+    bg : loadSound("assets/bgmusic.mp3", itemLoaded),
+    flash : loadSound("assets/flashsound.mp3", itemLoaded),
+    ghost : loadSound("assets/ghost.wav", itemLoaded),
+    barrier : loadSound("assets/barrier.wav", itemLoaded),
+  };
+}
+
+function itemLoaded() {
+  loadCount += 1;
+}
+
 function drawBackground() {
   background(bg);
 }
@@ -119,14 +129,22 @@ function showMenus() {
     text("The objective of this game is to avoid the incoming bullets at all costs. Good Luck!", width / 2, height / 5);
     rectMode(CENTER);
     stroke(0, 0, 255);
+    if (loadCount < 9) {
+      fill(255, 0 ,0);
+    }
     if (mouseX >= width / 2 - width / 12 && mouseX <= width / 2 + width / 12 &&
-      mouseY >= height / 3 * 2 - height / 10 && mouseY <= height / 3 * 2 + height / 10) {
+      mouseY >= height / 3 * 2 - height / 10 && mouseY <= height / 3 * 2 + height / 10 && loadCount === 9) {
       fill(0, 77, 255);
     }
     rect(width / 2, height / 3 * 2, width / 6, height / 5);
     fill(0);
     textSize(32);
-    text("Start", width / 2, height / 3 * 2);
+    if (loadCount < 9) {
+      text("Loading...", width / 2, height / 3 * 2);
+    }
+    if (loadCount === 9) {
+      text("Start", width / 2, height / 3 * 2);
+    }
   }
 
 }
@@ -270,11 +288,9 @@ function createBullet() {
   if (state === "game") {
 
     //loop that cycles through every frame and, depending on the difficulty and timer, there is a possibility of generating a bullet according to the class code above, which is then pushed into an array defined at the beginning
-    for (let i = 0; i < 1; i++) {
-      let randomvalue = random(0, difficulty - 20 * timer);
-      if (randomvalue <= 40) { 
-        bullets.push(new Bullet());
-      }
+    let randomvalue = random(0, difficulty - 20 * timer);
+    if (randomvalue <= 40) { 
+      bullets.push(new Bullet());
     }
   }
 
@@ -358,7 +374,7 @@ function resetGame() {
 function mouseClicked() {
 
   if (state === "menu" && mouseX >= width / 2 - width / 12 && mouseX <= width / 2 + width / 12 &&
-    mouseY >= height / 3 * 2 - height / 10 && mouseY <= height / 3 * 2 + height / 10) {
+    mouseY >= height / 3 * 2 - height / 10 && mouseY <= height / 3 * 2 + height / 10 && loadCount === 9) {
     state = "game";
     resetGame();
   }
