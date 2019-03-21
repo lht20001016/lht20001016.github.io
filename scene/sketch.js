@@ -49,6 +49,7 @@ function draw() {
   drawBackground();
   showMenus();
   gameMusic();
+  showCursor();
   characterPosition();
   determineVelocity();
   characterMovement();
@@ -153,6 +154,16 @@ function gameMusic() {
   if (state === "game" && ! sound.bg.isPlaying()) {
     sound.bg.setVolume(0.2);
     sound.bg.play();  
+  }
+}
+
+function showCursor() {
+  if (mouseX >= width / 2 - width / 12 && mouseX <= width / 2 + width / 12 &&
+    mouseY >= height / 3 * 2 - height / 10 && mouseY <= height / 3 * 2 + height / 10 && loadCount === 9 && state === "menu") {
+    cursor("assets/gamecursor1.cur");
+  }
+  else if (state === "game") {
+    cursor("assets/gamecursor1.cur");
   }
 }
 
