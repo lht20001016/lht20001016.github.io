@@ -49,7 +49,6 @@ function draw() {
   drawBackground();
   showMenus();
   gameMusic();
-  showCursor();
   characterPosition();
   determineVelocity();
   characterMovement();
@@ -97,6 +96,7 @@ function loadData() {
   };
   timer = 0;
   difficulty = 2500;
+  cursor("assets/gamecursor1.cur");
 
 }
 
@@ -122,29 +122,34 @@ function showMenus() {
 
   if (state === "menu") {
     textAlign(CENTER);
+    rectMode(CORNER);
     textSize(36);
     stroke(50, 0, 255);
     fill(0, 255, 255);
     text("Let The Bullets Fly", width / 2, height / 8);
     textSize(24);
     text("The objective of this game is to avoid the incoming bullets at all costs. Good Luck!", width / 2, height / 5);
-    rectMode(CENTER);
     stroke(0, 0, 255);
+    noFill();
+    rect(width / 10, height / 4 * 3, width * 0.8, height / 6);
     if (loadCount < 9) {
       fill(255, 0 ,0);
     }
-    if (mouseX >= width / 2 - width / 12 && mouseX <= width / 2 + width / 12 &&
-      mouseY >= height / 3 * 2 - height / 10 && mouseY <= height / 3 * 2 + height / 10 && loadCount === 9) {
+    else if (mouseX >= width / 10 && mouseX <= width * 0.9 &&
+      mouseY >= height * 0.75 && mouseY <= height / 4 * 3 + height / 6 && loadCount === 9) {
       fill(0, 77, 255);
     }
-    rect(width / 2, height / 3 * 2, width / 6, height / 5);
+    else {
+      fill(0, 255, 255);
+    }
+    rect(width / 10, height * 0.75,width * 0.8 / 9 * loadCount, height / 6);
     fill(0);
     textSize(32);
     if (loadCount < 9) {
-      text("Loading...", width / 2, height / 3 * 2);
+      text("Loading...", width / 2, height * 0.75 + height / 12);
     }
     if (loadCount === 9) {
-      text("Start", width / 2, height / 3 * 2);
+      text("Start", width / 2, height * 0.75 + height / 12);
     }
   }
 
@@ -154,16 +159,6 @@ function gameMusic() {
   if (state === "game" && ! sound.bg.isPlaying()) {
     sound.bg.setVolume(0.2);
     sound.bg.play();  
-  }
-}
-
-function showCursor() {
-  if (mouseX >= width / 2 - width / 12 && mouseX <= width / 2 + width / 12 &&
-    mouseY >= height / 3 * 2 - height / 10 && mouseY <= height / 3 * 2 + height / 10 && loadCount === 9 && state === "menu") {
-    cursor("assets/gamecursor1.cur");
-  }
-  else if (state === "game") {
-    cursor("assets/gamecursor1.cur");
   }
 }
 
@@ -348,7 +343,16 @@ function gameOverYet() {
 
   if (state === "gameover") {
     sound.bg.stop();
-    text("GAME OVER! You survived " + timer + " seconds. Press SPACEBAR to return to home screen.", width / 2, height / 2);
+    fill(0, 255, 255);
+    text("GAME OVER! You survived " + timer + " seconds.", width / 2, height / 8);
+    rectMode(CENTER);
+    if (mouseX >= width / 3 && mouseX <= width * (2 / 3) &&
+      mouseY >= height * (59 / 80) && mouseY <= height * (69 / 80)) {
+      fill(0, 77, 255);
+    }
+    rect(width / 2, height * 0.8, width / 3, height / 8);
+    fill(0);
+    text("Return to the Main Menu", width / 2, height * 0.8);
   }
 
 }
@@ -384,8 +388,8 @@ function resetGame() {
 //mouseclicks determine the destination of the character movement
 function mouseClicked() {
 
-  if (state === "menu" && mouseX >= width / 2 - width / 12 && mouseX <= width / 2 + width / 12 &&
-    mouseY >= height / 3 * 2 - height / 10 && mouseY <= height / 3 * 2 + height / 10 && loadCount === 9) {
+  if (state === "menu" && mouseX >= width / 10 && mouseX <= width * 0.9 &&
+    mouseY >= height * 0.75 && mouseY <= height / 4 * 3 + height / 6 && loadCount === 9) {
     state = "game";
     resetGame();
   }
@@ -393,6 +397,11 @@ function mouseClicked() {
   if (state === "game") {
     destinationpos.x = mouseX;
     destinationpos.y = mouseY;
+  }
+
+  if (mouseX >= width / 3 && mouseX <= width * (2 / 3) &&
+      mouseY >= height * (59 / 80) && mouseY <= height * (69 / 80) && state === "gameover") {
+    state = "menu";  
   }
 
 }
@@ -444,10 +453,6 @@ function keyTyped() {
     }
   }
 
-  //pressing space while game is over returns the user to the main menu
-  if (key === " " && state === "gameover") {
-    state = "menu";
-  }
 }
 
 //provides some support for resizing windows during gameplay
