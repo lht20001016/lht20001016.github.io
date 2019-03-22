@@ -7,6 +7,12 @@
 // Extra for Experts:
 // - Used Array to store objects in a class
 // - Callback Functions
+//
+//Version Logs
+//V1.0: Interactive Scene Assignment
+//
+//
+//
 
 //define variables to be used
 let loadCount;
