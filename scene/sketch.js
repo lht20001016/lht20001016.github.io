@@ -10,8 +10,18 @@
 //
 //Version Logs
 //V1.0: Interactive Scene Assignment
+//Basic Game
+//Classes for bullets
+//Three Abilities
+//CSS/HTML formatting
+//scaling with screensize (somewhat)
 //
-//
+//V2.0: States Variable Assignment
+//Replaced CSS/HTML with states varibles
+//Used object Notation to simplify variables
+//Loading Bar and Menu Screen
+//Cursor
+//Minor gameplay and balance improvements
 //
 
 //define variables to be used
@@ -47,6 +57,7 @@ function setup() {
   loadData();
   loadSoundFiles();
   loadAssets();
+
 }
 
 //game functions
@@ -152,7 +163,7 @@ function showMenus() {
     fill(0);
     textSize(32);
     if (loadCount < 9) {
-      text("Loading...", width / 2, height * 0.75 + height / 12);
+      text("Loading...(" + floor(loadCount / 9 * 100) + "%)", width / 2, height * 0.75 + height / 12);
     }
     if (loadCount === 9) {
       text("Start", width / 2, height * 0.75 + height / 12);
