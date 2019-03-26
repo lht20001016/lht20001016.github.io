@@ -19,7 +19,7 @@
 //Replaced CSS/HTML with states varibles to control the menus and the game
 //Used object Notation to simplify variables
 //Loading Bar and Menu Screen
-//Cursor
+//Cursors and varying cursors depending on the position of the mouse
 //Overall gameplay and balance improvements
 //UI navigation improvements
 //Sound improvements and options
@@ -72,6 +72,7 @@ function setup() {
 function draw() {
 
   drawBackground();
+  showCursor();
   showMenus();
   showShop();
   showSound();
@@ -89,6 +90,7 @@ function draw() {
   
 }
 
+//load the basic assets needed to run the menu, notes the total amount of files to load
 function setAssets() {
 
   bg = loadImage("assets/gamebackground.jpg");
@@ -97,6 +99,7 @@ function setAssets() {
 
 }
 
+//load images
 function loadAssets() {
   character = loadImage("assets/character.PNG", itemLoaded);
   tower = loadImage("assets/tower.png", itemLoaded);
@@ -131,10 +134,10 @@ function loadData() {
   };
   timer = 0;
   difficulty = 2500;
-  cursor("assets/gamecursor1.cur");
 
 }
 
+//load soundfiles
 function loadSoundFiles() {
   soundFormats("mp3", "wav");
   sound = {
@@ -149,14 +152,24 @@ function loadSoundFiles() {
   };
 }
 
+//tracks the number and percentage of total files loaded
 function itemLoaded() {
   loadCount += 1;
 }
 
+//function drawing the background
 function drawBackground() {
   background(bg);
 }
 
+//basic game cursor, called here to be overwritten later if needed
+function showCursor() {
+
+  cursor("assets/gamecursor1.cur");
+
+}
+
+//menuscreen using rectangles and text boxes, including hovering lighting and changing cursors
 function showMenus() {
 
   if (state === "menu") {
@@ -178,6 +191,7 @@ function showMenus() {
     else if (mouseX >= width / 10 && mouseX <= width * 0.9 &&
       mouseY >= height * 0.75 && mouseY <= height / 4 * 3 + height / 6 && loadCount === files) {
       fill(0, 77, 255);
+      cursor("assets/startgame.cur");
     }
     else {
       fill(0, 255, 255);
@@ -195,6 +209,7 @@ function showMenus() {
       rect(width / 8, height * (13/24), width * 0.75, height / 8);
       if (mouseX >= width / 8 && mouseX <= width * (7/8) && mouseY >= height * (13/24) && mouseY <= height * (2/3)) {
         fill(53, 0, 96);
+        cursor("assets/shop.cur");
       }
       else {
         fill(108, 16, 183);
@@ -208,6 +223,7 @@ function showMenus() {
 
 }
 
+//shop menu, still to come
 function showShop() {
   if (state === "shop") {
     noFill();
@@ -215,6 +231,7 @@ function showShop() {
     rect(width * 0.03, height * 0.1, width * 0.02, height * 0.8);
     if (mouseX >= width * 0.03 && mouseX <= width * 0.05 && mouseY >= height * 0.1 && mouseY <= height * 0.9) {
       fill(53, 0, 96);
+      cursor("assets/shop.cur");
     }
     else {
       fill(108, 16, 183);
@@ -230,6 +247,7 @@ function showShop() {
   }
 }
 
+//images responsible for displaying the control of sound
 function showSound() {
   if (state !== "game") {
     if (volumeControl) {
@@ -241,6 +259,7 @@ function showSound() {
   }
 }
 
+//plays the approperiate music for the gamestate
 function gameMusic() {
 
   if (state !== "game" && ! menumusic.isPlaying() && volumeControl) { 
@@ -410,10 +429,10 @@ function moveBullet() {
       }
 
       //gameover if the bullet is colliding with the character
-      if (bullets[i].x - 0.5 * bullets[i].diameter >= charpos.x && bullets[i].x - 0.5 * bullets[i].diameter <= charpos.x + width / 16 && bullets[i].y >= charpos.y && bullets[i].y <= charpos.y + height / 8 ||
+      if ((bullets[i].x - 0.5 * bullets[i].diameter >= charpos.x && bullets[i].x - 0.5 * bullets[i].diameter <= charpos.x + width / 16 && bullets[i].y >= charpos.y && bullets[i].y <= charpos.y + height / 8 ||
       bullets[i].x + 0.5 * bullets[i].diameter >= charpos.x && bullets[i].x + 0.5 * bullets[i].diameter <= charpos.x + width / 16 && bullets[i].y >= charpos.y && bullets[i].y <= charpos.y + height / 8 ||
       bullets[i].x >= charpos.x && bullets[i].x <= charpos.x + width / 16 && bullets[i].y + 0.5 * bullets[i].diameter >= charpos.y && bullets[i].y + 0.5 * bullets[i].diameter <= charpos.y + height / 8 ||
-      bullets[i].x >= charpos.x && bullets[i].x <= charpos.x + width / 16 && bullets[i].y - 0.5 * bullets[i].diameter >= charpos.y && bullets[i].y - 0.5 * bullets[i].diameter <= charpos.y + height / 8 &&
+      bullets[i].x >= charpos.x && bullets[i].x <= charpos.x + width / 16 && bullets[i].y - 0.5 * bullets[i].diameter >= charpos.y && bullets[i].y - 0.5 * bullets[i].diameter <= charpos.y + height / 8) &&
        ! abilities.invincibilitys) {
         state = "gameover";
         if (volumeControl){
@@ -437,6 +456,7 @@ function gameOverYet() {
     if (mouseX >= width / 3 && mouseX <= width * (2 / 3) &&
       mouseY >= height * (59 / 80) && mouseY <= height * (69 / 80)) {
       fill(0, 77, 255);
+      cursor("assets/gotomenu.cur");
     }
     rect(width / 2, height * 0.8, width / 3, height / 8);
     fill(0);
@@ -444,6 +464,8 @@ function gameOverYet() {
   }
 
 }
+
+//called everytime the game is reset, reset sounds, arrays, and assigns the default value to all relavent variables
 function resetGame() {
 
   velocityRatio = 60;
@@ -475,7 +497,7 @@ function resetGame() {
 
 }
 
-//mouseclicks determine the destination of the character movement
+//mouseclicks determine the destination of the character movement and to navigate through the menus
 function mouseReleased() {
 
   if(mouseX >= width * 0.03 && mouseX <= width * 0.05 && mouseY >= height * 0.1 && mouseY <= height * 0.9 && state === "shop") {
@@ -526,7 +548,7 @@ function mouseReleased() {
 
 }
 
-//responsible for the use of abilities
+//responsible for the use of abilities upon keytyped
 function keyTyped() {
 
   if (state === "game") {
