@@ -16,7 +16,7 @@
 //scaling with screensize
 //
 //V2.0: States Variable Assignment
-//Replaced CSS/HTML with states varibles
+//Replaced CSS/HTML with states varibles to control the menus and the game
 //Used object Notation to simplify variables
 //Loading Bar and Menu Screen
 //Cursor
@@ -28,6 +28,7 @@
 let loadCount;
 let files;
 let state;
+let volumeControl;
 let character;
 let charpos;
 let velocity;
@@ -36,6 +37,8 @@ let timer;
 let abilities;
 let flashp;
 let ghostp;
+let soundOn;
+let soundOff;
 let barrierp;
 let velocityRatio;
 let bg;
@@ -49,6 +52,8 @@ let bullets = [];
 function preload() {
 
   menumusic = loadSound("assets/menumusic.wav");
+  soundOn = loadImage("assets/soundon.png", itemLoaded);
+  soundOff = loadImage("assets/soundoff.png", itemLoaded);
   setAssets();
 
 }
@@ -69,6 +74,7 @@ function draw() {
   drawBackground();
   showMenus();
   showShop();
+  showSound();
   gameMusic();
   characterPosition();
   determineVelocity();
@@ -86,6 +92,7 @@ function draw() {
 function setAssets() {
 
   bg = loadImage("assets/gamebackground.jpg");
+  volumeControl = true;
   files = 13;
 
 }
@@ -223,14 +230,25 @@ function showShop() {
   }
 }
 
+function showSound() {
+  if (state !== "game") {
+    if (volumeControl) {
+      image(soundOn, width * 0.95, height * 0.9, height / 15, height / 15);
+    }
+    else {
+      image(soundOff, width * 0.95, height * 0.9, height / 15, height / 15);
+    }
+  }
+}
+
 function gameMusic() {
 
-  if ((state === "menu" || state === "shop" || state === "gameover") && ! menumusic.isPlaying()) { 
+  if (state !== "game" && ! menumusic.isPlaying() && volumeControl) { 
     menumusic.setVolume(1.0);
     menumusic.loop();
   }
 
-  if (state === "game" && ! sound.bg.isPlaying()) {
+  if (state === "game" && ! sound.bg.isPlaying() && volumeControl) {
     sound.bg.setVolume(0.2);
     sound.bg.loop();  
   }
@@ -398,8 +416,10 @@ function moveBullet() {
       bullets[i].x >= charpos.x && bullets[i].x <= charpos.x + width / 16 && bullets[i].y - 0.5 * bullets[i].diameter >= charpos.y && bullets[i].y - 0.5 * bullets[i].diameter <= charpos.y + height / 8 &&
        ! abilities.invincibilitys) {
         state = "gameover";
-        sound.gameover.setVolume(0.1);
-        sound.gameover.play();
+        if (volumeControl){
+          sound.gameover.setVolume(0.1);
+          sound.gameover.play();
+        }
       }
 
     }
@@ -444,8 +464,10 @@ function resetGame() {
     ghosts : true,
     barriers : true,
   };
-  sound.bg.setVolume(0.2);
-  sound.bg.loop();
+  if (volumeControl) {
+    sound.bg.setVolume(0.05);
+    sound.bg.loop();
+  }
   timer = 0;
   difficulty = 2500;
   menumusic.stop();
@@ -458,22 +480,28 @@ function mouseReleased() {
 
   if(mouseX >= width * 0.03 && mouseX <= width * 0.05 && mouseY >= height * 0.1 && mouseY <= height * 0.9 && state === "shop") {
     state = "menu";
-    sound.closestore.setVolume(0.1);
-    sound.closestore.play();
+    if (volumeControl) {
+      sound.closestore.setVolume(0.05);
+      sound.closestore.play();
+    }
   }
 
   if (mouseX >= width / 8 && mouseX <= width * (7/8) && mouseY >= height * (13/24) && mouseY <= height * (2/3) && state === "menu") {
     state = "shop";
-    sound.openstore.setVolume(0.1);
-    sound.openstore.play();
+    if (volumeControl) {
+      sound.openstore.setVolume(0.05);
+      sound.openstore.play();
+    }
   }
 
   if (state === "menu" && mouseX >= width / 10 && mouseX <= width * 0.9 &&
     mouseY >= height * 0.75 && mouseY <= height / 4 * 3 + height / 6 && loadCount === files) {
     state = "game";
     resetGame();
-    sound.startgame.setVolume(0.1);
-    sound.startgame.play();
+    if (volumeControl) {
+      sound.startgame.setVolume(0.1);
+      sound.startgame.play();
+    }
   }
 
   if (state === "game") {
@@ -484,7 +512,16 @@ function mouseReleased() {
   if (mouseX >= width / 3 && mouseX <= width * (2 / 3) &&
       mouseY >= height * (59 / 80) && mouseY <= height * (69 / 80) && state === "gameover") {
     state = "menu";
-    sound.startgame.play();
+    if (volumeControl) {
+      sound.startgame.play();
+    }
+  }
+
+  if (mouseX >= width * 0.95 && mouseX <= width * 0.95 + height / 15 && mouseY >= height * 0.9 && mouseY <= height * (29/30) && state !== "game") {
+    volumeControl = ! volumeControl;
+    if (! volumeControl) {
+      menumusic.stop();
+    }
   }
 
 }
@@ -494,8 +531,10 @@ function keyTyped() {
 
   if (state === "game") {
     if (key === "f" && abilities.flashs) {
-      sound.flash.setVolume(0.1);
-      sound.flash.play();
+      if (volumeControl) {
+        sound.flash.setVolume(0.1);
+        sound.flash.play();
+      }
       abilities.flashs = false;
       abilities.flashcd = timer;
 
@@ -520,16 +559,20 @@ function keyTyped() {
     }
 
     if (key === "g" && abilities.ghosts) {
-      sound.ghost.setVolume(0.4);
-      sound.ghost.play();
+      if (volumeControl) {
+        sound.ghost.setVolume(0.4);
+        sound.ghost.play();
+      }
       abilities.ghosts = false;
       abilities.ghostcd = timer;
       velocityRatio = 20;
     }
 
     if (key === "b" && abilities.barriers) {
-      sound.barrier.setVolume(0.1);
-      sound.barrier.play();
+      if (volumeControl) {
+        sound.barrier.setVolume(0.1);
+        sound.barrier.play();
+      }
       abilities.barriers = false;
       abilities.barriercd = timer;
       abilities.invincibilitys = true;
