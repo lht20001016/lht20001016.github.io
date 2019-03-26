@@ -13,15 +13,15 @@
 //Basic Game
 //Classes for bullets
 //Three Abilities
-//CSS/HTML formatting
-//scaling with screensize (somewhat)
+//CSS/HTML formatting for the game
+//scaling with screensize
 //
 //V2.0: States Variable Assignment
 //Replaced CSS/HTML with states varibles
 //Used object Notation to simplify variables
 //Loading Bar and Menu Screen
 //Cursor
-//Minor gameplay and balance improvements
+//Overall gameplay and balance improvements
 //
 
 //define variables to be used
@@ -121,7 +121,7 @@ function loadSoundFiles() {
   soundFormats("mp3", "wav");
   sound = {
     bg : loadSound("assets/bgmusic.mp3", itemLoaded),
-    flash : loadSound("assets/flashsound.mp3", itemLoaded),
+    flash : loadSound("assets/flashsound.wav", itemLoaded),
     ghost : loadSound("assets/ghost.wav", itemLoaded),
     barrier : loadSound("assets/barrier.wav", itemLoaded),
   };
