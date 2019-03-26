@@ -1,12 +1,11 @@
-// Let The bullets Fly
+// Let The bullets Fly (States Variables Edition)
 // Kyle Luo
 // March 25, 2019
-//
-// CURRENT LOADING FILES COUNT : 9
 //
 // Extra for Experts:
 // - Used Array to store objects in a class
 // - Callback Functions
+// - Push/Pop rotation with text in loadout menu
 //
 //Version Logs
 //V1.0: Interactive Scene Assignment
@@ -22,10 +21,12 @@
 //Loading Bar and Menu Screen
 //Cursor
 //Overall gameplay and balance improvements
-//
+//UI navigation improvements
+//Sound improvements and options
 
 //define variables to be used
 let loadCount;
+let files;
 let state;
 let character;
 let charpos;
@@ -40,13 +41,15 @@ let velocityRatio;
 let bg;
 let tower;
 let sound;
+let menumusic;
 let difficulty;
 let bullets = [];
 
 //preload assets
 function preload() {
 
-  bg = loadImage("assets/gamebackground.jpg");
+  menumusic = loadSound("assets/menumusic.wav");
+  setAssets();
 
 }
 
@@ -65,6 +68,7 @@ function draw() {
 
   drawBackground();
   showMenus();
+  showShop();
   gameMusic();
   characterPosition();
   determineVelocity();
@@ -77,6 +81,13 @@ function draw() {
   moveBullet();
   gameOverYet();
   
+}
+
+function setAssets() {
+
+  bg = loadImage("assets/gamebackground.jpg");
+  files = 13;
+
 }
 
 function loadAssets() {
@@ -124,6 +135,10 @@ function loadSoundFiles() {
     flash : loadSound("assets/flashsound.wav", itemLoaded),
     ghost : loadSound("assets/ghost.wav", itemLoaded),
     barrier : loadSound("assets/barrier.wav", itemLoaded),
+    openstore : loadSound("assets/openstore.wav", itemLoaded),
+    closestore : loadSound("assets/closestore.wav", itemLoaded),
+    startgame : loadSound("assets/startgame.wav", itemLoaded),
+    gameover : loadSound("assets/gameover.wav", itemLoaded)
   };
 }
 
@@ -138,6 +153,7 @@ function drawBackground() {
 function showMenus() {
 
   if (state === "menu") {
+
     textAlign(CENTER);
     rectMode(CORNER);
     textSize(36);
@@ -149,33 +165,74 @@ function showMenus() {
     stroke(0, 0, 255);
     noFill();
     rect(width / 10, height / 4 * 3, width * 0.8, height / 6);
-    if (loadCount < 9) {
+    if (loadCount < files) {
       fill(255, 0 ,0);
     }
     else if (mouseX >= width / 10 && mouseX <= width * 0.9 &&
-      mouseY >= height * 0.75 && mouseY <= height / 4 * 3 + height / 6 && loadCount === 9) {
+      mouseY >= height * 0.75 && mouseY <= height / 4 * 3 + height / 6 && loadCount === files) {
       fill(0, 77, 255);
     }
     else {
       fill(0, 255, 255);
     }
-    rect(width / 10, height * 0.75,width * 0.8 / 9 * loadCount, height / 6);
+    rect(width / 10, height * 0.75, width * 0.8 / files * loadCount, height / 6);
+
     fill(0);
     textSize(32);
-    if (loadCount < 9) {
-      text("Loading...(" + floor(loadCount / 9 * 100) + "%)", width / 2, height * 0.75 + height / 12);
+    if (loadCount < files) {
+      text("Loading...(" + floor(loadCount / files * 100) + "%)", width / 2, height * (27/32));
     }
-    if (loadCount === 9) {
-      text("Start", width / 2, height * 0.75 + height / 12);
+    if (loadCount === files) {
+      noFill();
+      stroke(53, 0, 96);
+      rect(width / 8, height * (13/24), width * 0.75, height / 8);
+      if (mouseX >= width / 8 && mouseX <= width * (7/8) && mouseY >= height * (13/24) && mouseY <= height * (2/3)) {
+        fill(53, 0, 96);
+      }
+      else {
+        fill(108, 16, 183);
+      }
+      rect(width / 8, height * (13/24), width * 0.75, height / 8);
+      fill(0);
+      text("Choose Your Loadout", width / 2, height * (117/192));
+      text("Start", width / 2, height * (27/32));
     }
   }
 
 }
 
+function showShop() {
+  if (state === "shop") {
+    noFill();
+    stroke(53, 0, 96);
+    rect(width * 0.03, height * 0.1, width * 0.02, height * 0.8);
+    if (mouseX >= width * 0.03 && mouseX <= width * 0.05 && mouseY >= height * 0.1 && mouseY <= height * 0.9) {
+      fill(53, 0, 96);
+    }
+    else {
+      fill(108, 16, 183);
+    }
+    rect(width * 0.03, height * 0.1, width * 0.02, height * 0.8);
+    fill(0);
+    textSize(20);
+    push();
+    translate(width * 0.0375, height * 0.5);
+    rotate(PI / 2);
+    text("Return to Menu", 0, 0);
+    pop();
+  }
+}
+
 function gameMusic() {
+
+  if ((state === "menu" || state === "shop" || state === "gameover") && ! menumusic.isPlaying()) { 
+    menumusic.setVolume(1.0);
+    menumusic.loop();
+  }
+
   if (state === "game" && ! sound.bg.isPlaying()) {
     sound.bg.setVolume(0.2);
-    sound.bg.play();  
+    sound.bg.loop();  
   }
 }
 
@@ -335,20 +392,14 @@ function moveBullet() {
       }
 
       //gameover if the bullet is colliding with the character
-      if (bullets[i].x - 0.5 * bullets[i].diameter >= charpos.x && bullets[i].x - 0.5 * bullets[i].diameter <= charpos.x + width / 16 && bullets[i].y >= charpos.y && bullets[i].y <= charpos.y + height / 8 && ! abilities.invincibilitys) {
+      if (bullets[i].x - 0.5 * bullets[i].diameter >= charpos.x && bullets[i].x - 0.5 * bullets[i].diameter <= charpos.x + width / 16 && bullets[i].y >= charpos.y && bullets[i].y <= charpos.y + height / 8 ||
+      bullets[i].x + 0.5 * bullets[i].diameter >= charpos.x && bullets[i].x + 0.5 * bullets[i].diameter <= charpos.x + width / 16 && bullets[i].y >= charpos.y && bullets[i].y <= charpos.y + height / 8 ||
+      bullets[i].x >= charpos.x && bullets[i].x <= charpos.x + width / 16 && bullets[i].y + 0.5 * bullets[i].diameter >= charpos.y && bullets[i].y + 0.5 * bullets[i].diameter <= charpos.y + height / 8 ||
+      bullets[i].x >= charpos.x && bullets[i].x <= charpos.x + width / 16 && bullets[i].y - 0.5 * bullets[i].diameter >= charpos.y && bullets[i].y - 0.5 * bullets[i].diameter <= charpos.y + height / 8 &&
+       ! abilities.invincibilitys) {
         state = "gameover";
-      }
-
-      if (bullets[i].x + 0.5 * bullets[i].diameter >= charpos.x && bullets[i].x + 0.5 * bullets[i].diameter <= charpos.x + width / 16 && bullets[i].y >= charpos.y && bullets[i].y <= charpos.y + height / 8 && ! abilities.invincibilitys) {
-        state = "gameover";
-      }
-
-      if (bullets[i].x >= charpos.x && bullets[i].x <= charpos.x + width / 16 && bullets[i].y + 0.5 * bullets[i].diameter >= charpos.y && bullets[i].y + 0.5 * bullets[i].diameter <= charpos.y + height / 8 && ! abilities.invincibilitys) {
-        state = "gameover";
-      }
-
-      if (bullets[i].x >= charpos.x && bullets[i].x <= charpos.x + width / 16 && bullets[i].y - 0.5 * bullets[i].diameter >= charpos.y && bullets[i].y - 0.5 * bullets[i].diameter <= charpos.y + height / 8 && ! abilities.invincibilitys) {
-        state = "gameover";
+        sound.gameover.setVolume(0.1);
+        sound.gameover.play();
       }
 
     }
@@ -373,7 +424,6 @@ function gameOverYet() {
   }
 
 }
-
 function resetGame() {
 
   velocityRatio = 60;
@@ -398,17 +448,32 @@ function resetGame() {
   sound.bg.loop();
   timer = 0;
   difficulty = 2500;
+  menumusic.stop();
   bullets = [];
 
 }
 
 //mouseclicks determine the destination of the character movement
-function mouseClicked() {
+function mouseReleased() {
+
+  if(mouseX >= width * 0.03 && mouseX <= width * 0.05 && mouseY >= height * 0.1 && mouseY <= height * 0.9 && state === "shop") {
+    state = "menu";
+    sound.closestore.setVolume(0.1);
+    sound.closestore.play();
+  }
+
+  if (mouseX >= width / 8 && mouseX <= width * (7/8) && mouseY >= height * (13/24) && mouseY <= height * (2/3) && state === "menu") {
+    state = "shop";
+    sound.openstore.setVolume(0.1);
+    sound.openstore.play();
+  }
 
   if (state === "menu" && mouseX >= width / 10 && mouseX <= width * 0.9 &&
-    mouseY >= height * 0.75 && mouseY <= height / 4 * 3 + height / 6 && loadCount === 9) {
+    mouseY >= height * 0.75 && mouseY <= height / 4 * 3 + height / 6 && loadCount === files) {
     state = "game";
     resetGame();
+    sound.startgame.setVolume(0.1);
+    sound.startgame.play();
   }
 
   if (state === "game") {
@@ -418,7 +483,8 @@ function mouseClicked() {
 
   if (mouseX >= width / 3 && mouseX <= width * (2 / 3) &&
       mouseY >= height * (59 / 80) && mouseY <= height * (69 / 80) && state === "gameover") {
-    state = "menu";  
+    state = "menu";
+    sound.startgame.play();
   }
 
 }
