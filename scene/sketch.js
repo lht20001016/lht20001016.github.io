@@ -21,6 +21,7 @@
 //Mostly code updates and refactoring with quality of life improvements and UI/Interface/player experience improvements, see details below.
 //Replaced CSS/HTML with states varibles to control the menus and the game
 //Used object Notation to simplify variables
+//Refactoring code, factoring, combinging, and cleaning up variables, as well as sorted load order
 //Loading Bar and Menu Screen
 //Cursors and varying cursors depending on the position of the mouse
 //Overall gameplay and balance improvements
