@@ -6,8 +6,10 @@
 // - Used Array to store objects in a class
 // - Callback Functions
 // - Push/Pop rotation with text in loadout menu
+// - Classes and constructors
+// ...other things that I have learned from the internet to better develop my game
 //
-//Version Logs
+//Version Logs -- 05 Mar 2019
 //V1.0: Interactive Scene Assignment
 //Basic Game
 //Classes for bullets
@@ -15,7 +17,7 @@
 //CSS/HTML formatting for the game
 //scaling with screensize
 //
-//V2.0: States Variable Assignment
+//V2.0: States Variable Assignment -- 25 Mar 2019
 //Replaced CSS/HTML with states varibles to control the menus and the game
 //Used object Notation to simplify variables
 //Loading Bar and Menu Screen
