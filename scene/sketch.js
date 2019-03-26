@@ -21,7 +21,7 @@
 //Mostly code updates and refactoring with quality of life improvements and UI/Interface/player experience improvements, see details below.
 //Replaced CSS/HTML with states varibles to control the menus and the game
 //Used object Notation to simplify variables
-//Refactoring code, factoring, combinging, and cleaning up variables, as well as sorted load order
+//Refactoring code, factoring, combinging, and cleaning up variables, as well as sorted load order.
 //Loading Bar and Menu Screen
 //Cursors and varying cursors depending on the position of the mouse
 //Overall gameplay and balance improvements
@@ -55,9 +55,9 @@ let bullets = [];
 //preload assets
 function preload() {
 
-  menumusic = loadSound("assets/menumusic.wav");
-  soundOn = loadImage("assets/soundon.png", itemLoaded);
-  soundOff = loadImage("assets/soundoff.png", itemLoaded);
+  menumusic = loadSound("assets/sounds/menumusic.wav");
+  soundOn = loadImage("assets/pictures/soundon.png", itemLoaded);
+  soundOff = loadImage("assets/pictures/soundoff.png", itemLoaded);
   setAssets();
 
 }
@@ -97,7 +97,7 @@ function draw() {
 //load the basic assets needed to run the menu, notes the total amount of files to load
 function setAssets() {
 
-  bg = loadImage("assets/gamebackground.jpg");
+  bg = loadImage("assets/pictures/gamebackground.jpg");
   volumeControl = true;
   files = 13;
 
@@ -105,11 +105,11 @@ function setAssets() {
 
 //load images
 function loadAssets() {
-  character = loadImage("assets/character.PNG", itemLoaded);
-  tower = loadImage("assets/tower.png", itemLoaded);
-  flashp = loadImage("assets/flash.jpg", itemLoaded);
-  ghostp = loadImage("assets/ghost.png", itemLoaded);
-  barrierp = loadImage("assets/barrier.jpg", itemLoaded);
+  character = loadImage("assets/pictures/character.PNG", itemLoaded);
+  tower = loadImage("assets/pictures/tower.png", itemLoaded);
+  flashp = loadImage("assets/pictures/flash.jpg", itemLoaded);
+  ghostp = loadImage("assets/pictures/ghost.png", itemLoaded);
+  barrierp = loadImage("assets/pictures/barrier.jpg", itemLoaded);
 }
 
 //assign initial values and default stats to variables
@@ -145,14 +145,14 @@ function loadData() {
 function loadSoundFiles() {
   soundFormats("mp3", "wav");
   sound = {
-    bg : loadSound("assets/bgmusic.mp3", itemLoaded),
-    flash : loadSound("assets/flashsound.wav", itemLoaded),
-    ghost : loadSound("assets/ghost.wav", itemLoaded),
-    barrier : loadSound("assets/barrier.wav", itemLoaded),
-    openstore : loadSound("assets/openstore.wav", itemLoaded),
-    closestore : loadSound("assets/closestore.wav", itemLoaded),
-    startgame : loadSound("assets/startgame.wav", itemLoaded),
-    gameover : loadSound("assets/gameover.wav", itemLoaded)
+    bg : loadSound("assets/sounds/bgmusic.mp3", itemLoaded),
+    flash : loadSound("assets/sounds/flashsound.wav", itemLoaded),
+    ghost : loadSound("assets/sounds/ghost.wav", itemLoaded),
+    barrier : loadSound("assets/sounds/barrier.wav", itemLoaded),
+    openstore : loadSound("assets/sounds/openstore.wav", itemLoaded),
+    closestore : loadSound("assets/sounds/closestore.wav", itemLoaded),
+    startgame : loadSound("assets/sounds/startgame.wav", itemLoaded),
+    gameover : loadSound("assets/sounds/gameover.wav", itemLoaded)
   };
 }
 
@@ -169,7 +169,7 @@ function drawBackground() {
 //basic game cursor, called here to be overwritten later if needed
 function showCursor() {
 
-  cursor("assets/gamecursor1.cur");
+  cursor("assets/cursors/gamecursor1.cur");
 
 }
 
@@ -195,7 +195,7 @@ function showMenus() {
     else if (mouseX >= width / 10 && mouseX <= width * 0.9 &&
       mouseY >= height * 0.75 && mouseY <= height / 4 * 3 + height / 6 && loadCount === files) {
       fill(0, 77, 255);
-      cursor("assets/startgame.cur");
+      cursor("assets/cursors/startgame.cur");
     }
     else {
       fill(0, 255, 255);
@@ -213,7 +213,7 @@ function showMenus() {
       rect(width / 8, height * (13/24), width * 0.75, height / 8);
       if (mouseX >= width / 8 && mouseX <= width * (7/8) && mouseY >= height * (13/24) && mouseY <= height * (2/3)) {
         fill(53, 0, 96);
-        cursor("assets/shop.cur");
+        cursor("assets/cursors/shop.cur");
       }
       else {
         fill(108, 16, 183);
@@ -235,7 +235,7 @@ function showShop() {
     rect(width * 0.03, height * 0.1, width * 0.02, height * 0.8);
     if (mouseX >= width * 0.03 && mouseX <= width * 0.05 && mouseY >= height * 0.1 && mouseY <= height * 0.9) {
       fill(53, 0, 96);
-      cursor("assets/shop.cur");
+      cursor("assets/cursors/shop.cur");
     }
     else {
       fill(108, 16, 183);
@@ -460,7 +460,7 @@ function gameOverYet() {
     if (mouseX >= width / 3 && mouseX <= width * (2 / 3) &&
       mouseY >= height * (59 / 80) && mouseY <= height * (69 / 80)) {
       fill(0, 77, 255);
-      cursor("assets/gotomenu.cur");
+      cursor("assets/cursors/gotomenu.cur");
     }
     rect(width / 2, height * 0.8, width / 3, height / 8);
     fill(0);
