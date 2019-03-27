@@ -99,7 +99,7 @@ function setAssets() {
 
   bg = loadImage("assets/pictures/gamebackground.jpg");
   volumeControl = true;
-  files = 13;
+  files = 14;
 
 }
 
@@ -152,7 +152,8 @@ function loadSoundFiles() {
     openstore : loadSound("assets/sounds/openstore.wav", itemLoaded),
     closestore : loadSound("assets/sounds/closestore.wav", itemLoaded),
     startgame : loadSound("assets/sounds/startgame.wav", itemLoaded),
-    gameover : loadSound("assets/sounds/gameover.wav", itemLoaded)
+    gameover : loadSound("assets/sounds/gameover.wav", itemLoaded),
+    click : loadSound("assets/sounds/click.mp3", itemLoaded),
   };
 }
 
@@ -533,6 +534,10 @@ function mouseReleased() {
   if (state === "game") {
     destinationpos.x = mouseX;
     destinationpos.y = mouseY;
+    if (volumeControl) {
+      sound.click.setVolume(0.1);
+      sound.click.play();
+    }
   }
 
   if (mouseX >= width / 3 && mouseX <= width * (2 / 3) &&
@@ -581,7 +586,6 @@ function keyTyped() {
       }
       destinationpos.x = charpos.x;
       destinationpos.y = charpos.y;
-
     }
 
     if (key === "g" && abilities.ghosts) {
