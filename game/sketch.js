@@ -40,12 +40,15 @@ let destinationpos;
 let timer;
 let abilities;
 let flashp;
-let ghostp;
+let barrierp;
+let ignitep;
+let healp;
+let exhaustp;
 let soundOn;
 let soundOff;
-let barrierp;
 let velocityRatio;
 let bg;
+let icon;
 let tower;
 let sound;
 let menumusic;
@@ -56,8 +59,8 @@ let bullets = [];
 function preload() {
 
   menumusic = loadSound("assets/sounds/menumusic.wav");
-  soundOn = loadImage("assets/pictures/soundon.png", itemLoaded);
-  soundOff = loadImage("assets/pictures/soundoff.png", itemLoaded);
+  soundOn = loadImage("assets/pictures/soundon.png");
+  soundOff = loadImage("assets/pictures/soundoff.png");
   setAssets();
 
 }
@@ -99,7 +102,7 @@ function setAssets() {
 
   bg = loadImage("assets/pictures/gamebackground.jpg");
   volumeControl = true;
-  files = 14;
+  files = 18;
 
 }
 
@@ -108,8 +111,10 @@ function loadAssets() {
   character = loadImage("assets/pictures/character.PNG", itemLoaded);
   tower = loadImage("assets/pictures/tower.png", itemLoaded);
   flashp = loadImage("assets/pictures/flash.jpg", itemLoaded);
-  ghostp = loadImage("assets/pictures/ghost.png", itemLoaded);
   barrierp = loadImage("assets/pictures/barrier.jpg", itemLoaded);
+  healp = loadImage("assets/pictures/heal.png", itemLoaded);
+  ignitep = loadImage("assets/pictures/ignite.png", itemLoaded);
+  exhaustp = loadImage("assets/pictures/exhaust.png", itemLoaded);
 }
 
 //assign initial values and default stats to variables
@@ -131,10 +136,20 @@ function loadData() {
     y : 0,
   };
   abilities ={
-    flashs : true,
-    ghosts : true,
-    barriers : true,
+    flashs : false,
+    barriers : false,
+    ignites : false,
+    heals : false,
+    exhausts : false,
     invincibilitys : false,
+  };
+  icon = {
+    flash : false,
+    heal : false,
+    exhaust : false,
+    ignite : false,
+    barrier : false,
+    count : 0,
   };
   timer = 0;
   difficulty = 2500;
@@ -147,8 +162,10 @@ function loadSoundFiles() {
   sound = {
     bg : loadSound("assets/sounds/bgmusic.mp3", itemLoaded),
     flash : loadSound("assets/sounds/flashsound.wav", itemLoaded),
-    ghost : loadSound("assets/sounds/ghost.wav", itemLoaded),
     barrier : loadSound("assets/sounds/barrier.wav", itemLoaded),
+    ignite : loadSound("assets/sounds/ignite.wav", itemLoaded),
+    heal : loadSound("assets/sounds/heal.wav", itemLoaded),
+    exhaust : loadSound("assets/sounds/exhaust.wav", itemLoaded),
     openstore : loadSound("assets/sounds/openstore.wav", itemLoaded),
     closestore : loadSound("assets/sounds/closestore.wav", itemLoaded),
     startgame : loadSound("assets/sounds/startgame.wav", itemLoaded),
@@ -231,6 +248,7 @@ function showMenus() {
 //shop menu, still to come
 function showShop() {
   if (state === "shop") {
+
     noFill();
     stroke(53, 0, 96);
     rect(width * 0.03, height * 0.1, width * 0.02, height * 0.8);
@@ -249,7 +267,72 @@ function showShop() {
     rotate(PI / 2);
     text("Return to Menu", 0, 0);
     pop();
+
+    noFill();
+    strokeWeight(10);
+    if (mouseX >= width * 0.1 && mouseX <= width * 0.2 && mouseY >= height * 0.1 && mouseY <= height * 0.3) {
+      cursor("assets/cursors/shop.cur");
+    }
+    if (icon.flash) {
+      stroke(0, 255, 255);
+    }
+    else {
+      stroke(53, 0, 96);
+    }
+    rect(width * 0.1, height * 0.1, width * 0.1, height * 0.2);
+    image(flashp, width * 0.1, height * 0.1, width * 0.1, height * 0.2);
+
+    if (mouseX >= width * 0.225 && mouseX <= width * 0.325 && mouseY >= height * 0.1 && mouseY <= height * 0.3) {
+      cursor("assets/cursors/shop.cur");
+    }
+    if (icon.heal) {
+      stroke(0, 255, 255);
+    }
+    else {
+      stroke(53, 0, 96);
+    }
+    rect(width * 0.225, height * 0.1, width * 0.1, height * 0.2);
+    image(healp, width * 0.225, height * 0.1, width * 0.1, height * 0.2);
+
+    if (mouseX >= width * 0.35 && mouseX <= width * 0.45 && mouseY >= height * 0.1 && mouseY <= height * 0.3) {
+      cursor("assets/cursors/shop.cur");
+    }
+    if (icon.barrier) {
+      stroke(0, 255, 255);
+    }
+    else {
+      stroke(53, 0, 96);
+    }
+    rect(width * 0.35, height * 0.1, width * 0.1, height * 0.2);
+    image(barrierp, width * 0.35, height * 0.1, width * 0.1, height * 0.2);
+
+    if (mouseX >= width * 0.475 && mouseX <= width * 0.575 && mouseY >= height * 0.1 && mouseY <= height * 0.3) {
+      cursor("assets/cursors/shop.cur");
+    }
+    if (icon.ignite) {
+      stroke(0, 255, 255);
+    }
+    else {
+      stroke(53, 0, 96);
+    }
+    rect(width * 0.475, height * 0.1, width * 0.1, height * 0.2);
+    image(ignitep, width * 0.475, height * 0.1, width * 0.1, height * 0.2);
+
+    if (mouseX >= width * 0.6 && mouseX <= width * 0.7 && mouseY >= height * 0.1 && mouseY <= height * 0.3) {
+      cursor("assets/cursors/shop.cur");
+    }
+    if (icon.exhaust) {
+      stroke(0, 255, 255);
+    }
+    else {
+      stroke(53, 0, 96);
+    }
+    rect(width * 0.6, height * 0.1, width * 0.1, height * 0.2);
+    image(exhaustp, width * 0.6, height * 0.1, width * 0.1, height * 0.2);
+    
   }
+
+  strokeWeight(1);
 }
 
 //images responsible for displaying the control of sound
@@ -333,10 +416,6 @@ function showAbilities() {
       image(flashp, width / 15 * 13, height / 10 * 9, 60, 60);
     }
 
-    if (abilities.ghosts) {
-      image(ghostp, width / 5 * 4, height / 10 * 9, 60, 60);
-    }
-
     if (abilities.barriers) {
       image(barrierp, width / 15 * 11, height / 10 * 9, 60, 60);
     }
@@ -348,15 +427,6 @@ function countCooldown() {
   if (state === "game") {
     if (! abilities.flashs && timer - abilities.flashcd >= 30) {
       abilities.flashs = true;
-    }
-
-    //restores the original velocity (with some increase over time)
-    if (! abilities.ghosts && timer - abilities.ghostcd >= 5) {
-      velocityRatio = 60 - floor(timer / 6);
-    }
-
-    if (! abilities.ghosts && timer - abilities.ghostcd >= 20) {
-      abilities.ghosts = true;
     }
 
     if (! abilities.barriers && timer - abilities.barriercd >= 2) {
@@ -486,10 +556,13 @@ function resetGame() {
     x : 0,
     y : 0,
   };
-  abilities = {
-    flashs : true,
-    ghosts : true,
-    barriers : true,
+  abilities ={
+    flashs : false,
+    barriers : false,
+    ignites : false,
+    heals : false,
+    exhausts : false,
+    invincibilitys : false,
   };
   if (volumeControl) {
     sound.bg.setVolume(0.05);
@@ -511,6 +584,14 @@ function mouseReleased() {
       sound.closestore.setVolume(0.05);
       sound.closestore.play();
     }
+    icon = {
+      flash : false,
+      heal : false,
+      exhaust : false,
+      ignite : false,
+      barrier : false,
+      count : 0,
+    };
   }
 
   if (mouseX >= width / 8 && mouseX <= width * (7/8) && mouseY >= height * (13/24) && mouseY <= height * (2/3) && state === "menu") {
@@ -555,6 +636,101 @@ function mouseReleased() {
     }
   }
 
+  if (mouseX >= width * 0.1 && mouseX <= width * 0.2 && mouseY >= height * 0.1 && mouseY <= height * 0.3 && state === "shop") {
+    if (!icon.flash && icon.count < 2) {
+      icon.flash = true;
+      icon.count++;
+      if (volumeControl) {
+        sound.flash.setVolume(0.1);
+        sound.flash.play();
+      }
+    }
+    else if (icon.flash) {
+      icon.flash = false;
+      icon.count--;
+      if (volumeControl) {
+        sound.closestore.setVolume(0.1);
+        sound.closestore.play();
+      }
+    }
+  }
+  
+  if (mouseX >= width * 0.225 && mouseX <= width * 0.325 && mouseY >= height * 0.1 && mouseY <= height * 0.3 && state === "shop") {
+    if (!icon.heal && icon.count < 2) {
+      icon.heal = true;
+      icon.count++;
+      if (volumeControl) {
+        sound.heal.setVolume(0.1);
+        sound.heal.play();
+      }
+    }
+    else if (icon.heal) {
+      icon.heal = false;
+      icon.count--;
+      if (volumeControl) {
+        sound.closestore.setVolume(0.1);
+        sound.closestore.play();
+      }
+    }
+  }
+  
+  if (mouseX >= width * 0.35 && mouseX <= width * 0.45 && mouseY >= height * 0.1 && mouseY <= height * 0.3 && state === "shop") {
+    if (!icon.barrier && icon.count < 2) {
+      icon.barrier = true;
+      icon.count++;
+      if (volumeControl) {
+        sound.barrier.setVolume(0.1);
+        sound.barrier.play();
+      }
+    }
+    else if (icon.barrier) {
+      icon.barrier = false;
+      icon.count--;
+      if (volumeControl) {
+        sound.closestore.setVolume(0.1);
+        sound.closestore.play();
+      }
+    }
+  }
+  
+  if (mouseX >= width * 0.475 && mouseX <= width * 0.575 && mouseY >= height * 0.1 && mouseY <= height * 0.3 && state === "shop") {
+    if (!icon.ignite && icon.count < 2) {
+      icon.ignite = true;
+      icon.count++;
+      if (volumeControl) {
+        sound.ignite.setVolume(0.1);
+        sound.ignite.play();
+      }
+    }
+    else if (icon.ignite) {
+      icon.ignite = false;
+      icon.count--;
+      if (volumeControl) {
+        sound.closestore.setVolume(0.1);
+        sound.closestore.play();
+      }
+    }
+  }
+  
+  if (mouseX >= width * 0.6 && mouseX <= width * 0.7 && mouseY >= height * 0.1 && mouseY <= height * 0.3 && state === "shop") {
+    if (!icon.exhaust && icon.count < 2) {
+      icon.exhaust = true;
+      icon.count++;
+      if (volumeControl) {
+        sound.exhaust.setVolume(0.1);
+        sound.exhaust.play();
+      }
+    }
+    else if (icon.exhaust) {
+      icon.exhaust = false;
+      icon.count--;
+      if (volumeControl) {
+        sound.closestore.setVolume(0.1);
+        sound.closestore.play();
+      }
+    }
+  }
+
 }
 
 //responsible for the use of abilities upon keytyped
@@ -586,16 +762,6 @@ function keyTyped() {
       }
       destinationpos.x = charpos.x;
       destinationpos.y = charpos.y;
-    }
-
-    if (key === "g" && abilities.ghosts) {
-      if (volumeControl) {
-        sound.ghost.setVolume(0.4);
-        sound.ghost.play();
-      }
-      abilities.ghosts = false;
-      abilities.ghostcd = timer;
-      velocityRatio = 20;
     }
 
     if (key === "b" && abilities.barriers) {
