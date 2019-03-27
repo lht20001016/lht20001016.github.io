@@ -152,7 +152,6 @@ function loadData() {
     exhaust : false,
     ignite : false,
     barrier : false,
-    count : 0,
   };
   timer = 0;
   difficulty = 2500;
@@ -593,7 +592,6 @@ function mouseReleased() {
       exhaust : false,
       ignite : false,
       barrier : false,
-      count : 0,
     };
   }
 
@@ -639,94 +637,131 @@ function mouseReleased() {
     }
   }
 
-  if (mouseX >= width * 0.1 && mouseX <= width * 0.2 && mouseY >= height * 0.1 && mouseY <= height * 0.3 && state === "shop") {
-    if (!icon.flash && icon.count < 2) {
-      icon.flash = true;
-      icon.count++;
-      if (volumeControl) {
-        sound.flash.setVolume(0.1);
-        sound.flash.play();
+  if (state === "shop") {
+
+    if (mouseX >= width * 0.1 && mouseX <= width * 0.2 && mouseY >= height * 0.1 && mouseY <= height * 0.3) {
+      if (!icon.flash) {
+        icon = {
+          flash : true,
+          heal : false,
+          exhaust : false,
+          ignite : false,
+          barrier : false,
+        };
+        if (volumeControl) {
+          sound.flash.setVolume(0.1);
+          sound.flash.play();
+        }
+      }
+      else if (icon.flash) {
+        icon.flash = false;
+        if (volumeControl) {
+          sound.closestore.setVolume(0.1);
+          sound.closestore.play();
+        }
       }
     }
-    else if (icon.flash) {
-      icon.flash = false;
-      icon.count--;
-      if (volumeControl) {
-        sound.closestore.setVolume(0.1);
-        sound.closestore.play();
-      }
-    }
-  }
   
-  if (mouseX >= width * 0.225 && mouseX <= width * 0.325 && mouseY >= height * 0.1 && mouseY <= height * 0.3 && state === "shop") {
-    if (!icon.heal && icon.count < 2) {
-      icon.heal = true;
-      icon.count++;
-      if (volumeControl) {
-        sound.heal.setVolume(0.1);
-        sound.heal.play();
+    else if (mouseX >= width * 0.225 && mouseX <= width * 0.325 && mouseY >= height * 0.1 && mouseY <= height * 0.3) {
+      if (!icon.heal) {
+        icon = {
+          flash : false,
+          heal : true,
+          exhaust : false,
+          ignite : false,
+          barrier : false,
+        };
+        if (volumeControl) {
+          sound.heal.setVolume(0.1);
+          sound.heal.play();
+        }
+      }
+      else if (icon.heal) {
+        icon.heal = false;
+        if (volumeControl) {
+          sound.closestore.setVolume(0.1);
+          sound.closestore.play();
+        }
       }
     }
-    else if (icon.heal) {
-      icon.heal = false;
-      icon.count--;
-      if (volumeControl) {
-        sound.closestore.setVolume(0.1);
-        sound.closestore.play();
-      }
-    }
-  }
   
-  if (mouseX >= width * 0.35 && mouseX <= width * 0.45 && mouseY >= height * 0.1 && mouseY <= height * 0.3 && state === "shop") {
-    if (!icon.barrier && icon.count < 2) {
-      icon.barrier = true;
-      icon.count++;
-      if (volumeControl) {
-        sound.barrier.setVolume(0.1);
-        sound.barrier.play();
+    else if (mouseX >= width * 0.35 && mouseX <= width * 0.45 && mouseY >= height * 0.1 && mouseY <= height * 0.3) {
+      if (!icon.barrier) {
+        icon = {
+          flash : false,
+          heal : false,
+          exhaust : false,
+          ignite : false,
+          barrier : true,
+        };
+        if (volumeControl) {
+          sound.barrier.setVolume(0.1);
+          sound.barrier.play();
+        }
+      }
+      else if (icon.barrier) {
+        icon.barrier = false;
+        if (volumeControl) {
+          sound.closestore.setVolume(0.1);
+          sound.closestore.play();
+        }
       }
     }
-    else if (icon.barrier) {
-      icon.barrier = false;
-      icon.count--;
-      if (volumeControl) {
-        sound.closestore.setVolume(0.1);
-        sound.closestore.play();
-      }
-    }
-  }
   
-  if (mouseX >= width * 0.475 && mouseX <= width * 0.575 && mouseY >= height * 0.1 && mouseY <= height * 0.3 && state === "shop") {
-    if (!icon.ignite && icon.count < 2) {
-      icon.ignite = true;
-      icon.count++;
-      if (volumeControl) {
-        sound.ignite.setVolume(0.1);
-        sound.ignite.play();
+    else if (mouseX >= width * 0.475 && mouseX <= width * 0.575 && mouseY >= height * 0.1 && mouseY <= height * 0.3) {
+      if (!icon.ignite) {
+        icon = {
+          flash : false,
+          heal : false,
+          exhaust : false,
+          ignite : true,
+          barrier : false,
+        };
+        if (volumeControl) {
+          sound.ignite.setVolume(0.1);
+          sound.ignite.play();
+        }
+      }
+      else if (icon.ignite) {
+        icon.ignite = false;
+        if (volumeControl) {
+          sound.closestore.setVolume(0.1);
+          sound.closestore.play();
+        }
       }
     }
-    else if (icon.ignite) {
-      icon.ignite = false;
-      icon.count--;
-      if (volumeControl) {
-        sound.closestore.setVolume(0.1);
-        sound.closestore.play();
-      }
-    }
-  }
   
-  if (mouseX >= width * 0.6 && mouseX <= width * 0.7 && mouseY >= height * 0.1 && mouseY <= height * 0.3 && state === "shop") {
-    if (!icon.exhaust && icon.count < 2) {
-      icon.exhaust = true;
-      icon.count++;
-      if (volumeControl) {
-        sound.exhaust.setVolume(0.1);
-        sound.exhaust.play();
+    else if (mouseX >= width * 0.6 && mouseX <= width * 0.7 && mouseY >= height * 0.1 && mouseY <= height * 0.3 ) {
+      if (!icon.exhaust) {
+        icon = {
+          flash : false,
+          heal : false,
+          exhaust : true,
+          ignite : false,
+          barrier : false,
+        };
+        if (volumeControl) {
+          sound.exhaust.setVolume(0.1);
+          sound.exhaust.play();
+        }
       }
-    }
-    else if (icon.exhaust) {
-      icon.exhaust = false;
-      icon.count--;
+      else if (icon.exhaust) {
+        icon.exhaust = false;
+        if (volumeControl) {
+          sound.closestore.setVolume(0.1);
+          sound.closestore.play();
+        }
+      }
+    } 
+
+    else if (icon.flash || icon.heal || icon.barrier || icon.ignite || icon.exhaust) {
+      icon = {
+        flash : false,
+        heal : false,
+        exhaust : false,
+        ignite : false,
+        barrier : false,
+      };
       if (volumeControl) {
         sound.closestore.setVolume(0.1);
         sound.closestore.play();
@@ -740,7 +775,7 @@ function mouseReleased() {
 function keyTyped() {
 
   if (state === "game") {
-    if (key === "f" && abilities.flashs) {
+    if (key === "d" && abilities.flashs) {
       if (volumeControl) {
         sound.flash.setVolume(0.1);
         sound.flash.play();
@@ -767,7 +802,7 @@ function keyTyped() {
       destinationpos.y = charpos.y;
     }
 
-    if (key === "b" && abilities.barriers) {
+    if (key === "f" && abilities.barriers) {
       if (volumeControl) {
         sound.barrier.setVolume(0.1);
         sound.barrier.play();
