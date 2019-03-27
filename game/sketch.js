@@ -27,6 +27,9 @@
 //Overall gameplay and balance improvements
 //UI navigation improvements
 //Sound improvements and options
+//
+//V3.0: Next Assignment -- Whenevr
+//Shop screen and select abilities
 
 //define variables to be used
 let loadCount;
