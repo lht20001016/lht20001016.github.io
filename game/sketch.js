@@ -85,6 +85,7 @@ function draw() {
   showCursor();
   showMenus();
   showShop();
+  showShopMenus();
   showSound();
   gameMusic();
   characterPosition();
@@ -337,6 +338,29 @@ function showShop() {
   strokeWeight(1);
 }
 
+function showShopMenus() {
+  if (state === "shop" && icon.flash) {
+
+    stroke(53, 0, 96);
+    strokeWeight(3);
+    fill(114, 120, 130);
+    rect(width * 0.75, height * 0.1, width * 0.2, height * 0.7);
+
+    stroke(0, 255, 255);
+    stroke(229, 216, 32);
+    textSize(36);
+    fill(0);
+    text("Flash", width * 0.85, height * 0.15);
+    textSize(24);
+    noStroke();
+    textAlign(LEFT);
+    text("Teleport your character to your cursor.", width * 0.80, height * 0.2);
+    textAlign(CENTER);
+
+    strokeWeight(1);
+  }
+}
+
 //images responsible for displaying the control of sound
 function showSound() {
   if (state !== "game") {
@@ -577,10 +601,100 @@ function resetGame() {
 
 }
 
+// class GameObject {
+//   constructor(x, y, width, height) {
+//     this.x = x;
+//     this.y = y;
+//     this.width = width;
+//     this.height = height;
+//     this.mouse;
+//   }
+
+//   checkMouse() {
+//     this.mouse = Math.abs(mouseX - this.x) <= this.width / 2 && Math.abs(mouseY - this.y) <= this.height / 2;
+//   }
+// }
+
+// class Button extends GameObject {
+//   constructor(x, y, width, height, buttonText, clickedOn, color = 0, alpha = 0) {
+//     super(x, y, width, height);
+//     this.buttonText = buttonText;
+//     this.clickedOn = clickedOn;
+//     if(color) {
+//       this.color = color;
+//     }
+//     else {
+//       color = 200;
+//     }
+//   }
+
+//   run() {
+//     this.checkMouse();
+
+//     rect(this.x, this.y, this.width, this.height);
+//     if(this.mouse && mouseIsPressed && !globalMouse) {
+//       globalMouseToggle = 1;
+//       this.clickedOn();
+//       // if clicked once
+//     }
+//     else if(this.mouse) {
+//       void 0;
+//       // if hovering
+//     }
+//   }
+// }
+
+// class ImageButton extends GameObject {
+//   constructor(x, y, width, height, buttonText, clickedOn, image, color = 0, alpha = 0) {
+//     super(x, y, width, height);
+//     this.buttonText = buttonText;
+//     this.clickedOn = clickedOn;
+//     this.image = image;
+//     if(color) {
+//       this.color = color;
+//     }
+//     else {
+//       color = 200;
+//     }
+//   }
+
+//   run() {
+//     this.checkMouse();
+
+//     image(this.x, this.y, this.width, this.height);
+//     if(this.image, this.mouse && mouseIsPressed && !globalMouse) {
+//       globalMouseToggle = 1;
+//       this.clickedOn();
+//       // if clicked once
+//     }
+//     else if(this.mouse) {
+//       void 0;
+//       // if hovering
+//     }
+//   }
+// }
+
+// mainMenuButton = new Button(width / 2, height / 2, 100, 50, "start game", function() {
+//   theState = 1;
+// });
+
+// let globalMouseToggle;
+// let globalMouse;
+
+// function globalMouseControl() {
+//   if(globalMouseToggle > 0) {
+//     globalMouse = globalMouseToggle;
+//   }
+//   else if(!mouseIsPressed) {
+//     globalMouse = 0;
+//   }
+//   globalMouseToggle = 0;
+// }
+
 //mouseclicks determine the destination of the character movement and to navigate through the menus
 function mouseReleased() {
 
-  if(mouseX >= width * 0.03 && mouseX <= width * 0.05 && mouseY >= height * 0.1 && mouseY <= height * 0.9 && state === "shop") {
+  if (mouseX >= width * 0.03 && mouseX <= width * 0.05 && mouseY >= height * 0.1 && mouseY <= height * 0.9 && state === "shop") {
     state = "menu";
     if (volumeControl) {
       sound.closestore.setVolume(0.05);
@@ -752,7 +866,7 @@ function mouseReleased() {
           sound.closestore.play();
         }
       }
-    } 
+    }
 
     else if (icon.flash || icon.heal || icon.barrier || icon.ignite || icon.exhaust) {
       icon = {
