@@ -28,7 +28,7 @@
 //UI navigation improvements
 //Sound improvements and options
 //
-//V3.0: Next Assignment -- Whenevr
+//V3.0: Two-Dimensional Arrays 
 //Shop screen and select abilities
 
 //define variables to be used
@@ -56,6 +56,8 @@ let tower;
 let sound;
 let menumusic;
 let difficulty;
+let globalMouseToggle;
+let globalMouse;
 let bullets = [];
 
 //preload assets
@@ -85,7 +87,7 @@ function draw() {
   showCursor();
   showMenus();
   showShop();
-  showShopMenus();
+  // showShopMenus();
   showSound();
   gameMusic();
   characterPosition();
@@ -338,28 +340,28 @@ function showShop() {
   strokeWeight(1);
 }
 
-function showShopMenus() {
-  if (state === "shop" && icon.flash) {
+// function showShopMenus() {
+//   if (state === "shop" && icon.flash) {
 
-    stroke(53, 0, 96);
-    strokeWeight(3);
-    fill(114, 120, 130);
-    rect(width * 0.75, height * 0.1, width * 0.2, height * 0.7);
+//     stroke(53, 0, 96);
+//     strokeWeight(3);
+//     fill(114, 120, 130);
+//     rect(width * 0.75, height * 0.1, width * 0.2, height * 0.7);
 
-    stroke(0, 255, 255);
-    stroke(229, 216, 32);
-    textSize(36);
-    fill(0);
-    text("Flash", width * 0.85, height * 0.15);
-    textSize(24);
-    noStroke();
-    textAlign(LEFT);
-    text("Teleport your character to your cursor.", width * 0.80, height * 0.2);
-    textAlign(CENTER);
+//     stroke(0, 255, 255);
+//     stroke(229, 216, 32);
+//     textSize(36);
+//     fill(0);
+//     text("Flash", width * 0.85, height * 0.15);
+//     textSize(24);
+//     noStroke();
+//     textAlign(LEFT);
+//     text("Teleport your character to your cursor.", width * 0.80, height * 0.2);
+//     textAlign(CENTER);
 
-    strokeWeight(1);
-  }
-}
+//     strokeWeight(1);
+//   }
+// }
 
 //images responsible for displaying the control of sound
 function showSound() {
@@ -476,6 +478,94 @@ function showTowers() {
     image(tower, width - 75, height - 125, 75, 125);
   }
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+class GameObject {
+  constructor(x, y, width, height) {
+    //position cords
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.mouse;
+  }
+
+  //check mouseover
+  checkMouse() {
+    this.mouse = this.x >= this.width && this.x <= this.width && this.y <= this.height && this.y <= this.height;
+  }
+}
+
+class Button extends GameObject {
+  constructor(x, y, width, height, buttonText, clickedOn, color) {
+    super(x, y, width, height);
+    this.buttonText = buttonText;
+    this.clickedOn = clickedOn;
+    this.color = color;
+  }
+
+  run() {
+    this.checkMouse();
+
+    rect(this.x, this.y, this.width, this.height);
+    if(this.mouse && mouseIsPressed && !globalMouse) {
+      globalMouseToggle = 1;
+      this.clickedOn();
+      // if clicked once
+    }
+    else if(this.mouse) {
+      void 0;
+      // if hovering
+    }
+  }
+}
+
+// class ImageButton extends GameObject {
+//   constructor(x, y, width, height, buttonText, clickedOn, image, color = 0, alpha = 0) {
+//     super(x, y, width, height);
+//     this.buttonText = buttonText;
+//     this.clickedOn = clickedOn;
+//     this.image = image;
+//     if(color) {
+//       this.color = color;
+//     }
+//     else {
+//       color = 200;
+//     }
+//   }
+
+//   run() {
+//     this.checkMouse();
+
+//     image(this.x, this.y, this.width, this.height);
+//     if(this.image, this.mouse && mouseIsPressed && !globalMouse) {
+//       globalMouseToggle = 1;
+//       this.clickedOn();
+//       // if clicked once
+//     }
+//     else if(this.mouse) {
+//       void 0;
+//       // if hovering
+//     }
+//   }
+// }
+
+// mainMenuButton = new Button(width / 2, height / 2, 100, 50, "start game", function() {
+//   theState = 1;
+// });
+
+// function globalMouseControl() {
+//   if(globalMouseToggle > 0) {
+//     globalMouse = globalMouseToggle;
+//   }
+//   else if(!mouseIsPressed) {
+//     globalMouse = 0;
+//   }
+//   globalMouseToggle = 0;
+// }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //class is used to track and display bullets
 class Bullet {
@@ -600,96 +690,6 @@ function resetGame() {
   bullets = [];
 
 }
-
-// class GameObject {
-//   constructor(x, y, width, height) {
-//     this.x = x;
-//     this.y = y;
-//     this.width = width;
-//     this.height = height;
-//     this.mouse;
-//   }
-
-//   checkMouse() {
-//     this.mouse = Math.abs(mouseX - this.x) <= this.width / 2 && Math.abs(mouseY - this.y) <= this.height / 2;
-//   }
-// }
-
-// class Button extends GameObject {
-//   constructor(x, y, width, height, buttonText, clickedOn, color = 0, alpha = 0) {
-//     super(x, y, width, height);
-//     this.buttonText = buttonText;
-//     this.clickedOn = clickedOn;
-//     if(color) {
-//       this.color = color;
-//     }
-//     else {
-//       color = 200;
-//     }
-//   }
-
-//   run() {
-//     this.checkMouse();
-
-//     rect(this.x, this.y, this.width, this.height);
-//     if(this.mouse && mouseIsPressed && !globalMouse) {
-//       globalMouseToggle = 1;
-//       this.clickedOn();
-//       // if clicked once
-//     }
-//     else if(this.mouse) {
-//       void 0;
-//       // if hovering
-//     }
-//   }
-// }
-
-// class ImageButton extends GameObject {
-//   constructor(x, y, width, height, buttonText, clickedOn, image, color = 0, alpha = 0) {
-//     super(x, y, width, height);
-//     this.buttonText = buttonText;
-//     this.clickedOn = clickedOn;
-//     this.image = image;
-//     if(color) {
-//       this.color = color;
-//     }
-//     else {
-//       color = 200;
-//     }
-//   }
-
-//   run() {
-//     this.checkMouse();
-
-//     image(this.x, this.y, this.width, this.height);
-//     if(this.image, this.mouse && mouseIsPressed && !globalMouse) {
-//       globalMouseToggle = 1;
-//       this.clickedOn();
-//       // if clicked once
-//     }
-//     else if(this.mouse) {
-//       void 0;
-//       // if hovering
-//     }
-//   }
-// }
-
-// mainMenuButton = new Button(width / 2, height / 2, 100, 50, "start game", function() {
-//   theState = 1;
-// });
-
-// let globalMouseToggle;
-// let globalMouse;
-
-// function globalMouseControl() {
-//   if(globalMouseToggle > 0) {
-//     globalMouse = globalMouseToggle;
-//   }
-//   else if(!mouseIsPressed) {
-//     globalMouse = 0;
-//   }
-//   globalMouseToggle = 0;
-// }
 
 //mouseclicks determine the destination of the character movement and to navigate through the menus
 function mouseReleased() {
