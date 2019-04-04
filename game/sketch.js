@@ -209,6 +209,7 @@ function showMenus() {
     text("Let The Bullets Fly", width / 2, height / 8);
     textSize(24);
     text("The objective of this game is to avoid the incoming bullets at all costs. Good Luck!", width / 2, height / 5);
+    
     stroke(0, 0, 255);
     noFill();
     rect(width / 10, height / 4 * 3, width * 0.8, height / 6);
@@ -493,16 +494,18 @@ class GameObject {
 
   //check mouseover
   checkMouse() {
-    this.mouse = this.x >= this.width && this.x <= this.width && this.y <= this.height && this.y <= this.height;
+    this.mouse = mouseX >= this.x && mouseX <= this.x + this.width && mouseY >= this.y && mouseY <= this.y + this.height;
   }
 }
 
 class Button extends GameObject {
-  constructor(x, y, width, height, buttonText, clickedOn, color) {
+  constructor(x, y, width, height, buttonText, clickedOn, color, hoverColor, hoverCursor) {
     super(x, y, width, height);
     this.buttonText = buttonText;
     this.clickedOn = clickedOn;
     this.color = color;
+    this.hoverColor = hoverColor;
+    this.hoverCursor = hoverCursor;
   }
 
   run() {
@@ -516,54 +519,24 @@ class Button extends GameObject {
     }
     else if(this.mouse) {
       void 0;
-      // if hovering
+      // if ohver
     }
   }
 }
-
-// class ImageButton extends GameObject {
-//   constructor(x, y, width, height, buttonText, clickedOn, image, color = 0, alpha = 0) {
-//     super(x, y, width, height);
-//     this.buttonText = buttonText;
-//     this.clickedOn = clickedOn;
-//     this.image = image;
-//     if(color) {
-//       this.color = color;
-//     }
-//     else {
-//       color = 200;
-//     }
-//   }
-
-//   run() {
-//     this.checkMouse();
-
-//     image(this.x, this.y, this.width, this.height);
-//     if(this.image, this.mouse && mouseIsPressed && !globalMouse) {
-//       globalMouseToggle = 1;
-//       this.clickedOn();
-//       // if clicked once
-//     }
-//     else if(this.mouse) {
-//       void 0;
-//       // if hovering
-//     }
-//   }
-// }
 
 // mainMenuButton = new Button(width / 2, height / 2, 100, 50, "start game", function() {
 //   theState = 1;
 // });
 
-// function globalMouseControl() {
-//   if(globalMouseToggle > 0) {
-//     globalMouse = globalMouseToggle;
-//   }
-//   else if(!mouseIsPressed) {
-//     globalMouse = 0;
-//   }
-//   globalMouseToggle = 0;
-// }
+function globalMouseControl() {
+  if(globalMouseToggle > 0) {
+    globalMouse = globalMouseToggle;
+  }
+  else if(!mouseIsPressed) {
+    globalMouse = 0;
+  }
+  globalMouseToggle = 0;
+}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
