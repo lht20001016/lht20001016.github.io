@@ -234,7 +234,6 @@ function showMenus() {
     if (loadCount === files) {
       noFill();
       stroke(53, 0, 96);
-      rect(width / 8, height * (13/24), width * 0.75, height / 8);
       if (mouseX >= width / 8 && mouseX <= width * (7/8) && mouseY >= height * (13/24) && mouseY <= height * (2/3)) {
         fill(53, 0, 96);
         cursor("assets/cursors/shop.cur");
@@ -242,7 +241,7 @@ function showMenus() {
       else {
         fill(108, 16, 183);
       }
-      rect(width / 8, height * (13/24), width * 0.75, height / 8);
+      // rect(width / 8, height * (13/24), width * 0.75, height / 8);
       fill(0);
       text("Choose Your Loadout", width / 2, height * (117/192));
       text("Start", width / 2, height * (27/32));
