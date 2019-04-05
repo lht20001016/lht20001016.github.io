@@ -140,7 +140,7 @@ function loadFiles() {
 
 function createButtons() {
   shopButton = new Button(width / 8, height * (13/24), width * 0.75, height / 8, "Loadout", 0, 
-    openShop, [108, 16, 183], [53, 0, 96], "assets/cursors/shop.cur");
+    openShop, [209, 19, 221], [103, 19, 109], "assets/cursors/shop.cur");
 }
 
 //assign initial values and default stats to variables
