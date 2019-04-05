@@ -33,6 +33,7 @@
 
 //define variables to be used
 let loadCount;
+let shopButton;
 let files;
 let state;
 let volumeControl;
@@ -75,8 +76,7 @@ function setup() {
 
   createCanvas(windowWidth, windowHeight);
   loadData();
-  loadSoundFiles();
-  loadAssets();
+  loadFiles(createButtons());
 
 }
 
@@ -87,7 +87,6 @@ function draw() {
   showCursor();
   showMenus();
   showShop();
-  // showShopMenus();
   showSound();
   gameMusic();
   characterPosition();
@@ -112,8 +111,23 @@ function setAssets() {
 
 }
 
-//load images
-function loadAssets() {
+//load files
+function loadFiles() {
+
+  soundFormats("mp3", "wav");
+  sound = {
+    bg : loadSound("assets/sounds/bgmusic.mp3", itemLoaded),
+    flash : loadSound("assets/sounds/flashsound.wav", itemLoaded),
+    barrier : loadSound("assets/sounds/barrier.wav", itemLoaded),
+    ignite : loadSound("assets/sounds/ignite.wav", itemLoaded),
+    heal : loadSound("assets/sounds/heal.wav", itemLoaded),
+    exhaust : loadSound("assets/sounds/exhaust.wav", itemLoaded),
+    openstore : loadSound("assets/sounds/openstore.wav", itemLoaded),
+    closestore : loadSound("assets/sounds/closestore.wav", itemLoaded),
+    startgame : loadSound("assets/sounds/startgame.wav", itemLoaded),
+    gameover : loadSound("assets/sounds/gameover.wav", itemLoaded),
+    click : loadSound("assets/sounds/click.mp3", itemLoaded),
+  };
   character = loadImage("assets/pictures/character.PNG", itemLoaded);
   tower = loadImage("assets/pictures/tower.png", itemLoaded);
   flashp = loadImage("assets/pictures/flash.jpg", itemLoaded);
@@ -121,6 +135,12 @@ function loadAssets() {
   healp = loadImage("assets/pictures/heal.png", itemLoaded);
   ignitep = loadImage("assets/pictures/ignite.png", itemLoaded);
   exhaustp = loadImage("assets/pictures/exhaust.png", itemLoaded);
+
+}
+
+function createButtons() {
+  shopButton = new Button(width / 8, height * (13/24), width * 0.75, height / 8, "Loadout", 0, 
+    openShop, [108, 16, 183], [53, 0, 96], "assets/cursors/shop.cur");
 }
 
 //assign initial values and default stats to variables
@@ -159,24 +179,6 @@ function loadData() {
   timer = 0;
   difficulty = 2500;
 
-}
-
-//load soundfiles
-function loadSoundFiles() {
-  soundFormats("mp3", "wav");
-  sound = {
-    bg : loadSound("assets/sounds/bgmusic.mp3", itemLoaded),
-    flash : loadSound("assets/sounds/flashsound.wav", itemLoaded),
-    barrier : loadSound("assets/sounds/barrier.wav", itemLoaded),
-    ignite : loadSound("assets/sounds/ignite.wav", itemLoaded),
-    heal : loadSound("assets/sounds/heal.wav", itemLoaded),
-    exhaust : loadSound("assets/sounds/exhaust.wav", itemLoaded),
-    openstore : loadSound("assets/sounds/openstore.wav", itemLoaded),
-    closestore : loadSound("assets/sounds/closestore.wav", itemLoaded),
-    startgame : loadSound("assets/sounds/startgame.wav", itemLoaded),
-    gameover : loadSound("assets/sounds/gameover.wav", itemLoaded),
-    click : loadSound("assets/sounds/click.mp3", itemLoaded),
-  };
 }
 
 //tracks the number and percentage of total files loaded
@@ -231,23 +233,25 @@ function showMenus() {
     if (loadCount < files) {
       text("Loading...(" + floor(loadCount / files * 100) + "%)", width / 2, height * (27/32));
     }
+
+    //first button
     if (loadCount === files) {
-      noFill();
-      stroke(53, 0, 96);
-      if (mouseX >= width / 8 && mouseX <= width * (7/8) && mouseY >= height * (13/24) && mouseY <= height * (2/3)) {
-        fill(53, 0, 96);
-        cursor("assets/cursors/shop.cur");
-      }
-      else {
-        fill(108, 16, 183);
-      }
-      // rect(width / 8, height * (13/24), width * 0.75, height / 8);
+      
+      shopButton.run();
+
       fill(0);
-      text("Choose Your Loadout", width / 2, height * (117/192));
       text("Start", width / 2, height * (27/32));
     }
   }
 
+}
+
+function openShop() {
+  state = "shop";
+  if (volumeControl) {
+    sound.openstore.setVolume(0.05);
+    sound.openstore.play();
+  }
 }
 
 //shop menu, still to come
@@ -498,9 +502,10 @@ class GameObject {
 }
 
 class Button extends GameObject {
-  constructor(x, y, width, height, buttonText, clickedOn, color, hoverColor, hoverCursor) {
+  constructor(x, y, width, height, buttonText, textColor, clickedOn, color, hoverColor, hoverCursor) {
     super(x, y, width, height);
     this.buttonText = buttonText;
+    this.textColor = textColor;
     this.clickedOn = clickedOn;
     this.color = color;
     this.hoverColor = hoverColor;
@@ -510,22 +515,29 @@ class Button extends GameObject {
   run() {
     this.checkMouse();
 
+    fill(this.color);
+    if(this.mouse) {
+      fill(this.hoverColor);
+      cursor(this.hoverCursor);
+    }
     rect(this.x, this.y, this.width, this.height);
+    noFill();
+    stroke(this.hoverColor);
+    rect(this.x, this.y, this.width, this.height);
+
+    fill(this.textColor);
+    stroke(this.hoverColor);
+    strokeWeight(3);
+    text(this.buttonText, this.x + this.width / 2, this.y + this.height / 2);
+    strokeWeight(1);
+
     if(this.mouse && mouseIsPressed && !globalMouse) {
       globalMouseToggle = 1;
       this.clickedOn();
-      // if clicked once
     }
-    else if(this.mouse) {
-      void 0;
-      // if ohver
-    }
+
   }
 }
-
-// mainMenuButton = new Button(width / 2, height / 2, 100, 50, "start game", function() {
-//   theState = 1;
-// });
 
 function globalMouseControl() {
   if(globalMouseToggle > 0) {
@@ -679,14 +691,6 @@ function mouseReleased() {
       ignite : false,
       barrier : false,
     };
-  }
-
-  if (mouseX >= width / 8 && mouseX <= width * (7/8) && mouseY >= height * (13/24) && mouseY <= height * (2/3) && state === "menu") {
-    state = "shop";
-    if (volumeControl) {
-      sound.openstore.setVolume(0.05);
-      sound.openstore.play();
-    }
   }
 
   if (state === "menu" && mouseX >= width / 10 && mouseX <= width * 0.9 &&
