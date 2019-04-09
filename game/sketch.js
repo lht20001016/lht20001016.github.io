@@ -33,7 +33,8 @@
 
 //define variables to be used
 let loadCount;
-let shopButton;
+let openShopButton;
+let shopToMenuButton;
 let files;
 let state;
 let volumeControl;
@@ -89,6 +90,7 @@ function draw() {
   showShop();
   showSound();
   gameMusic();
+  globalMouseControl();
   characterPosition();
   determineVelocity();
   characterMovement();
@@ -138,9 +140,109 @@ function loadFiles() {
 
 }
 
+class GameObject {
+  constructor(x, y, width, height) {
+    //position cords
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.mouse;
+  }
+
+  //check mouseover
+  checkMouse() {
+    this.mouse = mouseX >= this.x && mouseX <= this.x + this.width && mouseY >= this.y && mouseY <= this.y + this.height;
+  }
+}
+
+//class is used to track and display bullets
+class Bullet {
+
+  //sets up the variables of each individual bullet including position, size, and velocity
+  constructor() {
+    this.x = width;
+    this.y = random(0, height);
+    this.diameter = random(width / 25, height / 35);
+    this.speed = random(3, 10 + floor(timer / 4));
+  }
+
+  //function responsible for the movement of each bullet
+  move() {
+    this.x += random(-this.speed);
+  }
+
+  //function to displays the bullets
+  display() {
+    ellipse(this.x, this.y, this.diameter, this.diameter);
+  }
+
+}
+
+class Button extends GameObject {
+  constructor(x, y, width, height, buttonText, textColor, clickedOn, color, hoverColor, hoverCursor) {
+    super(x, y, width, height);
+    this.buttonText = buttonText;
+    this.textColor = textColor;
+    this.clickedOn = clickedOn;
+    this.color = color;
+    this.hoverColor = hoverColor;
+    this.hoverCursor = hoverCursor;
+  }
+
+  run() {
+    this.checkMouse();
+
+    fill(this.color);
+    if(this.mouse) {
+      fill(this.hoverColor);
+      cursor(this.hoverCursor);
+    }
+    rect(this.x, this.y, this.width, this.height);
+    noFill();
+    stroke(this.hoverColor);
+    rect(this.x, this.y, this.width, this.height);
+
+    fill(this.textColor);
+    stroke(this.hoverColor);
+    text(this.buttonText, this.x + this.width / 2, this.y + this.height / 2);
+
+    if(this.mouse && mouseIsPressed && !globalMouse) {
+      globalMouseToggle = 1;
+      this.clickedOn();
+    }
+
+  }
+}
+
 function createButtons() {
-  shopButton = new Button(width / 8, height * (13/24), width * 0.75, height / 8, "Loadout", 0, 
+  openShopButton = new Button(width / 8, height * (13/24), width * 0.75, height / 8, "Loadout", 0, 
     openShop, [209, 19, 221], [103, 19, 109], "assets/cursors/shop.cur");
+  shopToMenuButton = new Button(width * 0.15, height * 0.8, width * 0.7, height * 0.1, "Return To Menu", 0, 
+    shopToMenu, [209, 19, 221], [103, 19, 109], "assets/cursors/shop.cur");
+}
+
+function openShop() {
+  state = "shop";
+  if (volumeControl) {
+    sound.openstore.setVolume(0.05);
+    sound.openstore.play();
+  }
+}
+
+function shopToMenu() {
+  state = "menu";
+  if (volumeControl) {
+    sound.closestore.setVolume(0.05);
+    sound.closestore.play();
+  }
+  icon = {
+    flash : false,
+    heal : false,
+    exhaust : false,
+    ignite : false,
+    barrier : false,
+  };
 }
 
 //assign initial values and default stats to variables
@@ -203,7 +305,7 @@ function showMenus() {
 
   if (state === "menu") {
 
-    textAlign(CENTER);
+    textAlign(CENTER, CENTER);
     rectMode(CORNER);
     textSize(36);
     stroke(50, 0, 255);
@@ -237,45 +339,19 @@ function showMenus() {
     //first button
     if (loadCount === files) {
       
-      shopButton.run();
+      openShopButton.run();
 
-      fill(0);
       text("Start", width / 2, height * (27/32));
     }
   }
 
 }
 
-function openShop() {
-  state = "shop";
-  if (volumeControl) {
-    sound.openstore.setVolume(0.05);
-    sound.openstore.play();
-  }
-}
-
 //shop menu, still to come
 function showShop() {
   if (state === "shop") {
 
-    noFill();
-    stroke(53, 0, 96);
-    rect(width * 0.03, height * 0.1, width * 0.02, height * 0.8);
-    if (mouseX >= width * 0.03 && mouseX <= width * 0.05 && mouseY >= height * 0.1 && mouseY <= height * 0.9) {
-      fill(53, 0, 96);
-      cursor("assets/cursors/shop.cur");
-    }
-    else {
-      fill(108, 16, 183);
-    }
-    rect(width * 0.03, height * 0.1, width * 0.02, height * 0.8);
-    fill(0);
-    textSize(20);
-    push();
-    translate(width * 0.0375, height * 0.5);
-    rotate(PI / 2);
-    text("Return to Menu", 0, 0);
-    pop();
+    shopToMenuButton.run();
 
     noFill();
     strokeWeight(10);
@@ -393,6 +469,16 @@ function gameMusic() {
   }
 }
 
+function globalMouseControl() {
+  if(globalMouseToggle > 0) {
+    globalMouse = globalMouseToggle;
+  }
+  else if(!mouseIsPressed) {
+    globalMouse = 0;
+  }
+  globalMouseToggle = 0;
+}
+
 //responsible for tracking and displaying the position of the character
 function characterPosition() {
 
@@ -429,7 +515,6 @@ function characterMovement() {
 function updateTimer() {
 
   if (state === "game") {
-    textAlign(CENTER, CENTER);
     textStyle(ITALIC);
     textSize(24);
     stroke(255, 255, 255);
@@ -481,97 +566,6 @@ function showTowers() {
     image(tower, width - 75, (height - 125) / 4 * 3, 75, 125);
     image(tower, width - 75, height - 125, 75, 125);
   }
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-class GameObject {
-  constructor(x, y, width, height) {
-    //position cords
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
-    this.mouse;
-  }
-
-  //check mouseover
-  checkMouse() {
-    this.mouse = mouseX >= this.x && mouseX <= this.x + this.width && mouseY >= this.y && mouseY <= this.y + this.height;
-  }
-}
-
-class Button extends GameObject {
-  constructor(x, y, width, height, buttonText, textColor, clickedOn, color, hoverColor, hoverCursor) {
-    super(x, y, width, height);
-    this.buttonText = buttonText;
-    this.textColor = textColor;
-    this.clickedOn = clickedOn;
-    this.color = color;
-    this.hoverColor = hoverColor;
-    this.hoverCursor = hoverCursor;
-  }
-
-  run() {
-    this.checkMouse();
-
-    fill(this.color);
-    if(this.mouse) {
-      fill(this.hoverColor);
-      cursor(this.hoverCursor);
-    }
-    rect(this.x, this.y, this.width, this.height);
-    noFill();
-    stroke(this.hoverColor);
-    rect(this.x, this.y, this.width, this.height);
-
-    fill(this.textColor);
-    stroke(this.hoverColor);
-    strokeWeight(3);
-    text(this.buttonText, this.x + this.width / 2, this.y + this.height / 2);
-    strokeWeight(1);
-
-    if(this.mouse && mouseIsPressed && !globalMouse) {
-      globalMouseToggle = 1;
-      this.clickedOn();
-    }
-
-  }
-}
-
-function globalMouseControl() {
-  if(globalMouseToggle > 0) {
-    globalMouse = globalMouseToggle;
-  }
-  else if(!mouseIsPressed) {
-    globalMouse = 0;
-  }
-  globalMouseToggle = 0;
-}
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//class is used to track and display bullets
-class Bullet {
-
-  //sets up the variables of each individual bullet including position, size, and velocity
-  constructor() {
-    this.x = width;
-    this.y = random(0, height);
-    this.diameter = random(width / 25, height / 35);
-    this.speed = random(3, 10 + floor(timer / 4));
-  }
-
-  //function responsible for the movement of each bullet
-  move() {
-    this.x += random(-this.speed);
-  }
-
-  //function to displays the bullets
-  display() {
-    ellipse(this.x, this.y, this.diameter, this.diameter);
-  }
-
 }
 
 //responsible for the creation of the bullets
@@ -677,21 +671,6 @@ function resetGame() {
 
 //mouseclicks determine the destination of the character movement and to navigate through the menus
 function mouseReleased() {
-
-  if (mouseX >= width * 0.03 && mouseX <= width * 0.05 && mouseY >= height * 0.1 && mouseY <= height * 0.9 && state === "shop") {
-    state = "menu";
-    if (volumeControl) {
-      sound.closestore.setVolume(0.05);
-      sound.closestore.play();
-    }
-    icon = {
-      flash : false,
-      heal : false,
-      exhaust : false,
-      ignite : false,
-      barrier : false,
-    };
-  }
 
   if (state === "menu" && mouseX >= width / 10 && mouseX <= width * 0.9 &&
     mouseY >= height * 0.75 && mouseY <= height / 4 * 3 + height / 6 && loadCount === files) {
