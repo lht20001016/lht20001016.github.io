@@ -35,6 +35,7 @@
 let loadCount;
 let openShopButton;
 let shopToMenuButton;
+let gameoverToMenuButton;
 let files;
 let state;
 let volumeControl;
@@ -218,8 +219,10 @@ class Button extends GameObject {
 function createButtons() {
   openShopButton = new Button(width / 8, height * (13/24), width * 0.75, height / 8, "Loadout", 0, 
     openShop, [209, 19, 221], [103, 19, 109], "assets/cursors/shop.cur");
-  shopToMenuButton = new Button(width * 0.15, height * 0.8, width * 0.7, height * 0.1, "Return To Menu", 0, 
+  shopToMenuButton = new Button(width * 0.15, height * 0.85, width * 0.7, height * 0.1, "Done", 0, 
     shopToMenu, [209, 19, 221], [103, 19, 109], "assets/cursors/shop.cur");
+  gameoverToMenuButton = new Button(width * 0.15, height * 0.85, width * 0.7, height * 0.1, "Return To Menu", 0, 
+    gmToMenu, [0, 255, 255], [0, 77, 255], "assets/cursors/gotomenu.cur");
 }
 
 function openShop() {
@@ -243,6 +246,11 @@ function shopToMenu() {
     ignite : false,
     barrier : false,
   };
+}
+
+function gmToMenu() {
+  state = "menu";
+  sound.startgame.play();
 }
 
 //assign initial values and default stats to variables
@@ -340,8 +348,8 @@ function showMenus() {
     if (loadCount === files) {
       
       openShopButton.run();
-
       text("Start", width / 2, height * (27/32));
+
     }
   }
 
@@ -621,15 +629,7 @@ function gameOverYet() {
     sound.bg.stop();
     fill(0, 255, 255);
     text("GAME OVER! You survived " + timer + " seconds.", width / 2, height / 8);
-    rectMode(CENTER);
-    if (mouseX >= width / 3 && mouseX <= width * (2 / 3) &&
-      mouseY >= height * (59 / 80) && mouseY <= height * (69 / 80)) {
-      fill(0, 77, 255);
-      cursor("assets/cursors/gotomenu.cur");
-    }
-    rect(width / 2, height * 0.8, width / 3, height / 8);
-    fill(0);
-    text("Return to the Main Menu", width / 2, height * 0.8);
+    gameoverToMenuButton.run();
   }
 
 }
@@ -670,7 +670,7 @@ function resetGame() {
 }
 
 //mouseclicks determine the destination of the character movement and to navigate through the menus
-function mouseReleased() {
+function mousePressed() {
 
   if (state === "menu" && mouseX >= width / 10 && mouseX <= width * 0.9 &&
     mouseY >= height * 0.75 && mouseY <= height / 4 * 3 + height / 6 && loadCount === files) {
@@ -688,14 +688,6 @@ function mouseReleased() {
     if (volumeControl) {
       sound.click.setVolume(0.1);
       sound.click.play();
-    }
-  }
-
-  if (mouseX >= width / 3 && mouseX <= width * (2 / 3) &&
-      mouseY >= height * (59 / 80) && mouseY <= height * (69 / 80) && state === "gameover") {
-    state = "menu";
-    if (volumeControl) {
-      sound.startgame.play();
     }
   }
 
