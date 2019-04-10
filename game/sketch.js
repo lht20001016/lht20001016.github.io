@@ -38,6 +38,8 @@ let shopToMenuButton;
 let gameoverToMenuButton;
 let files;
 let state;
+let inGameShop();
+let shopSubstate;
 let volumeControl;
 let character;
 let charpos;
@@ -102,6 +104,7 @@ function draw() {
   createBullet();
   moveBullet();
   gameOverYet();
+  inGameShop();
   
 }
 
@@ -257,6 +260,7 @@ function gmToMenu() {
 function loadData() {
 
   state = "menu";
+  shopSubstate = false;
   loadCount = 0;
   velocityRatio = 60;
   charpos = {
@@ -288,6 +292,15 @@ function loadData() {
   };
   timer = 0;
   difficulty = 2500;
+
+  let emptyArray = [];
+  for (let i = 2; i <= 8; i++) {
+    emptyArray.push([]);
+    for (let j = 1; j <= 9; j++) {
+      emptyArray[i].push("assets/pictures/character.PNG");
+    }
+  }
+  inGameShop = emptyArray;
 
 }
 
@@ -487,6 +500,18 @@ function globalMouseControl() {
   globalMouseToggle = 0;
 }
 
+function inGameShop() {
+  if (shopSubstate) {
+
+    for (let x = 0; x < 8; x++) {
+      for (let y = 0; y < 10; y++) {}
+        image(inGameShop[x][y])
+      }
+    }
+
+  } 
+}
+
 //responsible for tracking and displaying the position of the character
 function characterPosition() {
 
@@ -637,6 +662,7 @@ function gameOverYet() {
 //called everytime the game is reset, reset sounds, arrays, and assigns the default value to all relavent variables
 function resetGame() {
 
+  shopSubstate = false;
   velocityRatio = 60;
   charpos = {
     x : width / 2,
@@ -836,6 +862,11 @@ function mousePressed() {
 function keyTyped() {
 
   if (state === "game") {
+
+    if ((key === "`" || key === "p") && state === "game") {
+      shopSubstate = !shopSubstate;
+    }
+  
     if (key === "d" && abilities.flashs) {
       if (volumeControl) {
         sound.flash.setVolume(0.1);
