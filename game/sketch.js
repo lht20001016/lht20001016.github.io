@@ -38,7 +38,7 @@ let shopToMenuButton;
 let gameoverToMenuButton;
 let files;
 let state;
-let inGameShop();
+let inGameShop = [];
 let shopSubstate;
 let volumeControl;
 let character;
@@ -104,7 +104,7 @@ function draw() {
   createBullet();
   moveBullet();
   gameOverYet();
-  inGameShop();
+  inGameShopDisplay();
   
 }
 
@@ -292,15 +292,6 @@ function loadData() {
   };
   timer = 0;
   difficulty = 2500;
-
-  let emptyArray = [];
-  for (let i = 2; i <= 8; i++) {
-    emptyArray.push([]);
-    for (let j = 1; j <= 9; j++) {
-      emptyArray[i].push("assets/pictures/character.PNG");
-    }
-  }
-  inGameShop = emptyArray;
 
 }
 
@@ -500,12 +491,20 @@ function globalMouseControl() {
   globalMouseToggle = 0;
 }
 
-function inGameShop() {
+function inGameShopDisplay() {
   if (shopSubstate) {
 
-    for (let x = 0; x < 8; x++) {
-      for (let y = 0; y < 10; y++) {}
-        image(inGameShop[x][y])
+    for (let i = 0; i < 8; i++) {
+      inGameShop.push([]);
+      for (let j = 0; j < 8; j++) {
+        inGameShop[i].push(character);
+      }
+    }
+
+    for (let x = 0; x < 6; x++) {
+      for (let y = 0; y < 6; y++) {
+        image(inGameShop[x][y], width * 0.1 + x * (width * 0.001 + width * 0.1), height * 0.1 + y * (height * 0.001 + height * 0.1),
+          width * 0.1, height * 0.1);
       }
     }
 
@@ -911,5 +910,6 @@ function keyTyped() {
 function windowResized() {
 
   resizeCanvas(windowWidth, windowHeight);
+  createButtons();
 
 }

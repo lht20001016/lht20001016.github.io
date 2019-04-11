@@ -1,17 +1,16 @@
-let answer;
 
-answer = 1;
+let k;
+let aimage;
 
-for (let i = 3; i <= 33; i++) {
-  let k;
-  k = Math.abs(2 * Math.pow(i, 4) - 25 * Math.pow(i, 3) + 33 * Math.pow(i, 2));
-  if (k === 0) {
-    alert(i);
-  }
-  answer *= k;
+function preload() {
+  aimage = loadImage("assets/gear.png");
 }
 
+function setup() {
+  createCanvas(windowWidth, windowHeight);
+}
 
-
-
-
+function draw() {
+  k = [[aimage, aimage], [aimage, aimage]];
+  image(k[1][0], 60, 60, 260, 260);
+}
