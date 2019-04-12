@@ -81,6 +81,7 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
   loadData();
   loadFiles(createButtons());
+  createShop();
 
 }
 
@@ -94,6 +95,7 @@ function draw() {
   showSound();
   gameMusic();
   globalMouseControl();
+  gameMode();
   characterPosition();
   determineVelocity();
   characterMovement();
@@ -134,6 +136,7 @@ function loadFiles() {
     gameover : loadSound("assets/sounds/gameover.wav", itemLoaded),
     click : loadSound("assets/sounds/click.mp3", itemLoaded),
   };
+
   character = loadImage("assets/pictures/character.PNG", itemLoaded);
   tower = loadImage("assets/pictures/tower.png", itemLoaded);
   flashp = loadImage("assets/pictures/flash.jpg", itemLoaded);
@@ -141,6 +144,17 @@ function loadFiles() {
   healp = loadImage("assets/pictures/heal.png", itemLoaded);
   ignitep = loadImage("assets/pictures/ignite.png", itemLoaded);
   exhaustp = loadImage("assets/pictures/exhaust.png", itemLoaded);
+
+}
+
+function createShop() {
+
+  for (let i = 0; i < 6; i++) {
+    inGameShop.push([]);
+    for (let j = 0; j < 5; j++) {
+      inGameShop[i].push(character);
+    }
+  }
 
 }
 
@@ -491,22 +505,66 @@ function globalMouseControl() {
   globalMouseToggle = 0;
 }
 
-function inGameShopDisplay() {
-  if (shopSubstate) {
+//diable right clicks in game
+function gameMode() {
 
-    for (let i = 0; i < 8; i++) {
-      inGameShop.push([]);
-      for (let j = 0; j < 8; j++) {
-        inGameShop[i].push(character);
-      }
-    }
+  document.addEventListener("contextmenu", event => event.preventDefault());
+
+}
+
+// class Items {
+
+//   //sets up the variables of each individual bullet including position, size, and velocity
+//   constructor(name, text1, text2, text3, ad, ap, armor, mr, hp, mana) {
+//     this.name = name;
+//     this.text1 = text1;
+//     this.text2 = text2;
+//     this.text1 = text1;
+//     this.diameter = random(width / 25, height / 35);
+//     this.speed = random(3, 10 + floor(timer / 4));
+//   }
+
+//   //function responsible for the movement of each bullet
+//   move() {
+//     this.x += random(-this.speed);
+//   }
+
+//   //function to displays the bullets
+//   display() {
+//     ellipse(this.x, this.y, this.diameter, this.diameter);
+//   }
+
+// }
+
+function inGameShopDisplay() {
+  if (shopSubstate && state === "game") {
+
+    // for (let i = 0; i < 6; i++) {
+    //   inGameShop.push([]);
+    //   for (let j = 0; j < 5; j++) {
+    //     inGameShop[i].push(character);
+    //   }
+    // }
+
+    fill(154, 191, 167);
+    rect(width * 0.13, height * 0.08, width * 0.7, height * 0.8);
 
     for (let x = 0; x < 6; x++) {
-      for (let y = 0; y < 6; y++) {
-        image(inGameShop[x][y], width * 0.1 + x * (width * 0.001 + width * 0.1), height * 0.1 + y * (height * 0.001 + height * 0.1),
-          width * 0.1, height * 0.1);
+      for (let y = 0; y < 5; y++) {
+        noFill();
+        strokeWeight(2);
+        stroke(45, 145, 78);
+        rect(width * 0.15 + x * (width * 0.08), height * 0.11 + y * (width * 0.08),
+          width * 0.05, width * 0.05);
+        image(inGameShop[x][y], width * 0.15 + x * (width * 0.08), height * 0.11 + y * (width * 0.08),
+          width * 0.05, width * 0.05);
       }
     }
+
+    textSize(36);
+    fill(0);
+    stroke(15, 66, 32);
+    text("shop", width * 0.712, height * 0.12);
 
   } 
 }
