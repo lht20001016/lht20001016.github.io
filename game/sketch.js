@@ -38,26 +38,21 @@ let shopToMenuButton;
 let gameoverToMenuButton;
 let files;
 let state;
-let inGameShop = [];
+let currentItem;
+let inGameShop;
 let shopSubstate;
 let volumeControl;
-let character;
 let charpos;
 let velocity;
 let destinationpos;
 let timer;
 let abilities;
-let flashp;
-let barrierp;
-let ignitep;
-let healp;
-let exhaustp;
 let soundOn;
 let soundOff;
 let velocityRatio;
 let bg;
 let icon;
-let tower;
+let images;
 let sound;
 let menumusic;
 let difficulty;
@@ -137,27 +132,28 @@ function loadFiles() {
     click : loadSound("assets/sounds/click.mp3", itemLoaded),
   };
 
-  character = loadImage("assets/pictures/character.PNG", itemLoaded);
-  tower = loadImage("assets/pictures/tower.png", itemLoaded);
-  flashp = loadImage("assets/pictures/flash.jpg", itemLoaded);
-  barrierp = loadImage("assets/pictures/barrier.jpg", itemLoaded);
-  healp = loadImage("assets/pictures/heal.png", itemLoaded);
-  ignitep = loadImage("assets/pictures/ignite.png", itemLoaded);
-  exhaustp = loadImage("assets/pictures/exhaust.png", itemLoaded);
+  images = {
+    character : loadImage("assets/pictures/character.PNG", itemLoaded),
+    tower : loadImage("assets/pictures/tower.png", itemLoaded),
+    flash : loadImage("assets/pictures/flash.jpg", itemLoaded),
+    barrier : loadImage("assets/pictures/barrier.jpg", itemLoaded),
+    heal : loadImage("assets/pictures/heal.png", itemLoaded),
+    ignite : loadImage("assets/pictures/ignite.png", itemLoaded),
+    exhaust : loadImage("assets/pictures/exhaust.png", itemLoaded),
+  };
 
 }
 
 function createShop() {
 
-  for (let i = 0; i < 6; i++) {
-    inGameShop.push([]);
-    for (let j = 0; j < 5; j++) {
-      inGameShop[i].push(character);
-    }
-  }
+  inGameShop = [[images.character, images.character, images.character, images.character, images.character, images.character], 
+    [images.character, images.character, images.character, images.character, images.character, images.character],
+    [images.character, images.character, images.character, images.character, images.character, images.character],
+    [images.character, images.character, images.character, images.character, images.character, images.character],
+    [images.character, images.character, images.character, images.character, images.character, images.character]];
 
 }
-
+                                                                                                                                                                                                                                               
 class GameObject {
   constructor(x, y, width, height) {
     //position cords
@@ -233,6 +229,45 @@ class Button extends GameObject {
   }
 }
 
+class ImageButton extends GameObject {
+  constructor(x, y, width, height, image, clickedOn, hoverCursor, borderColor, hoverBorderColor, itemID) {
+    super(x, y, width, height);
+    this.images = image;
+    this.clickedOn = clickedOn;
+    this.hoverCursor = hoverCursor;
+    this.borderColor = borderColor;
+    this.hoverBorderColor = hoverBorderColor;
+    this.itemID = itemID;
+  }
+
+  run() {
+    this.checkMouse(); 
+
+    noFill();
+    strokeWeight(2);
+
+    if(this.itemID === currentItem) {
+      stroke(64, 76, 55);
+    }
+    else if (this.mouse) {
+      stroke(this.hoverBorderColor);
+    }
+    else {
+      stroke(this.borderColor);
+    }
+
+    rect(this.x, this.y, this.width, this.height);
+
+    image(this.image, this.x, this.y, this.width, this.height);
+
+    if(this.mouse && mouseIsPressed && !globalMouse) {
+      globalMouseToggle = 1;
+      this.clickedOn();
+    }
+
+  }
+}
+
 function createButtons() {
   openShopButton = new Button(width / 8, height * (13/24), width * 0.75, height / 8, "Loadout", 0, 
     openShop, [209, 19, 221], [103, 19, 109], "assets/cursors/shop.cur");
@@ -275,6 +310,7 @@ function loadData() {
 
   state = "menu";
   shopSubstate = false;
+  currentItem = 0;
   loadCount = 0;
   velocityRatio = 60;
   charpos = {
@@ -391,7 +427,7 @@ function showShop() {
       stroke(53, 0, 96);
     }
     rect(width * 0.1, height * 0.1, width * 0.1, height * 0.2);
-    image(flashp, width * 0.1, height * 0.1, width * 0.1, height * 0.2);
+    image(images.flash, width * 0.1, height * 0.1, width * 0.1, height * 0.2);
 
     if (mouseX >= width * 0.225 && mouseX <= width * 0.325 && mouseY >= height * 0.1 && mouseY <= height * 0.3) {
       cursor("assets/cursors/shop.cur");
@@ -403,7 +439,7 @@ function showShop() {
       stroke(53, 0, 96);
     }
     rect(width * 0.225, height * 0.1, width * 0.1, height * 0.2);
-    image(healp, width * 0.225, height * 0.1, width * 0.1, height * 0.2);
+    image(images.heal, width * 0.225, height * 0.1, width * 0.1, height * 0.2);
 
     if (mouseX >= width * 0.35 && mouseX <= width * 0.45 && mouseY >= height * 0.1 && mouseY <= height * 0.3) {
       cursor("assets/cursors/shop.cur");
@@ -415,7 +451,7 @@ function showShop() {
       stroke(53, 0, 96);
     }
     rect(width * 0.35, height * 0.1, width * 0.1, height * 0.2);
-    image(barrierp, width * 0.35, height * 0.1, width * 0.1, height * 0.2);
+    image(images.barrier, width * 0.35, height * 0.1, width * 0.1, height * 0.2);
 
     if (mouseX >= width * 0.475 && mouseX <= width * 0.575 && mouseY >= height * 0.1 && mouseY <= height * 0.3) {
       cursor("assets/cursors/shop.cur");
@@ -427,7 +463,7 @@ function showShop() {
       stroke(53, 0, 96);
     }
     rect(width * 0.475, height * 0.1, width * 0.1, height * 0.2);
-    image(ignitep, width * 0.475, height * 0.1, width * 0.1, height * 0.2);
+    image(images.ignite, width * 0.475, height * 0.1, width * 0.1, height * 0.2);
 
     if (mouseX >= width * 0.6 && mouseX <= width * 0.7 && mouseY >= height * 0.1 && mouseY <= height * 0.3) {
       cursor("assets/cursors/shop.cur");
@@ -439,35 +475,12 @@ function showShop() {
       stroke(53, 0, 96);
     }
     rect(width * 0.6, height * 0.1, width * 0.1, height * 0.2);
-    image(exhaustp, width * 0.6, height * 0.1, width * 0.1, height * 0.2);
+    image(images.exhaust, width * 0.6, height * 0.1, width * 0.1, height * 0.2);
     
   }
 
   strokeWeight(1);
 }
-
-// function showShopMenus() {
-//   if (state === "shop" && icon.flash) {
-
-//     stroke(53, 0, 96);
-//     strokeWeight(3);
-//     fill(114, 120, 130);
-//     rect(width * 0.75, height * 0.1, width * 0.2, height * 0.7);
-
-//     stroke(0, 255, 255);
-//     stroke(229, 216, 32);
-//     textSize(36);
-//     fill(0);
-//     text("Flash", width * 0.85, height * 0.15);
-//     textSize(24);
-//     noStroke();
-//     textAlign(LEFT);
-//     text("Teleport your character to your cursor.", width * 0.80, height * 0.2);
-//     textAlign(CENTER);
-
-//     strokeWeight(1);
-//   }
-// }
 
 //images responsible for displaying the control of sound
 function showSound() {
@@ -512,51 +525,20 @@ function gameMode() {
 
 }
 
-// class Items {
-
-//   //sets up the variables of each individual bullet including position, size, and velocity
-//   constructor(name, text1, text2, text3, ad, ap, armor, mr, hp, mana) {
-//     this.name = name;
-//     this.text1 = text1;
-//     this.text2 = text2;
-//     this.text1 = text1;
-//     this.diameter = random(width / 25, height / 35);
-//     this.speed = random(3, 10 + floor(timer / 4));
-//   }
-
-//   //function responsible for the movement of each bullet
-//   move() {
-//     this.x += random(-this.speed);
-//   }
-
-//   //function to displays the bullets
-//   display() {
-//     ellipse(this.x, this.y, this.diameter, this.diameter);
-//   }
-
-// }
-
 function inGameShopDisplay() {
   if (shopSubstate && state === "game") {
-
-    // for (let i = 0; i < 6; i++) {
-    //   inGameShop.push([]);
-    //   for (let j = 0; j < 5; j++) {
-    //     inGameShop[i].push(character);
-    //   }
-    // }
 
     fill(154, 191, 167);
     rect(width * 0.13, height * 0.08, width * 0.7, height * 0.8);
 
-    for (let x = 0; x < 6; x++) {
-      for (let y = 0; y < 5; y++) {
+    for (let y = 0; y < 6; y++) {
+      for (let x = 0; x < 5; x++) {
         noFill();
         strokeWeight(2);
         stroke(45, 145, 78);
-        rect(width * 0.15 + x * (width * 0.08), height * 0.11 + y * (width * 0.08),
+        rect(width * 0.15 + y * (width * 0.08), height * 0.11 + x * (width * 0.08),
           width * 0.05, width * 0.05);
-        image(inGameShop[x][y], width * 0.15 + x * (width * 0.08), height * 0.11 + y * (width * 0.08),
+        image(inGameShop[x][y], width * 0.15 + y * (width * 0.08), height * 0.11 + x * (width * 0.08),
           width * 0.05, width * 0.05);
       }
     }
@@ -573,7 +555,7 @@ function inGameShopDisplay() {
 function characterPosition() {
 
   if (state === "game") {
-    image(character, charpos.x, charpos.y, width / 16, height / 8);
+    image(images.character, charpos.x, charpos.y, width / 16, height / 8);
   }
 
 }
@@ -620,11 +602,11 @@ function updateTimer() {
 function showAbilities() {
   if (state ==="game") {
     if (abilities.flashs) {
-      image(flashp, width / 15 * 13, height / 10 * 9, 60, 60);
+      image(images.flash, width / 15 * 13, height / 10 * 9, 60, 60);
     }
 
     if (abilities.barriers) {
-      image(barrierp, width / 15 * 11, height / 10 * 9, 60, 60);
+      image(images.barrier, width / 15 * 11, height / 10 * 9, 60, 60);
     }
   }
 }
@@ -650,11 +632,11 @@ function countCooldown() {
 function showTowers() {
 
   if (state === "game") {
-    image(tower, width - 75, 0, 75, 125);
-    image(tower, width - 75, (height - 125) / 4, 75, 125);
-    image(tower, width - 75, (height - 125) / 2, 75, 125);
-    image(tower, width - 75, (height - 125) / 4 * 3, 75, 125);
-    image(tower, width - 75, height - 125, 75, 125);
+    image(images.tower, width - 75, 0, 75, 125);
+    image(images.tower, width - 75, (height - 125) / 4, 75, 125);
+    image(images.tower, width - 75, (height - 125) / 2, 75, 125);
+    image(images.tower, width - 75, (height - 125) / 4 * 3, 75, 125);
+    image(images.tower, width - 75, height - 125, 75, 125);
   }
 }
 
@@ -922,6 +904,10 @@ function keyTyped() {
 
     if ((key === "`" || key === "p") && state === "game") {
       shopSubstate = !shopSubstate;
+      if (!shopSubstate) {
+        currentItem = 0;
+      }
+
     }
   
     if (key === "d" && abilities.flashs) {
