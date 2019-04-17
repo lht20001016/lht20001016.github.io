@@ -8,28 +8,7 @@
 // - Push/Pop rotation with text in loadout menu
 // - Classes and constructors
 // ...other things that I have learned from the internet to better develop my game
-//
-//Version Logs 
-//V1.0: Interactive Scene Assignment  -- 05 Mar 2019
-//Basic Game
-//Classes for bullets
-//Three Abilities
-//CSS/HTML formatting for the game
-//scaling with screensize
-//
-//V2.0: States Variable Assignment -- 25 Mar 2019
-//Mostly code updates and refactoring with quality of life improvements and UI/Interface/player experience improvements, see details below.
-//Replaced CSS/HTML with states varibles to control the menus and the game
-//Used object Notation to simplify variables
-//Refactoring code, factoring, combinging, and cleaning up variables, as well as sorted load order.
-//Loading Bar and Menu Screen
-//Cursors and varying cursors depending on the position of the mouse
-//Overall gameplay and balance improvements
-//UI navigation improvements
-//Sound improvements and options
-//
-//V3.0: Two-Dimensional Arrays 
-//Shop screen and select abilities
+
 
 //define variables to be used
 let loadCount;
