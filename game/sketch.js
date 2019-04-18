@@ -38,9 +38,7 @@ let difficulty;
 let globalMouseToggle;
 let globalMouse;
 let bullets = [];
-
-let infinityEdge;
-let infinityEdgePicture;
+let items;
 
 //preload assets
 function preload() {
@@ -49,8 +47,6 @@ function preload() {
   soundOn = loadImage("assets/pictures/soundon.png");
   soundOff = loadImage("assets/pictures/soundoff.png");
   setAssets();
-
-  infinityEdgePicture = loadImage("assets/pictures/infinityEdge.jpg");
 
 }
 
@@ -61,6 +57,7 @@ function setup() {
   loadData();
   loadFiles(createButtons());
   createShop();
+  loadItems();
 
 }
 
@@ -130,19 +127,12 @@ function loadFiles() {
 
 function createShop() {
 
-  infinityEdge = new Item(width * 0.15, height * 0.11, width * 0.05, width * 0.05, infinityEdgePicture, infinityEdgeFunction, 
-    "assets/cursors/startgame.cur", [25, 104, 232], [93, 152, 247], 1);
-
   inGameShop = [[images.character, images.character, images.character, images.character, images.character, images.character], 
     [images.character, images.character, images.character, images.character, images.character, images.character],
     [images.character, images.character, images.character, images.character, images.character, images.character],
     [images.character, images.character, images.character, images.character, images.character, images.character],
     [images.character, images.character, images.character, images.character, images.character, images.character]];
 
-}
-
-function infinityEdgeFunction() {
-  currentItem = 1;
 }
                                                                                                                                                                                                                                                
 class GameObject {
@@ -519,27 +509,27 @@ function gameMode() {
 function inGameShopDisplay() {
   if (shopSubstate && state === "game") {
 
-    // fill(154, 191, 167);
-    // rect(width * 0.13, height * 0.08, width * 0.7, height * 0.8);
+    fill(154, 191, 167);
+    rect(width * 0.13, height * 0.08, width * 0.7, height * 0.8);
 
-    // for (let y = 0; y < 6; y++) {
-    //   for (let x = 0; x < 5; x++) {
-    //     noFill();
-    //     strokeWeight(2);
-    //     stroke(45, 145, 78);
-    //     rect(width * 0.15 + y * (width * 0.08), height * 0.11 + x * (width * 0.08),
-    //       width * 0.05, width * 0.05);
-    //     image(inGameShop[x][y], width * 0.15 + y * (width * 0.08), height * 0.11 + x * (width * 0.08),
-    //       width * 0.05, width * 0.05);
-    //   }
-    // }
+    for (let y = 0; y < 6; y++) {
+      for (let x = 0; x < 5; x++) {
+        // noFill();
+        // strokeWeight(2);
+        // stroke(45, 145, 78);
+        // rect(width * 0.15 + y * (width * 0.08), height * 0.11 + x * (width * 0.08),
+        //   width * 0.05, width * 0.05);
+        // image(inGameShop[x][y], width * 0.15 + y * (width * 0.08), height * 0.11 + x * (width * 0.08),
+        //   width * 0.05, width * 0.05);
+        inGameShop[x][y].run();
+      }
+    }
 
-    // textSize(36);
-    // fill(0);
-    // stroke(15, 66, 32);
-    // text("shop", width * 0.712, height * 0.12);
+    textSize(36);
+    fill(0);
+    stroke(15, 66, 32);
+    text("shop", width * 0.712, height * 0.12);
 
-    infinityEdge.run();
 
   } 
 }
