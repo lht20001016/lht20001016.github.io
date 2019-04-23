@@ -31,14 +31,15 @@ let soundOff;
 let velocityRatio;
 let bg;
 let icon;
-let images;
-let sound;
 let menumusic;
 let difficulty;
 let globalMouseToggle;
 let globalMouse;
+let stats;
+let images = [];
+let sound = [];
 let bullets = [];
-let items;
+let items = [];
 
 //preload assets
 function preload() {
@@ -55,9 +56,8 @@ function setup() {
 
   createCanvas(windowWidth, windowHeight);
   loadData();
-  loadFiles(createButtons());
-  createShop();
   loadItems();
+  loadFiles(createButtons());
 
 }
 
@@ -81,9 +81,10 @@ function draw() {
   showTowers();
   createBullet();
   moveBullet();
-  gameOverYet();
   inGameShopDisplay();
-  
+  itemDetails();
+  gameOverYet();
+
 }
 
 //load the basic assets needed to run the menu, notes the total amount of files to load
@@ -91,7 +92,7 @@ function setAssets() {
 
   bg = loadImage("assets/pictures/gamebackground.jpg");
   volumeControl = true;
-  files = 18;
+  files = 19;
 
 }
 
@@ -111,6 +112,7 @@ function loadFiles() {
     startgame : loadSound("assets/sounds/startgame.wav", itemLoaded),
     gameover : loadSound("assets/sounds/gameover.wav", itemLoaded),
     click : loadSound("assets/sounds/click.mp3", itemLoaded),
+    clickItem : loadSound("assets/sounds/clickItem.wav", itemLoaded),
   };
 
   images = {
@@ -125,15 +127,54 @@ function loadFiles() {
 
 }
 
-function createShop() {
+function loadItems() {
 
-  inGameShop = [[images.character, images.character, images.character, images.character, images.character, images.character], 
-    [images.character, images.character, images.character, images.character, images.character, images.character],
-    [images.character, images.character, images.character, images.character, images.character, images.character],
-    [images.character, images.character, images.character, images.character, images.character, images.character],
-    [images.character, images.character, images.character, images.character, images.character, images.character]];
+  items = {
 
-}
+    infinityEdge : new Item(width * 0.15, height * 0.10, width * 0.05, width * 0.05, loadImage("assets/pictures/items/infinityEdge.png"), "assets/cursors/startgame.cur", [25, 104, 232], [93, 152, 247], 1),
+    essenceReaver : new Item(width * 0.225, height * 0.10, width * 0.05, width * 0.05, loadImage("assets/pictures/items/essenceReaver.png"), "assets/cursors/startgame.cur", [25, 104, 232], [93, 152, 247], 2),
+    stormRazor : new Item(width * 0.3, height * 0.10, width * 0.05, width * 0.05, loadImage("assets/pictures/items/stormRazor.png"), "assets/cursors/startgame.cur", [25, 104, 232], [93, 152, 247], 3),
+    starfireSpellblade : new Item(width * 0.375, height * 0.10, width * 0.05, width * 0.05, loadImage("assets/pictures/items/starfireSpellblade.jpg"),"assets/cursors/startgame.cur", [25, 104, 232], [93, 152, 247], 4),
+    lastWhisper : new Item(width * 0.45, height * 0.10, width * 0.05, width * 0.05, loadImage("assets/pictures/items/lastWhisper.png"),"assets/cursors/startgame.cur", [25, 104, 232], [93, 152, 247], 5),
+    frostMourne : new Item(width * 0.525, height * 0.10, width * 0.05, width * 0.05, loadImage("assets/pictures/items/frostMourne.png"), "assets/cursors/startgame.cur", [25, 104, 232], [93, 152, 247], 6),
+
+    rapidFirecannon : new Item(width * 0.15, height * 0.25, width * 0.05, width * 0.05, loadImage("assets/pictures/items/rapidFirecannon.png"), "assets/cursors/startgame.cur", [221, 239, 57], [93, 152, 247], 7),
+    thoridal : new Item(width * 0.225, height * 0.25, width * 0.05, width * 0.05, loadImage("assets/pictures/items/thoridal.jpg"), "assets/cursors/startgame.cur", [221, 239, 57], [93, 152, 247], 8),
+    staticShiv : new Item(width * 0.3, height * 0.25, width * 0.05, width * 0.05, loadImage("assets/pictures/items/staticShiv.png"), "assets/cursors/startgame.cur", [221, 239, 57], [93, 152, 247], 9),
+    runnansHurricane : new Item(width * 0.375, height * 0.25, width * 0.05, width * 0.05, loadImage("assets/pictures/items/runnansHurricane.png"),"assets/cursors/startgame.cur", [221, 239, 57], [93, 152, 247], 10),
+    phantomDancer : new Item(width * 0.45, height * 0.25, width * 0.05, width * 0.05, loadImage("assets/pictures/items/phantomDancer.png"), "assets/cursors/startgame.cur", [221, 239, 57], [93, 152, 247], 11),
+    nashorsTooth : new Item(width * 0.525, height * 0.25, width * 0.05, width * 0.05, loadImage("assets/pictures/items/nashorsTooth.png"),"assets/cursors/startgame.cur", [221, 239, 57], [93, 152, 247], 12),
+
+    ludensEcho : new Item(width * 0.15, height * 0.4, width * 0.05, width * 0.05, loadImage("assets/pictures/items/ludensEcho.png"), "assets/cursors/startgame.cur", [177, 30, 191], [93, 152, 247], 13),
+    rabadonsDeathcap : new Item(width * 0.225, height * 0.4, width * 0.05, width * 0.05, loadImage("assets/pictures/items/rabadonsDeathcap.png"), "assets/cursors/startgame.cur", [177, 30, 191], [93, 152, 247], 14),
+    voidStaff : new Item(width * 0.3, height * 0.4, width * 0.05, width * 0.05, loadImage("assets/pictures/items/voidStaff.png"), "assets/cursors/startgame.cur", [177, 30, 191], [93, 152, 247], 15),
+    lichBane : new Item(width * 0.375, height * 0.4, width * 0.05, width * 0.05, loadImage("assets/pictures/items/lichBane.png"), "assets/cursors/startgame.cur", [177, 30, 191], [93, 152, 247], 16),
+    liandrysTorment : new Item(width * 0.45, height * 0.4, width * 0.05, width * 0.05, loadImage("assets/pictures/items/liandrysTorment.png"),"assets/cursors/startgame.cur", [177, 30, 191], [93, 152, 247], 17),
+    hextechGunblade : new Item(width * 0.525, height * 0.4, width * 0.05, width * 0.05, loadImage("assets/pictures/items/hextechGunblade.png"),"assets/cursors/startgame.cur", [177, 30, 191], [93, 152, 247], 18),
+
+    deadmansPlate : new Item(width * 0.15, height * 0.55, width * 0.05, width * 0.05, loadImage("assets/pictures/items/deadmansPlate.png"), "assets/cursors/startgame.cur", [214, 80, 23], [93, 152, 247], 19),
+    randuinsOmen : new Item(width * 0.225, height * 0.55, width * 0.05, width * 0.05, loadImage("assets/pictures/items/randuinsOmen.png"),"assets/cursors/startgame.cur", [214, 80, 23], [93, 152, 247], 20),
+    thornMail : new Item(width * 0.3, height * 0.55, width * 0.05, width * 0.05, loadImage("assets/pictures/items/thornMail.png"), "assets/cursors/startgame.cur", [214, 80, 23], [93, 152, 247], 2),
+    sunfireCape : new Item(width * 0.375, height * 0.55, width * 0.05, width * 0.05, loadImage("assets/pictures/items/sunfireCape.png"),"assets/cursors/startgame.cur", [214, 80, 23], [93, 152, 247], 22),
+    zhonyasHourglass : new Item(width * 0.45, height * 0.55, width * 0.05, width * 0.05, loadImage("assets/pictures/items/zhonyasHourglass.png"),"assets/cursors/startgame.cur", [214, 80, 23], [93, 152, 247], 23),
+    thunderFury : new Item(width * 0.525, height * 0.55, width * 0.05, width * 0.05, loadImage("assets/pictures/items/thunderFury.png"),"assets/cursors/startgame.cur", [214, 80, 23], [93, 152, 247], 24),
+
+    abyssalMask : new Item(width * 0.15, height * 0.7, width * 0.05, width * 0.05, loadImage("assets/pictures/items/abyssalMask.png"),"assets/cursors/startgame.cur", [94, 44, 135], [93, 152, 247], 25),
+    spiritVisage : new Item(width * 0.225, height * 0.7, width * 0.05, width * 0.05, loadImage("assets/pictures/items/spiritVisage.png"), "assets/cursors/startgame.cur", [94, 44, 135], [93, 152, 247], 26),
+    adaptiveHelm : new Item(width * 0.3, height * 0.7, width * 0.05, width * 0.05, loadImage("assets/pictures/items/adaptiveHelm.png"),"assets/cursors/startgame.cur", [94, 44, 135], [93, 152, 247], 27),
+    bansheesVeil : new Item(width * 0.375, height * 0.7, width * 0.05, width * 0.05, loadImage("assets/pictures/items/bansheesVeil.png"), "assets/cursors/startgame.cur", [94, 44, 135], [93, 152, 247], 28),
+    hexDrinker : new Item(width * 0.45, height * 0.7, width * 0.05, width * 0.05, loadImage("assets/pictures/items/hexDrinker.png"), "assets/cursors/startgame.cur", [94, 44, 135], [93, 152, 247], 29),
+    trinityForce : new Item(width * 0.525, height * 0.7, width * 0.05, width * 0.05, loadImage("assets/pictures/items/trinityForce.png"), "assets/cursors/startgame.cur", [94, 44, 135], [93, 152, 247], 30),
+
+  };
+
+  inGameShop = [[items.infinityEdge, items.essenceReaver, items.stormRazor, items.starfireSpellblade, items.lastWhisper, items.frostMourne], 
+    [items.rapidFirecannon, items.thoridal, items.staticShiv, items.runnansHurricane, items.phantomDancer, items.nashorsTooth],
+    [items.ludensEcho, items.rabadonsDeathcap, items.voidStaff, items.lichBane, items.liandrysTorment, items.hextechGunblade],
+    [items.deadmansPlate, items.randuinsOmen, items.thornMail, items.sunfireCape, items.zhonyasHourglass, items.thunderFury],
+    [items.abyssalMask, items.spiritVisage, items.adaptiveHelm, items.bansheesVeil, items.hexDrinker, items.trinityForce]];
+
+}  
                                                                                                                                                                                                                                                
 class GameObject {
   constructor(x, y, width, height) {
@@ -211,10 +252,9 @@ class Button extends GameObject {
 }
 
 class Item extends GameObject {
-  constructor(x, y, width, height, image, clickedOn, hoverCursor, borderColor, hoverBorderColor, itemID) {
+  constructor(x, y, width, height, picture, hoverCursor, borderColor, hoverBorderColor, itemID) {
     super(x, y, width, height);
-    this.image = image;
-    this.clickedOn = clickedOn;
+    this.icon = picture;
     this.hoverCursor = hoverCursor;
     this.borderColor = borderColor;
     this.hoverBorderColor = hoverBorderColor;
@@ -225,7 +265,7 @@ class Item extends GameObject {
     this.checkMouse(); 
 
     noFill();
-    strokeWeight(2);
+    strokeWeight(7.5);
 
     if(this.itemID === currentItem) {
       stroke(64, 76, 55);
@@ -239,11 +279,15 @@ class Item extends GameObject {
 
     rect(this.x, this.y, this.width, this.height);
 
-    image(this.image, this.x, this.y, this.width, this.height);
+    image(this.icon, this.x, this.y, this.width, this.height);
 
     if(this.mouse && mouseIsPressed && !globalMouse) {
       globalMouseToggle = 1;
-      this.clickedOn();
+      currentItem = this.itemID;
+      if (volumeControl) {
+        sound.clickItem.setVolume(0.1);
+        sound.clickItem.play();
+      }
     }
 
   }
@@ -283,7 +327,9 @@ function shopToMenu() {
 
 function gmToMenu() {
   state = "menu";
-  sound.startgame.play();
+  if (volumeControl) {
+    sound.startgame.play();
+  }
 }
 
 //assign initial values and default stats to variables
@@ -294,6 +340,14 @@ function loadData() {
   currentItem = 0;
   loadCount = 0;
   velocityRatio = 60;
+  stats = {
+    health : 500,
+    mana : 200,
+    ad : 50,
+    ap : 0,
+    armor : 25,
+    mr : 15, 
+  };
   charpos = {
     x : width / 2,
     y : height / 2,
@@ -506,34 +560,6 @@ function gameMode() {
 
 }
 
-function inGameShopDisplay() {
-  if (shopSubstate && state === "game") {
-
-    fill(154, 191, 167);
-    rect(width * 0.13, height * 0.08, width * 0.7, height * 0.8);
-
-    for (let y = 0; y < 6; y++) {
-      for (let x = 0; x < 5; x++) {
-        // noFill();
-        // strokeWeight(2);
-        // stroke(45, 145, 78);
-        // rect(width * 0.15 + y * (width * 0.08), height * 0.11 + x * (width * 0.08),
-        //   width * 0.05, width * 0.05);
-        // image(inGameShop[x][y], width * 0.15 + y * (width * 0.08), height * 0.11 + x * (width * 0.08),
-        //   width * 0.05, width * 0.05);
-        inGameShop[x][y].run();
-      }
-    }
-
-    textSize(36);
-    fill(0);
-    stroke(15, 66, 32);
-    text("shop", width * 0.712, height * 0.12);
-
-
-  } 
-}
-
 //responsible for tracking and displaying the position of the character
 function characterPosition() {
 
@@ -556,11 +582,11 @@ function determineVelocity() {
 //responsible for moving the characters according to set restrictions (due to in game graphics) and velocities
 function characterMovement() {
 
-  if (charpos.x + velocity.x <= width - width / 16 - 75 && state === "game") {
+  if (!shopSubstate && charpos.x + velocity.x <= width - width / 16 - 75 && state === "game") {
     charpos.x += velocity.x;
   }
 
-  if (charpos.y + velocity.y <= height - height / 8 && state === "game") {
+  if (!shopSubstate && charpos.y + velocity.y <= height - height / 8 && state === "game") {
     charpos.y += velocity.y;
   }
 
@@ -575,7 +601,7 @@ function updateTimer() {
     stroke(255, 255, 255);
     fill(0, 255, 180);
     text(timer, width / 15, height / 10);
-    if (frameCount % 60 === 0) {
+    if (!shopSubstate && frameCount % 60 === 0) {
       timer++;
     }
   }  
@@ -626,7 +652,7 @@ function showTowers() {
 //responsible for the creation of the bullets
 function createBullet() {
 
-  if (state === "game") {
+  if (!shopSubstate && state === "game") {
 
     //loop that cycles through every frame and, depending on the difficulty and timer, there is a possibility of generating a bullet according to the class code above, which is then pushed into an array defined at the beginning
     let randomvalue = random(0, difficulty - 20 * timer);
@@ -645,7 +671,9 @@ function moveBullet() {
 
     //moves each bullet in the array bullets, defined at the beginning, according to the class code above
     for (let i = 0; i < bullets.length; i++) {
-      bullets[i].move();
+      if (!shopSubstate) {
+        bullets[i].move();
+      }
 
       //display the bullets that are on screen
       if (bullets[i].x > 0) {
@@ -667,6 +695,30 @@ function moveBullet() {
 
     }
   }
+}
+
+function inGameShopDisplay() {
+  if (shopSubstate && state === "game") {
+
+    fill(154, 191, 167);
+    rect(width * 0.13, height * 0.08, width * 0.7, height * 0.8);
+
+    for (let y = 0; y < 6; y++) {
+      for (let x = 0; x < 5; x++) {
+        inGameShop[x][y].run();
+      }
+    }
+
+    textSize(36);
+    fill(111, 242, 24);
+    stroke(15, 66, 32);
+    text("shop", width * 0.7, height * 0.125);
+
+  } 
+}
+
+function itemDetails() {
+  void 0;
 }
 
 //responsible for resetting and cleaning up the game after it is done
@@ -730,7 +782,7 @@ function mousePressed() {
     }
   }
 
-  if (state === "game") {
+  if (!shopSubstate && state === "game") {
     destinationpos.x = mouseX;
     destinationpos.y = mouseY;
     if (volumeControl) {
@@ -889,6 +941,14 @@ function keyTyped() {
       shopSubstate = !shopSubstate;
       if (!shopSubstate) {
         currentItem = 0;
+        if (volumeControl) {
+          sound.closestore.setVolume(0.1);
+          sound.closestore.play();
+        }
+      }
+      else if (shopSubstate && volumeControl) {
+        sound.openstore.setVolume(0.1);
+        sound.openstore.play();
       }
 
     }
@@ -938,6 +998,6 @@ function windowResized() {
 
   resizeCanvas(windowWidth, windowHeight);
   createButtons();
-  createShop();
+  loadItems();
 
 }
