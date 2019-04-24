@@ -14,6 +14,7 @@
 // basic stats now work properly, abilities still to come
 // introduced level system, level up and stat growth works as intended, although no xp mechanic is yet implemented
 // introduced mana, health, and xp bar, see HUD at bottom left corner
+// Stat icon PNG are capitalized causing the 404 problem?
 //
 // NOTE: Although there exist parts of code that remain for the purpose of game functionality (mostly talking about the towers and bullets, to maintain the game runnable), they will be wored on ASAP
 // ALSO NOTE: I was not able to get the separate file thing worked out to the effect that I wanted to so I'll tall to you after break to get help. Please let me know how I can fix the walls of text for item effects.
@@ -343,12 +344,14 @@ class Item extends GameObject {
 
 //function called when all the loading is done, initializing buttons
 function createButtons() {
+
   openShopButton = new Button(width / 8, height * (13/24), width * 0.75, height / 8, "Loadout", 36, 0, 
     openShop, [209, 19, 221], [103, 19, 109], "assets/cursors/shop.cur");
   shopToMenuButton = new Button(width * 0.15, height * 0.85, width * 0.7, height * 0.1, "Done", 36, 0, 
     shopToMenu, [209, 19, 221], [103, 19, 109], "assets/cursors/shop.cur");
   gameoverToMenuButton = new Button(width * 0.15, height * 0.85, width * 0.7, height * 0.1, "Return To Menu", 36, 0, 
     gmToMenu, [0, 255, 255], [0, 77, 255], "assets/cursors/gotomenu.cur");
+
 }
 
 //button function that opens the shop
