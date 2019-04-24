@@ -2,19 +2,18 @@
 // Kyle Luo
 // March 25, 2019
 //
-// Extra for Experts:
-// - Used Array to store objects in a class
-// - Callback Functions
-// - Push/Pop rotation with text in loadout menu
-// - Classes and constructors
-// ...other things that I have learned from the internet to better develop my game
-
+// update notes: (to history.md pending)
+// 2d arrays to create shop
+// health and mana system / calculations
+// introduced stats
+// deleted velocity ratio introduced speed
 
 //define variables to be used
 let loadCount;
 let openShopButton;
 let shopToMenuButton;
 let gameoverToMenuButton;
+let purchaseButton;
 let files;
 let state;
 let currentItem;
@@ -28,7 +27,6 @@ let timer;
 let abilities;
 let soundOn;
 let soundOff;
-let velocityRatio;
 let bg;
 let icon;
 let menumusic;
@@ -36,10 +34,20 @@ let difficulty;
 let globalMouseToggle;
 let globalMouse;
 let stats;
+let price;
+let effect1 = "";
+let effect2 = "";
+let effect3 = "";
+let effect4 = "";
+let effect5 = "";
+let effect6 = "";
+let additionaltexts = "";
+let additionaltexts2 = "";
 let images = [];
 let sound = [];
 let bullets = [];
 let items = [];
+let inventory = [];
 
 //preload assets
 function preload() {
@@ -81,6 +89,7 @@ function draw() {
   showTowers();
   createBullet();
   moveBullet();
+  characterStatus();
   inGameShopDisplay();
   itemDetails();
   gameOverYet();
@@ -92,7 +101,7 @@ function setAssets() {
 
   bg = loadImage("assets/pictures/gamebackground.jpg");
   volumeControl = true;
-  files = 19;
+  files = 22;
 
 }
 
@@ -113,6 +122,8 @@ function loadFiles() {
     gameover : loadSound("assets/sounds/gameover.wav", itemLoaded),
     click : loadSound("assets/sounds/click.mp3", itemLoaded),
     clickItem : loadSound("assets/sounds/clickItem.wav", itemLoaded),
+    buyItem : loadSound("assets/sounds/buyItem.wav", itemLoaded),
+    levelUp : loadSound("assets/sounds/levelUp.mp3", itemLoaded),
   };
 
   images = {
@@ -123,6 +134,7 @@ function loadFiles() {
     heal : loadImage("assets/pictures/heal.png", itemLoaded),
     ignite : loadImage("assets/pictures/ignite.png", itemLoaded),
     exhaust : loadImage("assets/pictures/exhaust.png", itemLoaded),
+    gold : loadImage("assets/pictures/gold.png", itemLoaded),
   };
 
 }
@@ -131,40 +143,40 @@ function loadItems() {
 
   items = {
 
-    infinityEdge : new Item(width * 0.15, height * 0.10, width * 0.05, width * 0.05, loadImage("assets/pictures/items/infinityEdge.png"), "assets/cursors/startgame.cur", [25, 104, 232], [93, 152, 247], 1),
-    essenceReaver : new Item(width * 0.225, height * 0.10, width * 0.05, width * 0.05, loadImage("assets/pictures/items/essenceReaver.png"), "assets/cursors/startgame.cur", [25, 104, 232], [93, 152, 247], 2),
-    stormRazor : new Item(width * 0.3, height * 0.10, width * 0.05, width * 0.05, loadImage("assets/pictures/items/stormRazor.png"), "assets/cursors/startgame.cur", [25, 104, 232], [93, 152, 247], 3),
-    starfireSpellblade : new Item(width * 0.375, height * 0.10, width * 0.05, width * 0.05, loadImage("assets/pictures/items/starfireSpellblade.jpg"),"assets/cursors/startgame.cur", [25, 104, 232], [93, 152, 247], 4),
-    lastWhisper : new Item(width * 0.45, height * 0.10, width * 0.05, width * 0.05, loadImage("assets/pictures/items/lastWhisper.png"),"assets/cursors/startgame.cur", [25, 104, 232], [93, 152, 247], 5),
-    frostMourne : new Item(width * 0.525, height * 0.10, width * 0.05, width * 0.05, loadImage("assets/pictures/items/frostMourne.png"), "assets/cursors/startgame.cur", [25, 104, 232], [93, 152, 247], 6),
+    infinityEdge : new Item("Infinity Edge", width * 0.15, height * 0.10, width * 0.05, width * 0.05, loadImage("assets/pictures/items/infinityEdge.png"), "assets/cursors/startgame.cur", [25, 104, 232], [93, 152, 247], 1),
+    essenceReaver : new Item("Essence Reaver", width * 0.225, height * 0.10, width * 0.05, width * 0.05, loadImage("assets/pictures/items/essenceReaver.png"), "assets/cursors/startgame.cur", [25, 104, 232], [93, 152, 247], 2),
+    stormRazor : new Item("Storm Raozr", width * 0.3, height * 0.10, width * 0.05, width * 0.05, loadImage("assets/pictures/items/stormRazor.png"), "assets/cursors/startgame.cur", [25, 104, 232], [93, 152, 247], 3),
+    starfireSpellblade : new Item("Starfire Spellbalde", width * 0.375, height * 0.10, width * 0.05, width * 0.05, loadImage("assets/pictures/items/starfireSpellblade.jpg"),"assets/cursors/startgame.cur", [25, 104, 232], [93, 152, 247], 4),
+    lastWhisper : new Item("Last Whisper", width * 0.45, height * 0.10, width * 0.05, width * 0.05, loadImage("assets/pictures/items/lastWhisper.png"),"assets/cursors/startgame.cur", [25, 104, 232], [93, 152, 247], 5),
+    frostMourne : new Item("Frost Mourne", width * 0.525, height * 0.10, width * 0.05, width * 0.05, loadImage("assets/pictures/items/frostMourne.png"), "assets/cursors/startgame.cur", [25, 104, 232], [93, 152, 247], 6),
 
-    rapidFirecannon : new Item(width * 0.15, height * 0.25, width * 0.05, width * 0.05, loadImage("assets/pictures/items/rapidFirecannon.png"), "assets/cursors/startgame.cur", [221, 239, 57], [93, 152, 247], 7),
-    thoridal : new Item(width * 0.225, height * 0.25, width * 0.05, width * 0.05, loadImage("assets/pictures/items/thoridal.jpg"), "assets/cursors/startgame.cur", [221, 239, 57], [93, 152, 247], 8),
-    staticShiv : new Item(width * 0.3, height * 0.25, width * 0.05, width * 0.05, loadImage("assets/pictures/items/staticShiv.png"), "assets/cursors/startgame.cur", [221, 239, 57], [93, 152, 247], 9),
-    runnansHurricane : new Item(width * 0.375, height * 0.25, width * 0.05, width * 0.05, loadImage("assets/pictures/items/runnansHurricane.png"),"assets/cursors/startgame.cur", [221, 239, 57], [93, 152, 247], 10),
-    phantomDancer : new Item(width * 0.45, height * 0.25, width * 0.05, width * 0.05, loadImage("assets/pictures/items/phantomDancer.png"), "assets/cursors/startgame.cur", [221, 239, 57], [93, 152, 247], 11),
-    nashorsTooth : new Item(width * 0.525, height * 0.25, width * 0.05, width * 0.05, loadImage("assets/pictures/items/nashorsTooth.png"),"assets/cursors/startgame.cur", [221, 239, 57], [93, 152, 247], 12),
+    rapidFirecannon : new Item("Rapid Firecannon", width * 0.15, height * 0.25, width * 0.05, width * 0.05, loadImage("assets/pictures/items/rapidFirecannon.png"), "assets/cursors/startgame.cur", [221, 239, 57], [93, 152, 247], 7),
+    thoridal : new Item("Thori'dal, Star's Fury", width * 0.225, height * 0.25, width * 0.05, width * 0.05, loadImage("assets/pictures/items/thoridal.jpg"), "assets/cursors/startgame.cur", [221, 239, 57], [93, 152, 247], 8),
+    staticShiv : new Item("Statikk Shiv", width * 0.3, height * 0.25, width * 0.05, width * 0.05, loadImage("assets/pictures/items/staticShiv.png"), "assets/cursors/startgame.cur", [221, 239, 57], [93, 152, 247], 9),
+    runnansHurricane : new Item("Runnan's Hurricane", width * 0.375, height * 0.25, width * 0.05, width * 0.05, loadImage("assets/pictures/items/runnansHurricane.png"),"assets/cursors/startgame.cur", [221, 239, 57], [93, 152, 247], 10),
+    phantomDancer : new Item("Phantom Dancer", width * 0.45, height * 0.25, width * 0.05, width * 0.05, loadImage("assets/pictures/items/phantomDancer.png"), "assets/cursors/startgame.cur", [221, 239, 57], [93, 152, 247], 11),
+    nashorsTooth : new Item("Nashor's Tooth", width * 0.525, height * 0.25, width * 0.05, width * 0.05, loadImage("assets/pictures/items/nashorsTooth.png"),"assets/cursors/startgame.cur", [221, 239, 57], [93, 152, 247], 12),
 
-    ludensEcho : new Item(width * 0.15, height * 0.4, width * 0.05, width * 0.05, loadImage("assets/pictures/items/ludensEcho.png"), "assets/cursors/startgame.cur", [177, 30, 191], [93, 152, 247], 13),
-    rabadonsDeathcap : new Item(width * 0.225, height * 0.4, width * 0.05, width * 0.05, loadImage("assets/pictures/items/rabadonsDeathcap.png"), "assets/cursors/startgame.cur", [177, 30, 191], [93, 152, 247], 14),
-    voidStaff : new Item(width * 0.3, height * 0.4, width * 0.05, width * 0.05, loadImage("assets/pictures/items/voidStaff.png"), "assets/cursors/startgame.cur", [177, 30, 191], [93, 152, 247], 15),
-    lichBane : new Item(width * 0.375, height * 0.4, width * 0.05, width * 0.05, loadImage("assets/pictures/items/lichBane.png"), "assets/cursors/startgame.cur", [177, 30, 191], [93, 152, 247], 16),
-    liandrysTorment : new Item(width * 0.45, height * 0.4, width * 0.05, width * 0.05, loadImage("assets/pictures/items/liandrysTorment.png"),"assets/cursors/startgame.cur", [177, 30, 191], [93, 152, 247], 17),
-    hextechGunblade : new Item(width * 0.525, height * 0.4, width * 0.05, width * 0.05, loadImage("assets/pictures/items/hextechGunblade.png"),"assets/cursors/startgame.cur", [177, 30, 191], [93, 152, 247], 18),
+    ludensEcho : new Item("Luden's Echo", width * 0.15, height * 0.4, width * 0.05, width * 0.05, loadImage("assets/pictures/items/ludensEcho.png"), "assets/cursors/startgame.cur", [177, 30, 191], [93, 152, 247], 13),
+    rabadonsDeathcap : new Item("Rabadon's Deathcap", width * 0.225, height * 0.4, width * 0.05, width * 0.05, loadImage("assets/pictures/items/rabadonsDeathcap.png"), "assets/cursors/startgame.cur", [177, 30, 191], [93, 152, 247], 14),
+    voidStaff : new Item("Void Staff", width * 0.3, height * 0.4, width * 0.05, width * 0.05, loadImage("assets/pictures/items/voidStaff.png"), "assets/cursors/startgame.cur", [177, 30, 191], [93, 152, 247], 15),
+    lichBane : new Item("Lich Bane", width * 0.375, height * 0.4, width * 0.05, width * 0.05, loadImage("assets/pictures/items/lichBane.png"), "assets/cursors/startgame.cur", [177, 30, 191], [93, 152, 247], 16),
+    liandrysTorment : new Item("Liandry's Torment", width * 0.45, height * 0.4, width * 0.05, width * 0.05, loadImage("assets/pictures/items/liandrysTorment.png"),"assets/cursors/startgame.cur", [177, 30, 191], [93, 152, 247], 17),
+    hextechGunblade : new Item("Hextech Gunblade", width * 0.525, height * 0.4, width * 0.05, width * 0.05, loadImage("assets/pictures/items/hextechGunblade.png"),"assets/cursors/startgame.cur", [177, 30, 191], [93, 152, 247], 18),
 
-    deadmansPlate : new Item(width * 0.15, height * 0.55, width * 0.05, width * 0.05, loadImage("assets/pictures/items/deadmansPlate.png"), "assets/cursors/startgame.cur", [214, 80, 23], [93, 152, 247], 19),
-    randuinsOmen : new Item(width * 0.225, height * 0.55, width * 0.05, width * 0.05, loadImage("assets/pictures/items/randuinsOmen.png"),"assets/cursors/startgame.cur", [214, 80, 23], [93, 152, 247], 20),
-    thornMail : new Item(width * 0.3, height * 0.55, width * 0.05, width * 0.05, loadImage("assets/pictures/items/thornMail.png"), "assets/cursors/startgame.cur", [214, 80, 23], [93, 152, 247], 2),
-    sunfireCape : new Item(width * 0.375, height * 0.55, width * 0.05, width * 0.05, loadImage("assets/pictures/items/sunfireCape.png"),"assets/cursors/startgame.cur", [214, 80, 23], [93, 152, 247], 22),
-    zhonyasHourglass : new Item(width * 0.45, height * 0.55, width * 0.05, width * 0.05, loadImage("assets/pictures/items/zhonyasHourglass.png"),"assets/cursors/startgame.cur", [214, 80, 23], [93, 152, 247], 23),
-    thunderFury : new Item(width * 0.525, height * 0.55, width * 0.05, width * 0.05, loadImage("assets/pictures/items/thunderFury.png"),"assets/cursors/startgame.cur", [214, 80, 23], [93, 152, 247], 24),
+    deadmansPlate : new Item("Dead Man's Plate", width * 0.15, height * 0.55, width * 0.05, width * 0.05, loadImage("assets/pictures/items/deadmansPlate.png"), "assets/cursors/startgame.cur", [214, 80, 23], [93, 152, 247], 19),
+    randuinsOmen : new Item("Randuin's Omen", width * 0.225, height * 0.55, width * 0.05, width * 0.05, loadImage("assets/pictures/items/randuinsOmen.png"),"assets/cursors/startgame.cur", [214, 80, 23], [93, 152, 247], 20),
+    thornMail : new Item("Thornmail", width * 0.3, height * 0.55, width * 0.05, width * 0.05, loadImage("assets/pictures/items/thornMail.png"), "assets/cursors/startgame.cur", [214, 80, 23], [93, 152, 247], 21),
+    sunfireCape : new Item("Sunfire Cape", width * 0.375, height * 0.55, width * 0.05, width * 0.05, loadImage("assets/pictures/items/sunfireCape.png"),"assets/cursors/startgame.cur", [214, 80, 23], [93, 152, 247], 22),
+    zhonyasHourglass : new Item("Zhonya's Hourglass", width * 0.45, height * 0.55, width * 0.05, width * 0.05, loadImage("assets/pictures/items/zhonyasHourglass.png"),"assets/cursors/startgame.cur", [214, 80, 23], [93, 152, 247], 23),
+    thunderFury : new Item("Thunderfury", width * 0.525, height * 0.55, width * 0.05, width * 0.05, loadImage("assets/pictures/items/thunderFury.png"),"assets/cursors/startgame.cur", [214, 80, 23], [93, 152, 247], 24),
 
-    abyssalMask : new Item(width * 0.15, height * 0.7, width * 0.05, width * 0.05, loadImage("assets/pictures/items/abyssalMask.png"),"assets/cursors/startgame.cur", [94, 44, 135], [93, 152, 247], 25),
-    spiritVisage : new Item(width * 0.225, height * 0.7, width * 0.05, width * 0.05, loadImage("assets/pictures/items/spiritVisage.png"), "assets/cursors/startgame.cur", [94, 44, 135], [93, 152, 247], 26),
-    adaptiveHelm : new Item(width * 0.3, height * 0.7, width * 0.05, width * 0.05, loadImage("assets/pictures/items/adaptiveHelm.png"),"assets/cursors/startgame.cur", [94, 44, 135], [93, 152, 247], 27),
-    bansheesVeil : new Item(width * 0.375, height * 0.7, width * 0.05, width * 0.05, loadImage("assets/pictures/items/bansheesVeil.png"), "assets/cursors/startgame.cur", [94, 44, 135], [93, 152, 247], 28),
-    hexDrinker : new Item(width * 0.45, height * 0.7, width * 0.05, width * 0.05, loadImage("assets/pictures/items/hexDrinker.png"), "assets/cursors/startgame.cur", [94, 44, 135], [93, 152, 247], 29),
-    trinityForce : new Item(width * 0.525, height * 0.7, width * 0.05, width * 0.05, loadImage("assets/pictures/items/trinityForce.png"), "assets/cursors/startgame.cur", [94, 44, 135], [93, 152, 247], 30),
+    abyssalMask : new Item("Abyssal Mask", width * 0.15, height * 0.7, width * 0.05, width * 0.05, loadImage("assets/pictures/items/abyssalMask.png"),"assets/cursors/startgame.cur", [94, 44, 135], [93, 152, 247], 25),
+    spiritVisage : new Item("Spirit Visage", width * 0.225, height * 0.7, width * 0.05, width * 0.05, loadImage("assets/pictures/items/spiritVisage.png"), "assets/cursors/startgame.cur", [94, 44, 135], [93, 152, 247], 26),
+    adaptiveHelm : new Item("Adaptive Helm", width * 0.3, height * 0.7, width * 0.05, width * 0.05, loadImage("assets/pictures/items/adaptiveHelm.png"),"assets/cursors/startgame.cur", [94, 44, 135], [93, 152, 247], 27),
+    bansheesVeil : new Item("Banshee's Veil", width * 0.375, height * 0.7, width * 0.05, width * 0.05, loadImage("assets/pictures/items/bansheesVeil.png"), "assets/cursors/startgame.cur", [94, 44, 135], [93, 152, 247], 28),
+    hexDrinker : new Item("Hex Drinker", width * 0.45, height * 0.7, width * 0.05, width * 0.05, loadImage("assets/pictures/items/hexDrinker.png"), "assets/cursors/startgame.cur", [94, 44, 135], [93, 152, 247], 29),
+    trinityForce : new Item("Trinity Force", width * 0.525, height * 0.7, width * 0.05, width * 0.05, loadImage("assets/pictures/items/trinityForce.png"), "assets/cursors/startgame.cur", [94, 44, 135], [93, 152, 247], 30),
 
   };
 
@@ -216,10 +228,11 @@ class Bullet {
 }
 
 class Button extends GameObject {
-  constructor(x, y, width, height, buttonText, textColor, clickedOn, color, hoverColor, hoverCursor) {
+  constructor(x, y, width, height, buttonText, textSize, textColor, clickedOn, color, hoverColor, hoverCursor) {
     super(x, y, width, height);
     this.buttonText = buttonText;
     this.textColor = textColor;
+    this.textSize = textSize;
     this.clickedOn = clickedOn;
     this.color = color;
     this.hoverColor = hoverColor;
@@ -241,6 +254,8 @@ class Button extends GameObject {
 
     fill(this.textColor);
     stroke(this.hoverColor);
+    strokeWeight(1);
+    textSize(this.textSize);
     text(this.buttonText, this.x + this.width / 2, this.y + this.height / 2);
 
     if(this.mouse && mouseIsPressed && !globalMouse) {
@@ -252,8 +267,9 @@ class Button extends GameObject {
 }
 
 class Item extends GameObject {
-  constructor(x, y, width, height, picture, hoverCursor, borderColor, hoverBorderColor, itemID) {
+  constructor(name, x, y, width, height, picture, hoverCursor, borderColor, hoverBorderColor, itemID) {
     super(x, y, width, height);
+    this.name = name;
     this.icon = picture;
     this.hoverCursor = hoverCursor;
     this.borderColor = borderColor;
@@ -268,7 +284,8 @@ class Item extends GameObject {
     strokeWeight(7.5);
 
     if(this.itemID === currentItem) {
-      stroke(64, 76, 55);
+      // stroke(64, 76, 55);
+      stroke(0, 255, 255);
     }
     else if (this.mouse) {
       stroke(this.hoverBorderColor);
@@ -294,11 +311,11 @@ class Item extends GameObject {
 }
 
 function createButtons() {
-  openShopButton = new Button(width / 8, height * (13/24), width * 0.75, height / 8, "Loadout", 0, 
+  openShopButton = new Button(width / 8, height * (13/24), width * 0.75, height / 8, "Loadout", 36, 0, 
     openShop, [209, 19, 221], [103, 19, 109], "assets/cursors/shop.cur");
-  shopToMenuButton = new Button(width * 0.15, height * 0.85, width * 0.7, height * 0.1, "Done", 0, 
+  shopToMenuButton = new Button(width * 0.15, height * 0.85, width * 0.7, height * 0.1, "Done", 36, 0, 
     shopToMenu, [209, 19, 221], [103, 19, 109], "assets/cursors/shop.cur");
-  gameoverToMenuButton = new Button(width * 0.15, height * 0.85, width * 0.7, height * 0.1, "Return To Menu", 0, 
+  gameoverToMenuButton = new Button(width * 0.15, height * 0.85, width * 0.7, height * 0.1, "Return To Menu", 36, 0, 
     gmToMenu, [0, 255, 255], [0, 77, 255], "assets/cursors/gotomenu.cur");
 }
 
@@ -327,6 +344,7 @@ function shopToMenu() {
 
 function gmToMenu() {
   state = "menu";
+  resetGame();
   if (volumeControl) {
     sound.startgame.play();
   }
@@ -339,14 +357,26 @@ function loadData() {
   shopSubstate = false;
   currentItem = 0;
   loadCount = 0;
-  velocityRatio = 60;
   stats = {
     health : 500,
+    maxhp : 500,
     mana : 200,
+    maxmana : 200,
     ad : 50,
     ap : 0,
+    crit : 0,
+    cdr : 0,
     armor : 25,
-    mr : 15, 
+    mr : 15,
+    armorpen : 0,
+    magicpen : 0,
+    hpregen : 2,
+    manaregen : 5,
+    speed : 100,
+    xp : 0,
+    lvlupxp : 100,
+    lvl : 1,
+    gold : 100000,
   };
   charpos = {
     x : width / 2,
@@ -437,6 +467,7 @@ function showMenus() {
     if (loadCount === files) {
       
       openShopButton.run();
+      textSize(55);
       text("Start", width / 2, height * (27/32));
 
     }
@@ -573,8 +604,8 @@ function characterPosition() {
 function determineVelocity() {
 
   if (charpos.x !== destinationpos.x && state === "game") {
-    velocity.x = (destinationpos.x - charpos.x) / velocityRatio;
-    velocity.y = (destinationpos.y - charpos.y) / velocityRatio;
+    velocity.x = (destinationpos.x - charpos.x) / stats.speed;
+    velocity.y = (destinationpos.y - charpos.y) / stats.speed;
   }
 
 }
@@ -686,15 +717,195 @@ function moveBullet() {
       bullets[i].x >= charpos.x && bullets[i].x <= charpos.x + width / 16 && bullets[i].y + 0.5 * bullets[i].diameter >= charpos.y && bullets[i].y + 0.5 * bullets[i].diameter <= charpos.y + height / 8 ||
       bullets[i].x >= charpos.x && bullets[i].x <= charpos.x + width / 16 && bullets[i].y - 0.5 * bullets[i].diameter >= charpos.y && bullets[i].y - 0.5 * bullets[i].diameter <= charpos.y + height / 8) &&
        ! abilities.invincibilitys) {
-        state = "gameover";
+        stats.health -= 50;
+        bullets.splice(i, 1);
         if (volumeControl){
-          sound.gameover.setVolume(0.1);
-          sound.gameover.play();
+          sound.clickItem.setVolume(0.1);
+          sound.clickItem.play();
         }
       }
 
     }
   }
+}
+
+function characterStatus() {
+
+  if (state === "game") { 
+
+    //natural regen
+    if (!shopSubstate && frameCount % 60 === 0) {
+      stats.mana += stats.manaregen;
+      stats.health += stats.hpregen;
+    }
+
+    //failsafe
+    if (stats.mana <= 0) {
+      stats.mana = 0;
+    }
+    else if (stats.mana >= stats.maxmana) {
+      stats.mana = stats.maxmana;
+    }
+
+    if (stats.health >= stats.maxhp) {
+      stats.health = stats.maxhp;
+    }
+
+    //hp and mana bars
+    stroke(0);
+    strokeWeight(2.5);
+
+    //hp
+    if (stats.health / stats.maxhp >= 0.6) {
+      fill(13, 91, 2);
+    }
+    else if (stats.health / stats.maxhp >= 0.3) {
+      fill(73, 63, 2);
+    }
+    else {
+      fill(112, 16, 16);
+    }
+    beginShape();
+    vertex(0, height * 0.95);
+    vertex(width * 0.27, height * 0.95);
+    vertex(width * 0.3, height);
+    vertex(0, height);
+    endShape();
+
+    if (stats.health / stats.maxhp >= 0.6) {
+      fill(3, 186, 28);
+    }
+    else if (stats.health / stats.maxhp >= 0.3) {
+      fill(219, 186, 2);
+    }
+    else {
+      fill(219, 49, 2);
+    }
+    noStroke();
+    beginShape();
+    vertex(0, height * 0.95);
+    vertex(width * 0.27 * (stats.health / stats.maxhp), height * 0.95);
+    vertex(width * 0.27 * (stats.health / stats.maxhp) + width * 0.03, height);
+    vertex(0, height);
+    endShape();
+
+    strokeWeight(1);
+    stroke(255);
+    fill(0);
+    text(floor(stats.health), width * 0.11, height * 0.975);
+    text("/", width * 0.15, height * 0.975);
+    text(stats.maxhp, width * 0.2, height * 0.975);
+
+    //mana
+    stroke(0);
+    strokeWeight(2.5);
+    fill(5, 26, 104);
+    beginShape();
+    vertex(0, height * 0.93);
+    vertex(width * 0.18, height * 0.93);
+    vertex(width * 0.2, height * 0.95);
+    vertex(0, height * 0.95);
+    endShape();
+
+    fill(2, 36, 209);
+    noStroke();
+    beginShape();
+    vertex(0, height * 0.93);
+    vertex(width * 0.18 * (stats.mana / stats.maxmana), height * 0.93);
+    if (stats.mana !== 0) {
+      vertex(width * 0.18 * (stats.mana / stats.maxmana) + width * 0.02, height * 0.95);
+    }
+    else {
+      vertex(0, height * 0.95);
+    }
+    vertex(0, height * 0.95);
+    endShape();
+
+    strokeWeight(1);
+    stroke(255);
+    fill(0);
+    textSize(18);
+    text(floor(stats.mana), width * 0.05, height * 0.94);
+    text("/", width * 0.1, height * 0.94);
+    text(stats.maxmana, width * 0.13, height * 0.94);
+
+    //exp bar
+    stroke(0);
+    strokeWeight(2.5);
+    noFill();
+    beginShape();
+    vertex(0, height * 0.915);
+    vertex(width * 0.13, height * 0.915);
+    vertex(width * 0.15, height * 0.93);
+    vertex(0, height * 0.93);
+    endShape();
+    
+    fill(0, 255, 140);
+    noStroke();
+    beginShape();
+    vertex(0, height * 0.915);
+    vertex(width * 0.13 * (stats.xp / stats.lvlupxp), height * 0.915);
+    if (stats.xp !== 0) {
+      vertex(width * 0.13 * (stats.xp / stats.lvlupxp) + width * 0.02, height * 0.93);
+    }
+    else {
+      vertex(0, height * 0.93);
+    }
+    vertex(0, height * 0.93);
+    endShape();
+
+    //gold
+    fill(255, 255, 0);
+    image(images.gold, width * 0.05, height * 0.88, height * 0.03, height * 0.03);
+    text(stats.gold, width * 0.085, height * 0.895);
+
+    //level
+    fill(255);
+    textSize(26);
+    text("Lvl. " + stats.lvl, width * 0.0225, height * 0.8975);
+
+    if (stats.xp >= stats.lvlupxp) {
+      stats.xp -= stats.lvlupxp;
+      stats.lvlupxp += 50;
+      stats.lvl += 1;
+      stats.maxhp += 50;
+      stats.health += 50;
+      stats.mana += 20;
+      stats.maxmana += 20;
+      stats.armor += 2;
+      stats.speed += 2;
+      stats.ad += 5;
+      stats.hpregen += 1;
+      stats.manaregen += 0.5;
+      if (volumeControl){
+        sound.levelUp.setVolume(0.3);
+        sound.levelUp.play();
+      }
+    }
+
+    //item display
+    for (let itemcount = 0; itemcount < inventory.length; itemcount++) {
+      image(inventory[itemcount].icon, width * 0.32 + itemcount * width * 0.04, height * 0.95, height * 0.05, height * 0.05);
+      if (mouseX >= width * 0.32 + itemcount * width * 0.04 && mouseX <= width * 0.32 + itemcount * width * 0.04 + height * 0.05 && mouseY >= height * 0.95 && mouseY <= height) {
+        fill(0);
+        noStroke();
+        rect(mouseX, mouseY - height * 0.16, width * 0.11, height * 0.16, 25);
+        fill(255);
+        textSize(22);
+        currentItem = inventory[itemcount].itemID;
+        text(inventory[itemcount].name, mouseX + width * 0.05, mouseY - height * 0.14);
+        textSize(13);
+        text(effect1, mouseX + width * 0.055, mouseY - height * 0.12);
+        text(effect2, mouseX + width * 0.055, mouseY - height * 0.10);
+        text(effect3, mouseX + width * 0.055, mouseY - height * 0.08);
+        text(effect4, mouseX + width * 0.055, mouseY - height * 0.06);
+        text(effect5, mouseX + width * 0.055, mouseY - height * 0.04);
+        text(effect6, mouseX + width * 0.055, mouseY - height * 0.02);
+      }
+    }
+
+  }
+
 }
 
 function inGameShopDisplay() {
@@ -709,20 +920,306 @@ function inGameShopDisplay() {
       }
     }
 
-    textSize(36);
+    textSize(64);
     fill(111, 242, 24);
     stroke(15, 66, 32);
-    text("shop", width * 0.7, height * 0.125);
+    text("shop", width * 0.7, height * 0.13);
 
   } 
 }
 
 function itemDetails() {
-  void 0;
+
+  effect1 = "";
+  effect2 = "";
+  effect3 = "";
+  effect4 = "";
+  effect5 = "";
+  effect6 = "";
+  additionaltexts = "";
+  additionaltexts2 = "";
+  if (currentItem === 1) {
+    effect1 = "Damage + 120";
+    additionaltexts = "The deadliest weapon...";
+    price = 4000;
+  }
+  if (currentItem === 2) {
+    effect1 = "Damage + 60";
+    effect2 = "Mana Regeneration + 5 / Second";
+    additionaltexts = "Legend has it that this blade was the";
+    additionaltexts2 = "harvestor of essence";
+    price = 3500;
+  }
+  if (currentItem === 3) {
+    effect1 = "Damage + 40";
+    effect2 = "Critical Chance + 30% (Max 100%)";
+    effect3 = "Critical Strike Damage + 20%";
+    additionaltexts = "MASSIVELY enhance critical strikes";
+    price = 3500;
+  }
+  if (currentItem === 4) {
+
+    effect1 = "Damage + 80";
+    effect2 = "Ability Power + 80";
+    additionaltexts = "The lost blade of the Archangel";
+    price = 3600;
+  }
+  if (currentItem === 5) {
+    effect1 = "Damage + 40";
+    effect2 = "Armor Penetration + 40%";
+    additionaltexts = "Lethal, through any armor";
+    price = 2800;
+  }
+
+  if (currentItem === 6) {
+    effect1 = "Damage + 80";
+    effect2 = "Heals for 10% of Damage Dealt";
+    additionaltexts = "A mythical blade that drain souls";
+    price = 3600;
+  }
+  if (currentItem === 7) {
+    effect1 = "Ability Cooldown - 30% (Max 70%)";
+    effect2 = "Critical Strike Chance + 30% (Max 100%)";
+    additionaltexts = "Loaded and ready";
+    price = 2500;
+  }
+  if (currentItem === 8) {
+    effect1 = "Dealing Damage Generates Gold";
+    effect2 = "Ability Cooldowns - 10% (Max 70%)";
+    effect3 = "Mana + 200";
+    additionaltexts = "The wrath of gods";
+    price = 2750;
+  }
+  if (currentItem === 9) {
+    effect1 = "Ability Cooldown - 20% (Max 70%)";
+    effect2 = "Critical Strike Chance + 20% (Max 100%)";
+    effect3 = "Abilities can Shock Enemies";
+    additionaltexts = "Forged with lightning and thunder";
+    price = 2500;
+  }
+  if (currentItem === 10) {
+    effect1 = "Damage + 40";
+    effect2 = "Ability Cooldowns - 10% (Max 70%)";
+    effect3 = "Critical Strike Chance + 10% (Max 100%)";
+    additionaltexts = "An utter devastation";
+    price = 2800;
+  }
+  if (currentItem === 11) {
+    effect1 = "Speed + 20 (Max 80)";
+    effect2 = "Ability Cooldowns - 20% (Max 70%)";
+    effect3 = "Critical Strike Chance + 20% (Max 100%)";
+    additionaltexts = "The unseen blade is the deadliest";
+    price = 2800;
+  }
+
+  if (currentItem === 12) {
+    effect1 = "Ability Power + 80";
+    effect2 = "Ability Cooldowns - 20% (Max 70%)";
+    additionaltexts = "The tooth of an ancient beast";
+    price = 3000;
+  }
+  if (currentItem === 13) {
+    effect1 = "Ability Power + 100";
+    effect2 = "Mana + 400";
+    additionaltexts = "The staff of the archmage";
+    price = 3200;
+  }
+  if (currentItem === 14) {
+    effect1 = "Ability Power + 200";
+    effect2 = "Ability Power Increased by 20%";
+    additionaltexts = "Descend into madness...";
+    price = 4000;
+  }
+  if (currentItem === 15) {
+    effect1 = "Ability Power + 80";
+    effect2 = "Magic Penetration + 40%";
+    additionaltexts = "Dispel and destroy";
+    price = 3000;
+  }
+  if (currentItem === 16) {
+    effect1 = "You Have 50 Points of Attack Damage";
+    effect2 = "Ability Power + 250";
+    effect3 = "Speed + 10";
+    effect4 = "Your Abilities Have a Chance to Heal You";
+    effect5 = "Loses 5 Health / Second";
+    additionaltexts = "The curse was never lifted...";
+    price = 3800;
+  }
+  if (currentItem === 17) {
+    effect1 = "Ability Power + 60";
+    effect2 = "Magic Penetration + 15%";
+    effect3 = "Health + 250";
+    effect4 = "Spell Burn the Target Equal to 1%";
+    effect5 = "of it's Maximum Health";
+    additionaltexts = "It's truely an honor, isn't it?";
+    additionaltexts2 = "to be remembered? Pity you";
+    price = 2800;
+  }
+
+  if (currentItem === 18) {
+    effect1 = "Damage + 40";
+    effect2 = "Ability Power + 80";
+    effect3 = "Heals for 5% of All Damage Dealt";
+    effect4 = "Mana + 150";
+    additionaltexts = "The only way to stop war is war";
+    price = 3600;
+  }
+  if (currentItem === 19) {
+    effect1 = "Armor + 40";
+    effect2 = "Health + 400";
+    effect3 = "You Gain Increased Speed Based on Missing Health";
+    effect4 = "up to a Maximum of 20";
+    additionaltexts = "There is one way you are getting this armor from me...";
+    price = 3500;
+  }
+  if (currentItem === 20) {
+    effect1 = "Armor + 30";
+    effect2 = "Health + 450";
+    effect3 = "-30% From Critical Strikes";
+    additionaltexts = "I have no weaknesses";
+    price = 3500;
+  }
+  if (currentItem === 21) {
+    effect1 = "Health + 250";
+    effect2 = "Armor + 80";
+    effect3 = "Reflect 5% of Physical Damage Taken";
+    additionaltexts = "How did he even put it on in the first place?";
+    price = 3500;
+  }
+  if (currentItem === 22) {
+    effect1 = "Health + 500";
+    effect2 = "Health Renegeration + 8 / Second";
+    additionaltexts = "It embodies all possible meanings of";
+    additionaltexts2 = "the word 'indestructible'";
+    price = 4000;
+  }
+  if (currentItem === 23) {
+    effect1 = "Ability Power + 50";
+    effect2 = "Armor + 40";
+    effect3 = "Upon Taking Lethal Damage, Prevent Death";
+    effect4 = "and Return to 500 or 20% Maximum Health";
+    effect5 = "(Whichever is Greater, Works Once)";
+    additionaltexts = "Even time bends to my will";
+    price = 3500;
+  }
+
+  if (currentItem === 24) {
+    effect1 = "Damage + 60";
+    effect2 = "Armor + 30";
+    effect3 = "Magic Peneration + 20%";
+    additionaltexts = "Sharp and energetic";
+    price = 3300;
+  }
+  if (currentItem === 25) {
+    effect1 = "Health + 350";
+    effect2 = "Magic Resist + 45";
+    effect3 = "Mana + 250";
+    effect4 = "Mana Regeneration + 4 / Second";
+    additionaltexts = "Who am I? None of your business";
+    price = 4000;
+  }
+  if (currentItem === 26) {
+    effect1 = "Health + 450";
+    effect2 = "Mana + 250";
+    effect3 = "Mana Regeneration + 2 / Second";
+    effect4 = "Health Regeneration + 4 / Second";
+    effect5 = "Magic Resist + 55";
+    effect6 = "Improve Healing of all Sources by 20";
+    additionaltexts = "Blessed by the kings of the court";
+    additionaltexts2 = "and maintained by the purest magic";
+    price = 3800;
+  }
+  if (currentItem === 27) {
+    effect1 = "Health + 250";
+    effect2 = "Mana + 200";
+    effect3 = "Mana Regeneration + 5 / Second";
+    effect4 = "Gain Armor and Magic Resist Over Time,";
+    effect5 = "up to a Maximum of 30 for Each";
+    additionaltexts = "Flexible yet strong";
+    price = 3500;
+  }
+  if (currentItem === 28) {
+    effect1 = "Magic Penetration + 10%";
+    effect2 = "Ability Power + 65";
+    effect3 = "Magic Resist + 35";
+    effect4 = "10% Chance to Prevent Spells";
+    additionaltexts = "It was destined to doom once the";
+    additionaltexts2 = "secret was unveiled...";
+    price = 3600;
+  }
+  if (currentItem === 29) {
+    effect1 = "Damage + 60";
+    effect2 = "Magic Resist + 40";
+    effect3 = "Prevent 15% of Magic Damage Taken";
+    additionaltexts = "It feasts upon magic";
+    price = 3300;
+  }
+
+  if (currentItem === 30) {
+    effect1 = "Health + 300   Mana + 200";
+    effect2 = "Speed + 20   Magic Resist + 30";
+    effect3 = "Armor + 30   Armor Peneration + 20%";
+    effect4 = "Magic Penetration + 20%";
+    effect5 = "Ability Cooldowns - 20%";
+    effect6 = "Critical Strike Chance + 20%";
+    additionaltexts = "A true display of skill";
+    price = 5000;
+  }
+
+  if (currentItem !== 0 && shopSubstate) {
+    purchaseButton = new Button(width * 0.6, height * 0.8, width * 0.2, height * 0.05, "Purchase (" + price + ")", 28, 0, 
+      purchaseItem, [11, 232, 176], [45, 142, 118], "assets/cursors/shop.cur");
+    image(inGameShop[ceil(currentItem / 6) - 1][(currentItem - 1) % 6].icon, width * 0.67, height * 0.28, width * 0.06, width * 0.06);
+    purchaseButton.run();
+    noStroke();
+    fill(0);
+    textSize(36);
+    textStyle(BOLD);
+    text(inGameShop[ceil(currentItem / 6) - 1][(currentItem - 1) % 6].name, width * 0.7, height * 0.24);
+  }
+
+  if (shopSubstate) {
+    textSize(20);
+    textStyle(NORMAL);
+    text(effect1, width * 0.7, height * 0.45);
+    text(effect2, width * 0.7, height * 0.48);
+    text(effect3, width * 0.7, height * 0.51);
+    text(effect4, width * 0.7, height * 0.54);
+    text(effect5, width * 0.7, height * 0.57);
+    text(effect6, width * 0.7, height * 0.6);
+    textStyle(ITALIC);
+    text(additionaltexts, width * 0.7, height * 0.65);
+    text(additionaltexts2, width * 0.7, height * 0.68);
+  }
+
+
+}
+
+function purchaseItem() {
+  if (stats.gold >= price && inventory.length < 6) {
+    stats.gold -= price;
+    inventory.push(inGameShop[ceil(currentItem / 6) - 1][(currentItem - 1) % 6]);
+    if (volumeControl) {
+      sound.buyItem.setVolume(0.1);
+      sound.buyItem.play();
+    }
+  }
+  else if (volumeControl) {
+    sound.gameover.setVolume(0.1);
+    sound.gameover.play();
+  }
 }
 
 //responsible for resetting and cleaning up the game after it is done
 function gameOverYet() {
+
+  if (state === "game" && stats.health <= 0) {
+    state = "gameover";
+    if (volumeControl) {
+      sound.gameover.setVolume(0.1);
+      sound.gameover.play();
+    }
+  }
 
   if (state === "gameover") {
     sound.bg.stop();
@@ -737,7 +1234,27 @@ function gameOverYet() {
 function resetGame() {
 
   shopSubstate = false;
-  velocityRatio = 60;
+  stats = {
+    health : 500,
+    maxhp : 500,
+    mana : 200,
+    maxmana : 200,
+    ad : 50,
+    ap : 0,
+    crit : 0,
+    cdr : 0,
+    armor : 25,
+    mr : 15,
+    armorpen : 0,
+    magicpen : 0,
+    hpregen : 1,
+    manaregen : 2,
+    speed : 100,
+    xp : 0,
+    lvlupxp : 100,
+    lvl : 1,
+    gold : 100000,
+  };
   charpos = {
     x : width / 2,
     y : height / 2,
@@ -764,7 +1281,6 @@ function resetGame() {
   }
   timer = 0;
   difficulty = 2500;
-  menumusic.stop();
   bullets = [];
 
 }
@@ -775,7 +1291,7 @@ function mousePressed() {
   if (state === "menu" && mouseX >= width / 10 && mouseX <= width * 0.9 &&
     mouseY >= height * 0.75 && mouseY <= height / 4 * 3 + height / 6 && loadCount === files) {
     state = "game";
-    resetGame();
+    menumusic.stop();
     if (volumeControl) {
       sound.startgame.setVolume(0.1);
       sound.startgame.play();

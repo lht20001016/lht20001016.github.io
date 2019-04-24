@@ -1,16 +1,10 @@
 
-let k;
-let aimage;
-
-function preload() {
-  aimage = loadImage("assets/gear.png");
-}
+let k = [];
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
 }
 
 function draw() {
-  k = [[aimage, aimage], [aimage, aimage]];
-  image(k[1][0], 60, 60, 260, 260);
+  k = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 }
