@@ -17,6 +17,7 @@ let purchaseButton;
 let files;
 let state;
 let currentItem;
+let tstatus;
 let inGameShop;
 let shopSubstate;
 let volumeControl;
@@ -35,6 +36,7 @@ let globalMouseToggle;
 let globalMouse;
 let stats;
 let price;
+let translatecount;
 let effect1 = "";
 let effect2 = "";
 let effect3 = "";
@@ -101,7 +103,7 @@ function setAssets() {
 
   bg = loadImage("assets/pictures/gamebackground.jpg");
   volumeControl = true;
-  files = 22;
+  files = 33;
 
 }
 
@@ -135,6 +137,17 @@ function loadFiles() {
     ignite : loadImage("assets/pictures/ignite.png", itemLoaded),
     exhaust : loadImage("assets/pictures/exhaust.png", itemLoaded),
     gold : loadImage("assets/pictures/gold.png", itemLoaded),
+    ad : loadImage("assets/pictures/ad.png", itemLoaded),
+    ap : loadImage("assets/pictures/ap.png", itemLoaded),
+    armor : loadImage("assets/pictures/armor.png", itemLoaded),
+    mr : loadImage("assets/pictures/mr.png", itemLoaded),
+    speed : loadImage("assets/pictures/speed.png", itemLoaded),
+    crit : loadImage("assets/pictures/crit.png", itemLoaded),
+    hpregen : loadImage("assets/pictures/hpregen.png", itemLoaded),
+    manaregen : loadImage("assets/pictures/manaregen.png", itemLoaded),
+    armorpen : loadImage("assets/pictures/armorpen.png", itemLoaded),
+    magicpen : loadImage("assets/pictures/magicpen.png", itemLoaded),
+    cdr : loadImage("assets/pictures/cdr.png", itemLoaded),
   };
 
 }
@@ -356,6 +369,8 @@ function loadData() {
   state = "menu";
   shopSubstate = false;
   currentItem = 0;
+  translatecount = 0;
+  tstatus = false;
   loadCount = 0;
   stats = {
     health : 500,
@@ -372,7 +387,7 @@ function loadData() {
     magicpen : 0,
     hpregen : 2,
     manaregen : 5,
-    speed : 100,
+    speed : 0,
     xp : 0,
     lvlupxp : 100,
     lvl : 1,
@@ -603,9 +618,17 @@ function characterPosition() {
 //responsible for determining the relative velocity of the character's movement relative to its destination
 function determineVelocity() {
 
+  let speedstat;
+  if (150 - stats.speed > 50) {
+    speedstat = stats.speed;
+  }
+  else {
+    speedstat = 100;
+  }
+
   if (charpos.x !== destinationpos.x && state === "game") {
-    velocity.x = (destinationpos.x - charpos.x) / stats.speed;
-    velocity.y = (destinationpos.y - charpos.y) / stats.speed;
+    velocity.x = (destinationpos.x - charpos.x) / (150 - speedstat);
+    velocity.y = (destinationpos.y - charpos.y) / (150 - speedstat);
   }
 
 }
@@ -858,6 +881,9 @@ function characterStatus() {
     fill(255, 255, 0);
     image(images.gold, width * 0.05, height * 0.88, height * 0.03, height * 0.03);
     text(stats.gold, width * 0.085, height * 0.895);
+    if (!shopSubstate && frameCount % 60 === 0) {
+      stats.gold += 5;
+    }
 
     //level
     fill(255);
@@ -873,7 +899,7 @@ function characterStatus() {
       stats.mana += 20;
       stats.maxmana += 20;
       stats.armor += 2;
-      stats.speed += 2;
+      stats.speed += 5;
       stats.ad += 5;
       stats.hpregen += 1;
       stats.manaregen += 0.5;
@@ -883,18 +909,21 @@ function characterStatus() {
       }
     }
 
-    //item display
+    //item display, separate for loops for text priority
     for (let itemcount = 0; itemcount < inventory.length; itemcount++) {
       image(inventory[itemcount].icon, width * 0.32 + itemcount * width * 0.04, height * 0.95, height * 0.05, height * 0.05);
+    }
+
+    for (let itemcount = 0; itemcount < inventory.length; itemcount++) {
       if (mouseX >= width * 0.32 + itemcount * width * 0.04 && mouseX <= width * 0.32 + itemcount * width * 0.04 + height * 0.05 && mouseY >= height * 0.95 && mouseY <= height) {
-        fill(0);
+        fill(0, 0, 0, 75);
         noStroke();
-        rect(mouseX, mouseY - height * 0.16, width * 0.11, height * 0.16, 25);
+        rect(mouseX - width * 0.02, mouseY - height * 0.17, width * 0.15, height * 0.17, 25);
         fill(255);
-        textSize(22);
+        textSize(18);
         currentItem = inventory[itemcount].itemID;
         text(inventory[itemcount].name, mouseX + width * 0.05, mouseY - height * 0.14);
-        textSize(13);
+        textSize(12);
         text(effect1, mouseX + width * 0.055, mouseY - height * 0.12);
         text(effect2, mouseX + width * 0.055, mouseY - height * 0.10);
         text(effect3, mouseX + width * 0.055, mouseY - height * 0.08);
@@ -903,6 +932,54 @@ function characterStatus() {
         text(effect6, mouseX + width * 0.055, mouseY - height * 0.02);
       }
     }
+
+    //stats menu display (AD, AP, SPEED, MR, ARMOR, ARMORPEN, MAGICPEN, HPREGEN, MANAREGEN, CRIT, CDR)
+
+    push();
+    translate(0 + translatecount, 0);
+    if (mouseX >= 0 && mouseX <= 15 && mouseY >= height * 0.15 && mouseY <= height * 0.6) {
+      tstatus = true;
+    }
+    if (mouseX >= width * 0.4) {
+      tstatus = false;
+    }
+    if (tstatus && translatecount < width * 0.1) {
+      translatecount += 20;
+    }
+    else if (! tstatus && translatecount > 0) {
+      translatecount -= 20;
+    }
+
+    fill(0, 0, 0, 75);
+    noStroke();
+    rect(width * - 0.1, height* 0.15, width * 0.1, height * 0.45, 50);
+    fill(255);
+    textSize(28);
+    image(images.ad, width * -0.085, height * 0.16, height * 0.03, height * 0.03);
+    text(stats.ad, width * -0.04, height * 0.175);
+    image(images.ap, width * -0.085, height * 0.20, height * 0.03, height * 0.03);
+    text(stats.ap, width * -0.04, height * 0.215);
+    image(images.speed, width * -0.085, height * 0.24, height * 0.03, height * 0.03);
+    text(stats.speed, width * -0.04, height * 0.255);
+    image(images.armor, width * -0.085, height * 0.28, height * 0.03, height * 0.03);
+    text(stats.armor, width * -0.04, height * 0.295);
+    image(images.mr, width * -0.085, height * 0.32, height * 0.03, height * 0.03);
+    text(stats.mr, width * -0.04, height * 0.335);
+    image(images.magicpen, width * -0.085, height * 0.36, height * 0.03, height * 0.03);
+    text(stats.magicpen, width * -0.04, height * 0.375);
+    image(images.armorpen, width * -0.085, height * 0.4, height * 0.03, height * 0.03);
+    text(stats.armorpen, width * -0.04, height * 0.415);
+    image(images.hpregen, width * -0.085, height * 0.44, height * 0.03, height * 0.03);
+    text(stats.hpregen, width * -0.04, height * 0.455);
+    image(images.manaregen, width * -0.085, height * 0.48, height * 0.03, height * 0.03);
+    text(stats.manaregen, width * -0.04, height * 0.495);
+    image(images.crit, width * -0.085, height * 0.52, height * 0.03, height * 0.03);
+    text(stats.crit, width * -0.04, height * 0.535);
+    image(images.cdr, width * -0.085, height * 0.56, height * 0.03, height * 0.03);
+    text(stats.cdr, width * -0.04, height * 0.575);
+
+    pop();
+
 
   }
 
@@ -939,13 +1016,17 @@ function itemDetails() {
   additionaltexts = "";
   additionaltexts2 = "";
   if (currentItem === 1) {
-    effect1 = "Damage + 120";
-    additionaltexts = "The deadliest weapon...";
+    effect1 = "Damage + 100";
+    effect2 = "Critical Strike Chance + 30%";
+    effect3 = "Critical Strike Damage + 20%";
+    additionaltexts = "MASSIVELY enhance critical strikes";
     price = 4000;
   }
   if (currentItem === 2) {
-    effect1 = "Damage + 60";
+    effect1 = "Damage + 70";
     effect2 = "Mana Regeneration + 5 / Second";
+    effect3 = "Mana + 200";
+    effect4 = "Abilities Cooldown - 20% (Max 70%)";
     additionaltexts = "Legend has it that this blade was the";
     additionaltexts2 = "harvestor of essence";
     price = 3500;
@@ -953,14 +1034,17 @@ function itemDetails() {
   if (currentItem === 3) {
     effect1 = "Damage + 40";
     effect2 = "Critical Chance + 30% (Max 100%)";
-    effect3 = "Critical Strike Damage + 20%";
-    additionaltexts = "MASSIVELY enhance critical strikes";
+    effect3 = "Speed + 20";
+    effect4 = "Abilities Cooldown - 20% (Max 70%)";
+    additionaltexts = "From the depth of the tempest";
     price = 3500;
   }
   if (currentItem === 4) {
 
-    effect1 = "Damage + 80";
+    effect1 = "Damage + 50";
     effect2 = "Ability Power + 80";
+    effect3 = "Mana + 400";
+    effect4 = "Deals Increased Damaged to Low Health Targets";
     additionaltexts = "The lost blade of the Archangel";
     price = 3600;
   }
@@ -972,14 +1056,18 @@ function itemDetails() {
   }
 
   if (currentItem === 6) {
-    effect1 = "Damage + 80";
+    effect1 = "Damage + 30";
     effect2 = "Heals for 10% of Damage Dealt";
+    effect3 = "Ability Cooldown - 10% (Max 70%)";
+    effect4 = "Attacks Deal Additional Damage Equals";
+    effect5 = "to 2% of the Target's Current Health";
     additionaltexts = "A mythical blade that drain souls";
     price = 3600;
   }
   if (currentItem === 7) {
-    effect1 = "Ability Cooldown - 30% (Max 70%)";
+    effect1 = "Ability Cooldown - 20% (Max 70%)";
     effect2 = "Critical Strike Chance + 30% (Max 100%)";
+    effect3 = "Speed + 25";
     additionaltexts = "Loaded and ready";
     price = 2500;
   }
@@ -987,13 +1075,15 @@ function itemDetails() {
     effect1 = "Dealing Damage Generates Gold";
     effect2 = "Ability Cooldowns - 10% (Max 70%)";
     effect3 = "Mana + 200";
+    effect4 = "Critical Strike Chance + 10% (Max 100%)";
     additionaltexts = "The wrath of gods";
     price = 2750;
   }
   if (currentItem === 9) {
     effect1 = "Ability Cooldown - 20% (Max 70%)";
     effect2 = "Critical Strike Chance + 20% (Max 100%)";
-    effect3 = "Abilities can Shock Enemies";
+    effect3 = "Speed + 10";
+    effect4 = "Abilities can Shock Enemies";
     additionaltexts = "Forged with lightning and thunder";
     price = 2500;
   }
@@ -1001,6 +1091,7 @@ function itemDetails() {
     effect1 = "Damage + 40";
     effect2 = "Ability Cooldowns - 10% (Max 70%)";
     effect3 = "Critical Strike Chance + 10% (Max 100%)";
+    effect4 = "Attacks Have a Small Chance to deal Double Damage";
     additionaltexts = "An utter devastation";
     price = 2800;
   }
@@ -1008,6 +1099,7 @@ function itemDetails() {
     effect1 = "Speed + 20 (Max 80)";
     effect2 = "Ability Cooldowns - 20% (Max 70%)";
     effect3 = "Critical Strike Chance + 20% (Max 100%)";
+    effect4 = "(IN PROGRESS) Go Invisible";
     additionaltexts = "The unseen blade is the deadliest";
     price = 2800;
   }
@@ -1015,17 +1107,19 @@ function itemDetails() {
   if (currentItem === 12) {
     effect1 = "Ability Power + 80";
     effect2 = "Ability Cooldowns - 20% (Max 70%)";
+    effect3 = "Critical Strike Chance + 20%";
     additionaltexts = "The tooth of an ancient beast";
     price = 3000;
   }
   if (currentItem === 13) {
     effect1 = "Ability Power + 100";
     effect2 = "Mana + 400";
-    additionaltexts = "The staff of the archmage";
+    effect3 = "Ability Cooldowns - 20% (Max 70%)";
+    additionaltexts = "The staff of an ancient archmage";
     price = 3200;
   }
   if (currentItem === 14) {
-    effect1 = "Ability Power + 200";
+    effect1 = "Ability Power + 150";
     effect2 = "Ability Power Increased by 20%";
     additionaltexts = "Descend into madness...";
     price = 4000;
@@ -1038,7 +1132,7 @@ function itemDetails() {
   }
   if (currentItem === 16) {
     effect1 = "You Have 50 Points of Attack Damage";
-    effect2 = "Ability Power + 250";
+    effect2 = "Ability Power + 200";
     effect3 = "Speed + 10";
     effect4 = "Your Abilities Have a Chance to Heal You";
     effect5 = "Loses 5 Health / Second";
@@ -1068,7 +1162,7 @@ function itemDetails() {
     effect1 = "Armor + 40";
     effect2 = "Health + 400";
     effect3 = "You Gain Increased Speed Based on Missing Health";
-    effect4 = "up to a Maximum of 20";
+    effect4 = "up to a Maximum of 30";
     additionaltexts = "There is one way you are getting this armor from me...";
     price = 3500;
   }
@@ -1102,7 +1196,6 @@ function itemDetails() {
     additionaltexts = "Even time bends to my will";
     price = 3500;
   }
-
   if (currentItem === 24) {
     effect1 = "Damage + 60";
     effect2 = "Armor + 30";
@@ -1196,18 +1289,209 @@ function itemDetails() {
 }
 
 function purchaseItem() {
+
   if (stats.gold >= price && inventory.length < 6) {
+
     stats.gold -= price;
     inventory.push(inGameShop[ceil(currentItem / 6) - 1][(currentItem - 1) % 6]);
     if (volumeControl) {
       sound.buyItem.setVolume(0.1);
       sound.buyItem.play();
     }
+
+    if (currentItem === 1) {
+      stats.ad += 100;
+      stats.crit += 30;
+      //special ability +20 crit damage
+    }
+    if (currentItem === 2) {
+      stats.ad += 70;
+      stats.manaregen += 5;
+      stats.maxmana += 200;
+      stats.mana += 200;
+      stats.cdr += 20;
+    }
+    if (currentItem === 3) {
+      stats.ad += 40;
+      stats.crit += 30;
+      stats.speed += 20;
+      stats.cdr += 20;
+    }
+    if (currentItem === 4) {
+      stats.ad += 50;
+      stats.ap += 80;
+      stats.maxmana += 400;
+      stats.mana += 400;
+      //special ability does increased dmg to low hp targets
+    }
+    if (currentItem === 5) {
+      stats.armorpen += 40;
+      stats.ad += 40;
+    }
+    if (currentItem === 6){
+      stats.ad += 30;
+      stats.cdr += 10;
+      //special ability heals for 10% AND does 2% current HP
+    }
+    if (currentItem === 7) {
+      stats.cdr += 20;
+      stats.speed += 25;
+      stats.crit += 30;
+    }
+    if (currentItem === 8) {
+      stats.cdr += 10;
+      stats.maxmana += 200;
+      stats.mana += 200;
+      stats.crit += 10;
+      //special ability dealing damage geneartes gold
+    }
+    if (currentItem === 9) {
+      stats.cdr += 20;
+      stats.crit += 20;
+      stats.speed += 10;
+      //special ability shock kenemies
+    }
+    if (currentItem === 10) {
+      stats.ad += 40;
+      stats.cdr += 10;
+      stats.crit += 10;
+      //special ability chance to double dmg
+    }
+    if (currentItem === 11) {
+      stats.speed += 20;
+      stats.cdr += 20;
+      stats.crit += 20;
+      //go invisible
+    }
+    if (currentItem === 12) {
+      stats.ap += 80;
+      stats.cdr += 20;
+      stats.crit += 20;
+    }
+    if (currentItem === 13) {
+      stats.ap += 100;
+      stats.maxmana += 400;
+      stats.mana += 400;
+      stats.cdr += 20;
+    }
+    if (currentItem === 14) {
+      stats.ap += 150;
+      //special ability +20% total ap
+    }
+    if (currentItem === 15){
+      stats.ap += 80;
+      stats.magicpen += 40;
+    }
+    if (currentItem === 16) {
+      stats.ap += 200;
+      stats.speed += 10;
+      //health regen is always -5, ad is always 50, special ability heal you
+    }
+    if (currentItem === 17) {
+      stats.ap += 60;
+      stats.magicpen += 15;
+      stats.maxhp += 250;
+      stats.health += 250;
+      //special ability burn 1% maximum health 
+    }
+    if (currentItem === 18) {
+      stats.ad += 40;
+      stats.ap += 80;
+      stats.maxmana += 150;
+      stats.mana + 150;
+      //special ability heal 5%
+    }
+    if (currentItem === 19) {
+      stats.armor += 40;
+      stats.maxhp += 400;
+      stats.health += 400;
+      //gain increased speed (up to 30%) based on missing hp
+    }
+    if (currentItem === 20) {
+      stats.armor += 30;
+      stats.maxhp += 450;
+      stats.health += 450;
+      //special ability -30% from crits
+    }
+    if (currentItem === 21) {
+      stats.maxhp += 250;
+      stats.health += 250;
+      stats.armor += 80;
+      //special ability reflect 5% Physical damage
+    }
+    if (currentItem === 22) {
+      stats.maxhp += 500;
+      stats.health += 500;
+      stats.hpregen += 8;
+    }
+    if (currentItem === 23) {
+      stats.ap += 50;
+      stats.armor += 40;
+      //GA effect
+    }
+    if (currentItem === 24) {
+      stats.ad += 60;
+      stats.armor += 30;
+      stats.magicpen += 20;
+    }
+    if (currentItem === 25) {
+      stats.maxhp += 350;
+      stats.health += 350;
+      stats.mr += 45;
+      stats.maxmana += 250;
+      stats.mana += 250;
+      stats.manaregen += 4;
+    }
+    if (currentItem === 26) {
+      stats.maxhp += 450;
+      stats.health += 450;
+      stats.maxmana += 250;
+      stats.mana += 250;
+      stats.manaregen += 2;
+      stats.hpregen += 4;
+      stats.mr += 55;
+      //special ablity improve healing
+    }
+    if (currentItem === 27) {
+      stats.maxhp += 250;
+      stats.health += 250;
+      stats.maxmana += 200;
+      stats.mana += 200;
+      stats.manaregen += 5;
+      //gain armor and magic resist over time up to 30 of each
+    }
+    if (currentItem === 28) {
+      stats.magicpen += 10;
+      stats.ap += 65;
+      stats.mr += 35;
+      //10% to prevent spells
+    }
+    if (currentItem === 29) {
+      stats.ad += 60;
+      stats.mr += 40;
+      //special ability prevent 15% all magic damage
+    }
+    if (currentItem === 30) {
+      stats.maxhp += 300;
+      stats.health += 300;
+      stats.maxmana += 200;
+      stats.mana += 200;
+      stats.speed += 20;
+      stats.mr += 30;
+      stats.armor += 30;
+      stats.armorpen += 20;
+      stats.magicpen += 20;
+      stats.cdr += 20;
+      stats.crit += 20;
+    }
+
   }
+
   else if (volumeControl) {
     sound.gameover.setVolume(0.1);
     sound.gameover.play();
   }
+
 }
 
 //responsible for resetting and cleaning up the game after it is done
@@ -1234,6 +1518,8 @@ function gameOverYet() {
 function resetGame() {
 
   shopSubstate = false;
+  translatecount = 0;
+  tstatus = false;
   stats = {
     health : 500,
     maxhp : 500,
@@ -1249,7 +1535,7 @@ function resetGame() {
     magicpen : 0,
     hpregen : 1,
     manaregen : 2,
-    speed : 100,
+    speed : 0,
     xp : 0,
     lvlupxp : 100,
     lvl : 1,
