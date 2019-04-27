@@ -37,6 +37,7 @@ let state;
 let currentItem;
 let tstatus;
 let inGameShop;
+let statsToggle;
 let shopSubstate;
 let volumeControl;
 let charpos;
@@ -397,6 +398,7 @@ function loadData() {
   translatecount = 0;
   tstatus = false;
   loadCount = 0;
+  statsToggle = false;
   stats = {
     health : 500,
     maxhp : 500,
@@ -813,170 +815,208 @@ function characterStatus() {
       stats.health = stats.maxhp;
     }
 
-    //stats HUD
-    stroke(0);
-    strokeWeight(2.5);
+    healthbar();
 
-    //hp bar
-    if (stats.health / stats.maxhp >= 0.6) {
-      fill(13, 91, 2);
-    }
-    else if (stats.health / stats.maxhp >= 0.3) {
-      fill(73, 63, 2);
-    }
-    else {
-      fill(112, 16, 16);
-    }
-    beginShape();
+    manabar();
+
+    expbar();
+
+    lvlandgold();
+
+    itemDisplay();
+
+    statsMenu();
+
+  }
+
+}
+
+//hp bar
+function healthbar(){
+
+  stroke(0);
+  strokeWeight(2.5);
+  
+  if (stats.health / stats.maxhp >= 0.6) {
+    fill(13, 91, 2);
+  }
+  else if (stats.health / stats.maxhp >= 0.3) {
+    fill(73, 63, 2);
+  }
+  else {
+    fill(112, 16, 16);
+  }
+  beginShape();
+  vertex(0, height * 0.95);
+  vertex(width * 0.27, height * 0.95);
+  vertex(width * 0.3, height);
+  vertex(0, height);
+  endShape();
+
+  if (stats.health / stats.maxhp >= 0.6) {
+    fill(3, 186, 28);
+  }
+  else if (stats.health / stats.maxhp >= 0.3) {
+    fill(219, 186, 2);
+  }
+  else {
+    fill(219, 49, 2);
+  }
+  noStroke();
+  beginShape();
+  vertex(0, height * 0.95);
+  vertex(width * 0.27 * (stats.health / stats.maxhp), height * 0.95);
+  vertex(width * 0.27 * (stats.health / stats.maxhp) + width * 0.03, height);
+  vertex(0, height);
+  endShape();
+  strokeWeight(1);
+  stroke(255);
+  fill(0);
+  text(floor(stats.health), width * 0.11, height * 0.975);
+  text("/", width * 0.15, height * 0.975);
+  text(stats.maxhp, width * 0.2, height * 0.975);
+
+}
+
+//mana bar
+function manabar() {
+
+  stroke(0);
+  strokeWeight(2.5);
+  fill(5, 26, 104);
+  beginShape();
+  vertex(0, height * 0.93);
+  vertex(width * 0.18, height * 0.93);
+  vertex(width * 0.2, height * 0.95);
+  vertex(0, height * 0.95);
+  endShape();
+
+  fill(2, 36, 209);
+  noStroke();
+  beginShape();
+  vertex(0, height * 0.93);
+  vertex(width * 0.18 * (stats.mana / stats.maxmana), height * 0.93);
+  if (stats.mana !== 0) {
+    vertex(width * 0.18 * (stats.mana / stats.maxmana) + width * 0.02, height * 0.95);
+  }
+  else {
     vertex(0, height * 0.95);
-    vertex(width * 0.27, height * 0.95);
-    vertex(width * 0.3, height);
-    vertex(0, height);
-    endShape();
+  }
+  vertex(0, height * 0.95);
+  endShape();
 
-    if (stats.health / stats.maxhp >= 0.6) {
-      fill(3, 186, 28);
-    }
-    else if (stats.health / stats.maxhp >= 0.3) {
-      fill(219, 186, 2);
-    }
-    else {
-      fill(219, 49, 2);
-    }
-    noStroke();
-    beginShape();
-    vertex(0, height * 0.95);
-    vertex(width * 0.27 * (stats.health / stats.maxhp), height * 0.95);
-    vertex(width * 0.27 * (stats.health / stats.maxhp) + width * 0.03, height);
-    vertex(0, height);
-    endShape();
+  strokeWeight(1);
+  stroke(255);
+  fill(0);
+  textSize(18);
+  text(floor(stats.mana), width * 0.05, height * 0.94);
+  text("/", width * 0.1, height * 0.94);
+  text(stats.maxmana, width * 0.13, height * 0.94);
 
-    strokeWeight(1);
-    stroke(255);
-    fill(0);
-    text(floor(stats.health), width * 0.11, height * 0.975);
-    text("/", width * 0.15, height * 0.975);
-    text(stats.maxhp, width * 0.2, height * 0.975);
+}
 
-    //mana bar
-    stroke(0);
-    strokeWeight(2.5);
-    fill(5, 26, 104);
-    beginShape();
+//experience bar
+function expbar() {
+
+  stroke(0);
+  strokeWeight(2.5);
+  noFill();
+  beginShape();
+  vertex(0, height * 0.915);
+  vertex(width * 0.13, height * 0.915);
+  vertex(width * 0.15, height * 0.93);
+  vertex(0, height * 0.93);
+  endShape();
+  
+  fill(0, 255, 140);
+  noStroke();
+  beginShape();
+  vertex(0, height * 0.915);
+  vertex(width * 0.13 * (stats.xp / stats.lvlupxp), height * 0.915);
+  if (stats.xp !== 0) {
+    vertex(width * 0.13 * (stats.xp / stats.lvlupxp) + width * 0.02, height * 0.93);
+  }
+  else {
     vertex(0, height * 0.93);
-    vertex(width * 0.18, height * 0.93);
-    vertex(width * 0.2, height * 0.95);
-    vertex(0, height * 0.95);
-    endShape();
+  }
+  vertex(0, height * 0.93);
+  endShape();
 
-    fill(2, 36, 209);
-    noStroke();
-    beginShape();
-    vertex(0, height * 0.93);
-    vertex(width * 0.18 * (stats.mana / stats.maxmana), height * 0.93);
-    if (stats.mana !== 0) {
-      vertex(width * 0.18 * (stats.mana / stats.maxmana) + width * 0.02, height * 0.95);
+}
+
+//level and gold indicators and level up growth stats
+function lvlandgold() {
+
+  //gold
+  fill(255, 255, 0);
+  image(images.gold, width * 0.05, height * 0.88, height * 0.03, height * 0.03);
+  text(stats.gold, width * 0.085, height * 0.895);
+  if (!shopSubstate && frameCount % 60 === 0) {
+    stats.gold += 5;
+  }
+
+  //level up
+  fill(255);
+  textSize(26);
+  text("Lvl. " + stats.lvl, width * 0.0225, height * 0.8975);
+
+  if (stats.xp >= stats.lvlupxp) {
+    stats.xp -= stats.lvlupxp;
+    stats.lvlupxp += 50;
+    stats.lvl += 1;
+    stats.maxhp += 50;
+    stats.health += 50;
+    stats.mana += 20;
+    stats.maxmana += 20;
+    stats.armor += 2;
+    stats.speed += 5;
+    stats.ad += 5;
+    stats.hpregen += 1;
+    stats.manaregen += 0.5;
+    if (volumeControl){
+      sound.levelUp.setVolume(0.3);
+      sound.levelUp.play();
     }
-    else {
-      vertex(0, height * 0.95);
+  }
+
+}
+
+//display of items after purchase
+function itemDisplay() {
+  
+  //item display, separate loops are for text priority over icons
+  for (let itemcount = 0; itemcount < inventory.length; itemcount++) {
+    image(inventory[itemcount].icon, width * 0.32 + itemcount * width * 0.04, height * 0.95, height * 0.05, height * 0.05);
+  }
+  
+  for (let itemcount = 0; itemcount < inventory.length; itemcount++) {
+    if (mouseX >= width * 0.32 + itemcount * width * 0.04 && mouseX <= width * 0.32 + itemcount * width * 0.04 + height * 0.05 && mouseY >= height * 0.95 && mouseY <= height) {
+      fill(0, 0, 0, 75);
+      noStroke();
+      rect(mouseX - width * 0.02, mouseY - height * 0.17, width * 0.15, height * 0.17, 25);
+      fill(255);
+      textSize(18);
+      currentItem = inventory[itemcount].itemID;
+      text(inventory[itemcount].name, mouseX + width * 0.05, mouseY - height * 0.14);
+      textSize(12);
+      text(texts.effect1, mouseX + width * 0.055, mouseY - height * 0.12);
+      text(texts.effect2, mouseX + width * 0.055, mouseY - height * 0.10);
+      text(texts.effect3, mouseX + width * 0.055, mouseY - height * 0.08);
+      text(texts.effect4, mouseX + width * 0.055, mouseY - height * 0.06);
+      text(texts.effect5, mouseX + width * 0.055, mouseY - height * 0.04);
+      text(texts.effect6, mouseX + width * 0.055, mouseY - height * 0.02);
     }
-    vertex(0, height * 0.95);
-    endShape();
+  }
 
-    strokeWeight(1);
-    stroke(255);
-    fill(0);
-    textSize(18);
-    text(floor(stats.mana), width * 0.05, height * 0.94);
-    text("/", width * 0.1, height * 0.94);
-    text(stats.maxmana, width * 0.13, height * 0.94);
+}
 
-    //experience bar
-    stroke(0);
-    strokeWeight(2.5);
-    noFill();
-    beginShape();
-    vertex(0, height * 0.915);
-    vertex(width * 0.13, height * 0.915);
-    vertex(width * 0.15, height * 0.93);
-    vertex(0, height * 0.93);
-    endShape();
-    
-    fill(0, 255, 140);
-    noStroke();
-    beginShape();
-    vertex(0, height * 0.915);
-    vertex(width * 0.13 * (stats.xp / stats.lvlupxp), height * 0.915);
-    if (stats.xp !== 0) {
-      vertex(width * 0.13 * (stats.xp / stats.lvlupxp) + width * 0.02, height * 0.93);
-    }
-    else {
-      vertex(0, height * 0.93);
-    }
-    vertex(0, height * 0.93);
-    endShape();
+//stats menu display (AD, AP, SPEED, MR, ARMOR, ARMORPEN, MAGICPEN, HPREGEN, MANAREGEN, CRIT, CDR)
+function statsMenu() {
 
-    //gold
-    fill(255, 255, 0);
-    image(images.gold, width * 0.05, height * 0.88, height * 0.03, height * 0.03);
-    text(stats.gold, width * 0.085, height * 0.895);
-    if (!shopSubstate && frameCount % 60 === 0) {
-      stats.gold += 5;
-    }
+  push();
 
-    //level
-    fill(255);
-    textSize(26);
-    text("Lvl. " + stats.lvl, width * 0.0225, height * 0.8975);
-
-    if (stats.xp >= stats.lvlupxp) {
-      stats.xp -= stats.lvlupxp;
-      stats.lvlupxp += 50;
-      stats.lvl += 1;
-      stats.maxhp += 50;
-      stats.health += 50;
-      stats.mana += 20;
-      stats.maxmana += 20;
-      stats.armor += 2;
-      stats.speed += 5;
-      stats.ad += 5;
-      stats.hpregen += 1;
-      stats.manaregen += 0.5;
-      if (volumeControl){
-        sound.levelUp.setVolume(0.3);
-        sound.levelUp.play();
-      }
-    }
-
-    //item display, separate loops are for text priority over icons
-    for (let itemcount = 0; itemcount < inventory.length; itemcount++) {
-      image(inventory[itemcount].icon, width * 0.32 + itemcount * width * 0.04, height * 0.95, height * 0.05, height * 0.05);
-    }
-
-    for (let itemcount = 0; itemcount < inventory.length; itemcount++) {
-      if (mouseX >= width * 0.32 + itemcount * width * 0.04 && mouseX <= width * 0.32 + itemcount * width * 0.04 + height * 0.05 && mouseY >= height * 0.95 && mouseY <= height) {
-        fill(0, 0, 0, 75);
-        noStroke();
-        rect(mouseX - width * 0.02, mouseY - height * 0.17, width * 0.15, height * 0.17, 25);
-        fill(255);
-        textSize(18);
-        currentItem = inventory[itemcount].itemID;
-        text(inventory[itemcount].name, mouseX + width * 0.05, mouseY - height * 0.14);
-        textSize(12);
-        text(texts.effect1, mouseX + width * 0.055, mouseY - height * 0.12);
-        text(texts.effect2, mouseX + width * 0.055, mouseY - height * 0.10);
-        text(texts.effect3, mouseX + width * 0.055, mouseY - height * 0.08);
-        text(texts.effect4, mouseX + width * 0.055, mouseY - height * 0.06);
-        text(texts.effect5, mouseX + width * 0.055, mouseY - height * 0.04);
-        text(texts.effect6, mouseX + width * 0.055, mouseY - height * 0.02);
-      }
-    }
-
-    //stats menu display (AD, AP, SPEED, MR, ARMOR, ARMORPEN, MAGICPEN, HPREGEN, MANAREGEN, CRIT, CDR)
-
-    push();
-
-    //sliding animation when stat menu is requested
+  if (! statsToggle) {
+  //sliding animation when stat menu is requested
     translate(0 + translatecount, 0);
     if (mouseX >= 0 && mouseX <= 15 && mouseY >= height * 0.15 && mouseY <= height * 0.6) {
       tstatus = true;
@@ -990,40 +1030,42 @@ function characterStatus() {
     else if (! tstatus && translatecount > 0) {
       translatecount -= 20;
     }
-
-    //stat menu with the values and icons
-    fill(0, 0, 0, 75);
-    noStroke();
-    rect(width * - 0.1, height* 0.15, width * 0.1, height * 0.45, 50);
-    fill(255);
-    textSize(28);
-    image(images.ad, width * -0.085, height * 0.16, height * 0.03, height * 0.03);
-    text(stats.ad, width * -0.04, height * 0.175);
-    image(images.ap, width * -0.085, height * 0.20, height * 0.03, height * 0.03);
-    text(stats.ap, width * -0.04, height * 0.215);
-    image(images.speed, width * -0.085, height * 0.24, height * 0.03, height * 0.03);
-    text(stats.speed, width * -0.04, height * 0.255);
-    image(images.armor, width * -0.085, height * 0.28, height * 0.03, height * 0.03);
-    text(stats.armor, width * -0.04, height * 0.295);
-    image(images.mr, width * -0.085, height * 0.32, height * 0.03, height * 0.03);
-    text(stats.mr, width * -0.04, height * 0.335);
-    image(images.magicpen, width * -0.085, height * 0.36, height * 0.03, height * 0.03);
-    text(stats.magicpen, width * -0.04, height * 0.375);
-    image(images.armorpen, width * -0.085, height * 0.4, height * 0.03, height * 0.03);
-    text(stats.armorpen, width * -0.04, height * 0.415);
-    image(images.hpregen, width * -0.085, height * 0.44, height * 0.03, height * 0.03);
-    text(stats.hpregen, width * -0.04, height * 0.455);
-    image(images.manaregen, width * -0.085, height * 0.48, height * 0.03, height * 0.03);
-    text(stats.manaregen, width * -0.04, height * 0.495);
-    image(images.crit, width * -0.085, height * 0.52, height * 0.03, height * 0.03);
-    text(stats.crit, width * -0.04, height * 0.535);
-    image(images.cdr, width * -0.085, height * 0.56, height * 0.03, height * 0.03);
-    text(stats.cdr, width * -0.04, height * 0.575);
-
-    pop();
-
   }
 
+  else if (statsToggle) {
+    translate(width * 0.1, 0);
+  }
+  
+  //stat menu with the values and icons
+  fill(0, 0, 0, 75);
+  noStroke();
+  rect(width * - 0.1, height* 0.15, width * 0.1, height * 0.45, 50);
+  fill(255);
+  textSize(28);
+  image(images.ad, width * -0.085, height * 0.16, height * 0.03, height * 0.03);
+  text(stats.ad, width * -0.04, height * 0.175);
+  image(images.ap, width * -0.085, height * 0.20, height * 0.03, height * 0.03);
+  text(stats.ap, width * -0.04, height * 0.215);
+  image(images.speed, width * -0.085, height * 0.24, height * 0.03, height * 0.03);
+  text(stats.speed, width * -0.04, height * 0.255);
+  image(images.armor, width * -0.085, height * 0.28, height * 0.03, height * 0.03);
+  text(stats.armor, width * -0.04, height * 0.295);
+  image(images.mr, width * -0.085, height * 0.32, height * 0.03, height * 0.03);
+  text(stats.mr, width * -0.04, height * 0.335);
+  image(images.magicpen, width * -0.085, height * 0.36, height * 0.03, height * 0.03);
+  text(stats.magicpen, width * -0.04, height * 0.375);
+  image(images.armorpen, width * -0.085, height * 0.4, height * 0.03, height * 0.03);
+  text(stats.armorpen, width * -0.04, height * 0.415);
+  image(images.hpregen, width * -0.085, height * 0.44, height * 0.03, height * 0.03);
+  text(stats.hpregen, width * -0.04, height * 0.455);
+  image(images.manaregen, width * -0.085, height * 0.48, height * 0.03, height * 0.03);
+  text(stats.manaregen, width * -0.04, height * 0.495);
+  image(images.crit, width * -0.085, height * 0.52, height * 0.03, height * 0.03);
+  text(stats.crit, width * -0.04, height * 0.535);
+  image(images.cdr, width * -0.085, height * 0.56, height * 0.03, height * 0.03);
+  text(stats.cdr, width * -0.04, height * 0.575);
+  
+  pop();
 }
 
 //function that runs the items previously loaded
@@ -1060,7 +1102,41 @@ function itemDetails() {
   texts.additionaltexts = "";
   texts.additionaltexts2 = "";
 
-  //info of every item (name is already added during creation of items)
+  itemInfo();
+
+  //Display the item information when selected
+  if (currentItem !== 0 && shopSubstate) {
+    purchaseButton = new Button(width * 0.6, height * 0.8, width * 0.2, height * 0.05, "Purchase (" + price + ")", 28, 0, 
+      purchaseItem, [11, 232, 176], [45, 142, 118], "assets/cursors/shop.cur");
+    image(inGameShop[ceil(currentItem / 6) - 1][(currentItem - 1) % 6].icon, width * 0.67, height * 0.28, width * 0.06, width * 0.06);
+    purchaseButton.run();
+    noStroke();
+    fill(0);
+    textSize(36);
+    textStyle(BOLD);
+    text(inGameShop[ceil(currentItem / 6) - 1][(currentItem - 1) % 6].name, width * 0.7, height * 0.24);
+  }
+
+  if (shopSubstate) {
+    textSize(20);
+    textStyle(NORMAL);
+    text(texts.effect1, width * 0.7, height * 0.45);
+    text(texts.effect2, width * 0.7, height * 0.48);
+    text(texts.effect3, width * 0.7, height * 0.51);
+    text(texts.effect4, width * 0.7, height * 0.54);
+    text(texts.effect5, width * 0.7, height * 0.57);
+    text(texts.effect6, width * 0.7, height * 0.6);
+    textStyle(ITALIC);
+    text(texts.additionaltexts, width * 0.7, height * 0.65);
+    text(texts.additionaltexts2, width * 0.7, height * 0.68);
+  }
+
+
+}
+
+//info of every item (name is already added during creation of items)
+function itemInfo() {
+
   if (currentItem === 1) {
     texts.effect1 = "Damage + 100";
     texts.effect2 = "Critical Strike Chance + 30%";
@@ -1305,34 +1381,6 @@ function itemDetails() {
     price = 5000;
   }
 
-  //Display the item information when selected
-  if (currentItem !== 0 && shopSubstate) {
-    purchaseButton = new Button(width * 0.6, height * 0.8, width * 0.2, height * 0.05, "Purchase (" + price + ")", 28, 0, 
-      purchaseItem, [11, 232, 176], [45, 142, 118], "assets/cursors/shop.cur");
-    image(inGameShop[ceil(currentItem / 6) - 1][(currentItem - 1) % 6].icon, width * 0.67, height * 0.28, width * 0.06, width * 0.06);
-    purchaseButton.run();
-    noStroke();
-    fill(0);
-    textSize(36);
-    textStyle(BOLD);
-    text(inGameShop[ceil(currentItem / 6) - 1][(currentItem - 1) % 6].name, width * 0.7, height * 0.24);
-  }
-
-  if (shopSubstate) {
-    textSize(20);
-    textStyle(NORMAL);
-    text(texts.effect1, width * 0.7, height * 0.45);
-    text(texts.effect2, width * 0.7, height * 0.48);
-    text(texts.effect3, width * 0.7, height * 0.51);
-    text(texts.effect4, width * 0.7, height * 0.54);
-    text(texts.effect5, width * 0.7, height * 0.57);
-    text(texts.effect6, width * 0.7, height * 0.6);
-    textStyle(ITALIC);
-    text(texts.additionaltexts, width * 0.7, height * 0.65);
-    text(texts.additionaltexts2, width * 0.7, height * 0.68);
-  }
-
-
 }
 
 //Function of the Purchase button, adds stats to the character and the item to the inventory
@@ -1350,192 +1398,7 @@ function purchaseItem() {
       sound.buyItem.play();
     }
 
-    //stats added for each item
-    if (currentItem === 1) {
-      stats.ad += 100;
-      stats.crit += 30;
-      //special ability +20 crit damage
-    }
-    if (currentItem === 2) {
-      stats.ad += 70;
-      stats.manaregen += 5;
-      stats.maxmana += 200;
-      stats.mana += 200;
-      stats.cdr += 20;
-    }
-    if (currentItem === 3) {
-      stats.ad += 40;
-      stats.crit += 30;
-      stats.speed += 20;
-      stats.cdr += 20;
-    }
-    if (currentItem === 4) {
-      stats.ad += 50;
-      stats.ap += 80;
-      stats.maxmana += 400;
-      stats.mana += 400;
-      //special ability does increased dmg to low hp targets
-    }
-    if (currentItem === 5) {
-      stats.armorpen += 40;
-      stats.ad += 40;
-    }
-    if (currentItem === 6){
-      stats.ad += 30;
-      stats.cdr += 10;
-      //special ability heals for 10% AND does 2% current HP
-    }
-    if (currentItem === 7) {
-      stats.cdr += 20;
-      stats.speed += 25;
-      stats.crit += 30;
-    }
-    if (currentItem === 8) {
-      stats.cdr += 10;
-      stats.maxmana += 200;
-      stats.mana += 200;
-      stats.crit += 10;
-      //special ability dealing damage geneartes gold
-    }
-    if (currentItem === 9) {
-      stats.cdr += 20;
-      stats.crit += 20;
-      stats.speed += 10;
-      //special ability shock kenemies
-    }
-    if (currentItem === 10) {
-      stats.ad += 40;
-      stats.cdr += 10;
-      stats.crit += 10;
-      //special ability chance to double dmg
-    }
-    if (currentItem === 11) {
-      stats.speed += 20;
-      stats.cdr += 20;
-      stats.crit += 20;
-      //go invisible
-    }
-    if (currentItem === 12) {
-      stats.ap += 80;
-      stats.cdr += 20;
-      stats.crit += 20;
-    }
-    if (currentItem === 13) {
-      stats.ap += 100;
-      stats.maxmana += 400;
-      stats.mana += 400;
-      stats.cdr += 20;
-    }
-    if (currentItem === 14) {
-      stats.ap += 150;
-      //special ability +20% total ap
-    }
-    if (currentItem === 15){
-      stats.ap += 80;
-      stats.magicpen += 40;
-    }
-    if (currentItem === 16) {
-      stats.ap += 200;
-      stats.speed += 10;
-      //health regen is always -5, ad is always 50, special ability heal you
-    }
-    if (currentItem === 17) {
-      stats.ap += 60;
-      stats.magicpen += 15;
-      stats.maxhp += 250;
-      stats.health += 250;
-      //special ability burn 1% maximum health 
-    }
-    if (currentItem === 18) {
-      stats.ad += 40;
-      stats.ap += 80;
-      stats.maxmana += 150;
-      stats.mana + 150;
-      //special ability heal 5%
-    }
-    if (currentItem === 19) {
-      stats.armor += 40;
-      stats.maxhp += 400;
-      stats.health += 400;
-      //gain increased speed (up to 30%) based on missing hp
-    }
-    if (currentItem === 20) {
-      stats.armor += 30;
-      stats.maxhp += 450;
-      stats.health += 450;
-      //special ability -30% from crits
-    }
-    if (currentItem === 21) {
-      stats.maxhp += 250;
-      stats.health += 250;
-      stats.armor += 80;
-      //special ability reflect 5% Physical damage
-    }
-    if (currentItem === 22) {
-      stats.maxhp += 500;
-      stats.health += 500;
-      stats.hpregen += 8;
-    }
-    if (currentItem === 23) {
-      stats.ap += 50;
-      stats.armor += 40;
-      //GA effect
-    }
-    if (currentItem === 24) {
-      stats.ad += 60;
-      stats.armor += 30;
-      stats.magicpen += 20;
-    }
-    if (currentItem === 25) {
-      stats.maxhp += 350;
-      stats.health += 350;
-      stats.mr += 45;
-      stats.maxmana += 250;
-      stats.mana += 250;
-      stats.manaregen += 4;
-    }
-    if (currentItem === 26) {
-      stats.maxhp += 450;
-      stats.health += 450;
-      stats.maxmana += 250;
-      stats.mana += 250;
-      stats.manaregen += 2;
-      stats.hpregen += 4;
-      stats.mr += 55;
-      //special ablity improve healing
-    }
-    if (currentItem === 27) {
-      stats.maxhp += 250;
-      stats.health += 250;
-      stats.maxmana += 200;
-      stats.mana += 200;
-      stats.manaregen += 5;
-      //gain armor and magic resist over time up to 30 of each
-    }
-    if (currentItem === 28) {
-      stats.magicpen += 10;
-      stats.ap += 65;
-      stats.mr += 35;
-      //10% to prevent spells
-    }
-    if (currentItem === 29) {
-      stats.ad += 60;
-      stats.mr += 40;
-      //special ability prevent 15% all magic damage
-    }
-    if (currentItem === 30) {
-      stats.maxhp += 300;
-      stats.health += 300;
-      stats.maxmana += 200;
-      stats.mana += 200;
-      stats.speed += 20;
-      stats.mr += 30;
-      stats.armor += 30;
-      stats.armorpen += 20;
-      stats.magicpen += 20;
-      stats.cdr += 20;
-      stats.crit += 20;
-    }
+    addStats();
 
   }
 
@@ -1543,6 +1406,197 @@ function purchaseItem() {
   else if (volumeControl) {
     sound.gameover.setVolume(0.1);
     sound.gameover.play();
+  }
+
+}
+
+//stats added for each item
+function addStats() {
+
+  if (currentItem === 1) {
+    stats.ad += 100;
+    stats.crit += 30;
+    //special ability +20 crit damage
+  }
+  if (currentItem === 2) {
+    stats.ad += 70;
+    stats.manaregen += 5;
+    stats.maxmana += 200;
+    stats.mana += 200;
+    stats.cdr += 20;
+  }
+  if (currentItem === 3) {
+    stats.ad += 40;
+    stats.crit += 30;
+    stats.speed += 20;
+    stats.cdr += 20;
+  }
+  if (currentItem === 4) {
+    stats.ad += 50;
+    stats.ap += 80;
+    stats.maxmana += 400;
+    stats.mana += 400;
+    //special ability does increased dmg to low hp targets
+  }
+  if (currentItem === 5) {
+    stats.armorpen += 40;
+    stats.ad += 40;
+  }
+  if (currentItem === 6){
+    stats.ad += 30;
+    stats.cdr += 10;
+    //special ability heals for 10% AND does 2% current HP
+  }
+  if (currentItem === 7) {
+    stats.cdr += 20;
+    stats.speed += 25;
+    stats.crit += 30;
+  }
+  if (currentItem === 8) {
+    stats.cdr += 10;
+    stats.maxmana += 200;
+    stats.mana += 200;
+    stats.crit += 10;
+    //special ability dealing damage geneartes gold
+  }
+  if (currentItem === 9) {
+    stats.cdr += 20;
+    stats.crit += 20;
+    stats.speed += 10;
+    //special ability shock kenemies
+  }
+  if (currentItem === 10) {
+    stats.ad += 40;
+    stats.cdr += 10;
+    stats.crit += 10;
+    //special ability chance to double dmg
+  }
+  if (currentItem === 11) {
+    stats.speed += 20;
+    stats.cdr += 20;
+    stats.crit += 20;
+    //go invisible
+  }
+  if (currentItem === 12) {
+    stats.ap += 80;
+    stats.cdr += 20;
+    stats.crit += 20;
+  }
+  if (currentItem === 13) {
+    stats.ap += 100;
+    stats.maxmana += 400;
+    stats.mana += 400;
+    stats.cdr += 20;
+  }
+  if (currentItem === 14) {
+    stats.ap += 150;
+    //special ability +20% total ap
+  }
+  if (currentItem === 15){
+    stats.ap += 80;
+    stats.magicpen += 40;
+  }
+  if (currentItem === 16) {
+    stats.ap += 200;
+    stats.speed += 10;
+    //health regen is always -5, ad is always 50, special ability heal you
+  }
+  if (currentItem === 17) {
+    stats.ap += 60;
+    stats.magicpen += 15;
+    stats.maxhp += 250;
+    stats.health += 250;
+    //special ability burn 1% maximum health 
+  }
+  if (currentItem === 18) {
+    stats.ad += 40;
+    stats.ap += 80;
+    stats.maxmana += 150;
+    stats.mana + 150;
+    //special ability heal 5%
+  }
+  if (currentItem === 19) {
+    stats.armor += 40;
+    stats.maxhp += 400;
+    stats.health += 400;
+    //gain increased speed (up to 30%) based on missing hp
+  }
+  if (currentItem === 20) {
+    stats.armor += 30;
+    stats.maxhp += 450;
+    stats.health += 450;
+    //special ability -30% from crits
+  }
+  if (currentItem === 21) {
+    stats.maxhp += 250;
+    stats.health += 250;
+    stats.armor += 80;
+    //special ability reflect 5% Physical damage
+  }
+  if (currentItem === 22) {
+    stats.maxhp += 500;
+    stats.health += 500;
+    stats.hpregen += 8;
+  }
+  if (currentItem === 23) {
+    stats.ap += 50;
+    stats.armor += 40;
+    //GA effect
+  }
+  if (currentItem === 24) {
+    stats.ad += 60;
+    stats.armor += 30;
+    stats.magicpen += 20;
+  }
+  if (currentItem === 25) {
+    stats.maxhp += 350;
+    stats.health += 350;
+    stats.mr += 45;
+    stats.maxmana += 250;
+    stats.mana += 250;
+    stats.manaregen += 4;
+  }
+  if (currentItem === 26) {
+    stats.maxhp += 450;
+    stats.health += 450;
+    stats.maxmana += 250;
+    stats.mana += 250;
+    stats.manaregen += 2;
+    stats.hpregen += 4;
+    stats.mr += 55;
+    //special ablity improve healing
+  }
+  if (currentItem === 27) {
+    stats.maxhp += 250;
+    stats.health += 250;
+    stats.maxmana += 200;
+    stats.mana += 200;
+    stats.manaregen += 5;
+    //gain armor and magic resist over time up to 30 of each
+  }
+  if (currentItem === 28) {
+    stats.magicpen += 10;
+    stats.ap += 65;
+    stats.mr += 35;
+    //10% to prevent spells
+  }
+  if (currentItem === 29) {
+    stats.ad += 60;
+    stats.mr += 40;
+    //special ability prevent 15% all magic damage
+  }
+  if (currentItem === 30) {
+    stats.maxhp += 300;
+    stats.health += 300;
+    stats.maxmana += 200;
+    stats.mana += 200;
+    stats.speed += 20;
+    stats.mr += 30;
+    stats.armor += 30;
+    stats.armorpen += 20;
+    stats.magicpen += 20;
+    stats.cdr += 20;
+    stats.crit += 20;
   }
 
 }
@@ -1575,6 +1629,7 @@ function resetGame() {
   shopSubstate = false;
   translatecount = 0;
   tstatus = false;
+  statsToggle = false;
   stats = {
     health : 500,
     maxhp : 500,
@@ -1829,6 +1884,10 @@ function keyTyped() {
         sound.openstore.play();
       }
 
+    }
+
+    if (key === "c" && state === "game") {
+      statsToggle = ! statsToggle;
     }
   
     //flash
