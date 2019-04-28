@@ -617,12 +617,12 @@ function gameMusic() {
 
   if (state !== "game" && ! menumusic.isPlaying() && volumeControl) { 
     menumusic.setVolume(1.0);
-    menumusic.loop();
+    menumusic.play();
   }
 
   if (state === "game" && ! sound.bg.isPlaying() && volumeControl) {
     sound.bg.setVolume(0.2);
-    sound.bg.loop();  
+    sound.bg.play();  
   }
 
 }
@@ -1681,10 +1681,6 @@ function resetGame() {
     exhausts : false,
     invincibilitys : false,
   };
-  if (volumeControl) {
-    sound.bg.setVolume(0.05);
-    sound.bg.loop();
-  }
   timer = 0;
   difficulty = 2500;
   bullets = [];
