@@ -115,7 +115,7 @@ function setAssets() {
 
   bg = loadImage("assets/pictures/gamebackground.jpg");
   volumeControl = true;
-  files = 33;
+  files = 37;
 
 }
 
@@ -160,6 +160,10 @@ function loadFiles() {
     armorpen : loadImage("assets/pictures/armorpen.PNG", itemLoaded),
     magicpen : loadImage("assets/pictures/magicpen.PNG", itemLoaded),
     cdr : loadImage("assets/pictures/cdr.PNG", itemLoaded),
+    friendlyCannon : loadImage("assets/pictures/friendlyCannon.png", itemLoaded),
+    enemyCannon : loadImage("assets/pictures/enemyCannon.png", itemLoaded),
+    friendlyMinion : loadImage("assets/pictures/friendlyMinion.png", itemLoaded),
+    enemyMinion : loadImage("assets/pictures/enemyMinion.png", itemLoaded),
   };
 
 }
@@ -341,6 +345,25 @@ class Item extends GameObject {
     }
 
   }
+}
+
+class Creeps extends GameObject {
+
+  constructor(x, y, width, height, type, side) {
+    super(x, y, width, height);
+    this.type = type;
+    this.side = side;
+  }
+
+  move() {
+    if (this.side === "friendly") {
+      this.x += width * 0.02;
+    }
+    else if (this.side === "enemy") {
+      this.x -= width * 0.02;
+    }
+  }
+
 }
 
 //function called when all the loading is done, initializing buttons
@@ -696,9 +719,23 @@ function updateTimer() {
     text(timer, width / 15, height / 10);
     if (!shopSubstate && frameCount % 60 === 0) {
       timer++;
+      if (timer % 10 === 0) {
+        spawnMelee();
+      }
+      if (timer % 10 === 1) {
+        spawnCannon();
+      }
     }
   }  
 
+}
+
+function spawnMelee() {
+  //spawnMelees
+}
+
+function spawnCannon() {
+  //spawnCannons
 }
 
 //responsible for showing the availability of the in-game abilities
