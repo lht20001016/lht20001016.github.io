@@ -62,6 +62,7 @@ let sound;
 let items;
 let inventory = [];
 let bullets = [];
+let minions = [];
 
 //preload assets
 function preload() {
@@ -98,9 +99,10 @@ function draw() {
   determineVelocity();
   characterMovement();
   updateTimer();
+  minionFunctions();
   showAbilities();
   countCooldown();
-  showTowers();
+  // showTowers();
   createBullet();
   moveBullet();
   characterStatus();
@@ -347,7 +349,7 @@ class Item extends GameObject {
   }
 }
 
-class Creeps extends GameObject {
+class Creep extends GameObject {
 
   constructor(x, y, width, height, type, side) {
     super(x, y, width, height);
@@ -357,11 +359,28 @@ class Creeps extends GameObject {
 
   move() {
     if (this.side === "friendly") {
-      this.x += width * 0.02;
+      this.x += width * 0.0001;
     }
     else if (this.side === "enemy") {
-      this.x -= width * 0.02;
+      this.x -= width * 0.0001;
     }
+  }
+
+  show() {
+
+    if (this.type === "melee" && this.side === "friendly") {
+      image(images.friendlyMinion, this.x, this.y, this.width, this.height);
+    }
+    else if (this.type === "melee" && this.side === "enemy") {
+      image(images.enemyMinion, this.x, this.y, this.width, this.height);
+    }
+    else if (this.type === "cannon" && this.side === "friendly") {
+      image(images.friendlyCannon, this.x, this.y, this.width, this.height);
+    }
+    else if (this.type === "cannon" && this.side === "enemy") {
+      image(images.enemyCannon, this.x, this.y, this.width, this.height);
+    }
+
   }
 
 }
@@ -731,11 +750,30 @@ function updateTimer() {
 }
 
 function spawnMelee() {
-  //spawnMelees
+
+  minions.push(new Creep(0, height * 0.3, width * 0.06, height * 0.1, "melee", "friendly"));
+  minions.push(new Creep(0, height * 0.4, width * 0.06, height * 0.1, "melee", "friendly"));
+  minions.push(new Creep(0, height * 0.5, width * 0.06, height * 0.1, "melee", "friendly"));
+  minions.push(new Creep(width * 0.95, height * 0.3, width * 0.06, height * 0.1, "melee", "enemy"));
+  minions.push(new Creep(width * 0.95, height * 0.4, width * 0.06, height * 0.1, "melee", "enemy"));
+  minions.push(new Creep(width * 0.95, height * 0.5, width * 0.06, height * 0.1, "melee", "enemy"));
+
 }
 
 function spawnCannon() {
-  //spawnCannons
+  minions.push(new Creep(0, height * 0.3, width * 0.06, height * 0.1, "cannon", "friendly"));
+  minions.push(new Creep(0, height * 0.4, width * 0.06, height * 0.1, "cannon", "friendly"));
+  minions.push(new Creep(0, height * 0.5, width * 0.06, height * 0.1, "cannon", "friendly"));
+  minions.push(new Creep(width * 0.95, height * 0.3, width * 0.06, height * 0.1, "cannon", "enemy"));
+  minions.push(new Creep(width * 0.95, height * 0.4, width * 0.06, height * 0.1, "cannon", "enemy"));
+  minions.push(new Creep(width * 0.95, height * 0.5, width * 0.06, height * 0.1, "cannon", "enemy"));
+}
+
+function minionFunctions() {
+  for (let i = 0; i < minions.length; i++) {
+    minions[i].move();
+    minions[i].show();
+  }
 }
 
 //responsible for showing the availability of the in-game abilities
@@ -769,16 +807,16 @@ function countCooldown() {
 }
 
 //displays the image of the towers, representing the side which hostile projectiles are launched
-function showTowers() {
+// function showTowers() {
 
-  if (state === "game") {
-    image(images.tower, width - 75, 0, 75, 125);
-    image(images.tower, width - 75, (height - 125) / 4, 75, 125);
-    image(images.tower, width - 75, (height - 125) / 2, 75, 125);
-    image(images.tower, width - 75, (height - 125) / 4 * 3, 75, 125);
-    image(images.tower, width - 75, height - 125, 75, 125);
-  }
-}
+//   if (state === "game") {
+//     image(images.tower, width - 75, 0, 75, 125);
+//     image(images.tower, width - 75, (height - 125) / 4, 75, 125);
+//     image(images.tower, width - 75, (height - 125) / 2, 75, 125);
+//     image(images.tower, width - 75, (height - 125) / 4 * 3, 75, 125);
+//     image(images.tower, width - 75, height - 125, 75, 125);
+//   }
+// }
 
 //responsible for the creation of the bullets
 function createBullet() {
