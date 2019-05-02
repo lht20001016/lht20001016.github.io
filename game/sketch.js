@@ -178,7 +178,7 @@ function loadItems() {
     //item creation separated by categories
     infinityEdge : new Item("Infinity Edge", width * 0.15, height * 0.10, width * 0.05, width * 0.05, loadImage("assets/pictures/items/infinityEdge.png"), "assets/cursors/startgame.cur", [25, 104, 232], [93, 152, 247], 1),
     essenceReaver : new Item("Essence Reaver", width * 0.225, height * 0.10, width * 0.05, width * 0.05, loadImage("assets/pictures/items/essenceReaver.png"), "assets/cursors/startgame.cur", [25, 104, 232], [93, 152, 247], 2),
-    stormRazor : new Item("Storm Raozr", width * 0.3, height * 0.10, width * 0.05, width * 0.05, loadImage("assets/pictures/items/stormRazor.png"), "assets/cursors/startgame.cur", [25, 104, 232], [93, 152, 247], 3),
+    stormRazor : new Item("Storm Razor", width * 0.3, height * 0.10, width * 0.05, width * 0.05, loadImage("assets/pictures/items/stormRazor.png"), "assets/cursors/startgame.cur", [25, 104, 232], [93, 152, 247], 3),
     starfireSpellblade : new Item("Starfire Spellbalde", width * 0.375, height * 0.10, width * 0.05, width * 0.05, loadImage("assets/pictures/items/starfireSpellblade.jpg"),"assets/cursors/startgame.cur", [25, 104, 232], [93, 152, 247], 4),
     lastWhisper : new Item("Last Whisper", width * 0.45, height * 0.10, width * 0.05, width * 0.05, loadImage("assets/pictures/items/lastWhisper.png"),"assets/cursors/startgame.cur", [25, 104, 232], [93, 152, 247], 5),
     frostMourne : new Item("Frost Mourne", width * 0.525, height * 0.10, width * 0.05, width * 0.05, loadImage("assets/pictures/items/frostMourne.png"), "assets/cursors/startgame.cur", [25, 104, 232], [93, 152, 247], 6),
@@ -359,10 +359,10 @@ class Creep extends GameObject {
 
   move() {
     if (this.side === "friendly") {
-      this.x += width * 0.0001;
+      this.x += width * 0.0002;
     }
     else if (this.side === "enemy") {
-      this.x -= width * 0.0001;
+      this.x -= width * 0.0002;
     }
   }
 
@@ -732,16 +732,16 @@ function updateTimer() {
 
   if (state === "game") {
     textStyle(ITALIC);
-    textSize(24);
+    textSize(24); 
     stroke(255, 255, 255);
     fill(0, 255, 180);
     text(timer, width / 15, height / 10);
     if (!shopSubstate && frameCount % 60 === 0) {
       timer++;
-      if (timer % 10 === 0) {
+      if (timer % 20 === 5) {
         spawnMelee();
       }
-      if (timer % 10 === 1) {
+      if (timer % 20 === 10) {
         spawnCannon();
       }
     }
@@ -771,7 +771,9 @@ function spawnCannon() {
 
 function minionFunctions() {
   for (let i = 0; i < minions.length; i++) {
-    minions[i].move();
+    if (! shopSubstate) {
+      minions[i].move();
+    }
     minions[i].show();
   }
 }
@@ -1288,7 +1290,8 @@ function itemInfo() {
     texts.effect1 = "Damage + 40";
     texts.effect2 = "Ability Cooldowns - 10% (Max 70%)";
     texts.effect3 = "Critical Strike Chance + 10% (Max 100%)";
-    texts.effect4 = "Attacks Have a Small Chance to deal Double Damage";
+    texts.effect4 = "Attacks Have a Small Chance";
+    texts.effect5 = "to deal Double Damage";
     texts.additionaltexts = "An utter devastation";
     price = 2800;
   }
