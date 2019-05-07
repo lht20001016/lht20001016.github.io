@@ -364,28 +364,26 @@ class Creep extends GameObject {
       this.hp = 500 + timer * 50;
     }
     if (side === "friendly") {
-      this.speed = width * 0.004;
+      this.speed = width * 0.006;
     }
     if (side === "enemy") {
-      this.speed = width * -0.004;
+      this.speed = width * -0.006;
     }
     this.maxhp = this.hp;
 
   }
 
-  move() {
-    // if (this.side === "friendly") {
-    //   this.x += this.speed;
-    // }
-    // else if (this.side === "enemy") {
-    //   this.x += this.speed;
-    // }
+  moveAttack() {
     if (this.type === "melee" && this.side === "enemy") {
       if (this.x - minions[0].x >= this.width * 1.05) {
         this.x += this.speed;
       }
       else {
-        minions[0].hp -= 10;
+        for (let i = 0; i < 3; i++) {
+          if (minions[i].y === this.y && frameCount % 60 === 0){
+            minions[i].hp -= 20 + 2 * timer;
+          }
+        }
       }
     }
     if (this.type === "melee" && this.side === "friendly") {
@@ -393,7 +391,11 @@ class Creep extends GameObject {
         this.x += this.speed;
       }
       else {
-        enemyMinions[0].hp -= 10;
+        for (let i = 0; i < 3; i++) {
+          if (enemyMinions[i].y === this.y && frameCount % 60 === 0){
+            enemyMinions[i].hp -= 20 + 2 * timer;
+          }
+        }
       }
     }
     if (this.type === "cannon" && this.side === "enemy") {
@@ -401,7 +403,11 @@ class Creep extends GameObject {
         this.x += this.speed;
       }
       else {
-        minions[0].hp -= 20;
+        for (let i = 0; i < 3; i++) {
+          if (minions[i].y === this.y && frameCount % 60 === 0){
+            minions[i].hp -= 30 + 3 * timer;
+          }
+        }
       }
     }
     if (this.type === "cannon" && this.side === "friendly" ) {
@@ -409,7 +415,11 @@ class Creep extends GameObject {
         this.x += this.speed;
       }
       else {
-        enemyMinions[0].hp -= 20;
+        for (let i = 0; i < 3; i++) {
+          if (enemyMinions[i].y === this.y && frameCount % 60 === 0){
+            enemyMinions[i].hp -= 30 + 3 * timer;
+          }
+        }
       }
     }
   }
@@ -782,16 +792,31 @@ function characterMovement() {
 
 }
 
-//responsible for keeping a timer which act as a guideline for game difficulty as well as player score
+//responsible for keeping a timer which act as a guideline for game difficulty as well as player score and spawn minions
 function updateTimer() {
 
   if (state === "game") {
+
     textStyle(ITALIC);
     textSize(24); 
     stroke(255, 255, 255);
     fill(0, 255, 180);
     text(timer, width / 15, height / 10);
-  }  
+    if (!shopSubstate && frameCount % 60 === 0) {
+      timer++;
+      minionsSpawn();
+    }
+  }
+}
+
+function minionsSpawn() {
+
+  if (timer % 30 === 5) {
+    spawnMelee();
+  }
+  if (timer % 30 === 12) {
+    spawnCannon();
+  }
 
 }
 
@@ -817,52 +842,32 @@ function spawnCannon() {
 
 function minionFunctions() {
 
-  minionsSpawn();
-  minionsTrack();
-}
-
-function minionsSpawn() {
-
-  if (!shopSubstate && frameCount % 60 === 0) {
-    timer++;
-    if (timer % 30 === 5) {
-      spawnMelee();
-    }
-    if (timer % 30 === 12) {
-      spawnCannon();
-    }
-  }
-
-}
-
-function minionsTrack() {
-  //move minions
-  for (let i = 0; i < minions.length; i++) {
-    if (! shopSubstate) {
-      minions[i].move();
-    }
-    minions[i].show();
-    if (minions[i].hp <= 0) {
+  if (state === "game") {
+    //move minions
+    for (let i = 0; i < minions.length; i++) {
+      if (! shopSubstate) {
+        minions[i].moveAttack();
+      }
+      minions[i].show();
+      if (minions[i].hp <= 0) {
       //kill upon 0hp
-      // minions.splice(i, 1);
+        minions.splice(i, 1);
+      }
     }
-  }
 
-  for (let i = 0; i < enemyMinions.length; i++) {
-    if (! shopSubstate) {
-      enemyMinions[i].move();
-    }
-    enemyMinions[i].show();
-    if (enemyMinions[i].hp <= 0) {
+    for (let i = 0; i < enemyMinions.length; i++) {
+      if (! shopSubstate) {
+        enemyMinions[i].moveAttack();
+      }
+      enemyMinions[i].show();
+      if (enemyMinions[i].hp <= 0) {
       //kill upon 0hp
-      enemyMinions.splice(i, 1);
+        enemyMinions.splice(i, 1);
+      }
     }
   }
+
 }
-
-// function minionsCombat() {
-
-// }
 
 //responsible for showing the availability of the in-game abilities
 function showAbilities() {
