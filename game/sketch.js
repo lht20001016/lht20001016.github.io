@@ -814,7 +814,7 @@ function minionsSpawn() {
   if (timer % 30 === 5) {
     spawnMelee();
   }
-  if (timer % 30 === 12) {
+  if (timer % 30 === 8) {
     spawnCannon();
   }
 
@@ -845,25 +845,25 @@ function minionFunctions() {
   if (state === "game") {
     //move minions
     for (let i = 0; i < minions.length; i++) {
+      if (minions[i].hp <= 0) {
+        //kill upon 0hp
+        minions.splice(i, 1);
+      }
       if (! shopSubstate) {
         minions[i].moveAttack();
       }
       minions[i].show();
-      if (minions[i].hp <= 0) {
-      //kill upon 0hp
-        minions.splice(i, 1);
-      }
     }
 
     for (let i = 0; i < enemyMinions.length; i++) {
+      if (enemyMinions[i].hp <= 0) {
+        //kill upon 0hp
+        enemyMinions.splice(i, 1);
+      }
       if (! shopSubstate) {
         enemyMinions[i].moveAttack();
       }
       enemyMinions[i].show();
-      if (enemyMinions[i].hp <= 0) {
-      //kill upon 0hp
-        enemyMinions.splice(i, 1);
-      }
     }
   }
 
