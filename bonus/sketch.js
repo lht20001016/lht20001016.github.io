@@ -1,29 +1,76 @@
-// Refactor the following code
-// - in other words, keep the same functionality, but improve the method used
+// // Bubble Sort
 
-let xspace;
-let yspace;
-let ssize;
+// let theNumbers = [5, 15, 3, 8, 9, 1, 20, 7];
+
+// function setup() {
+//   createCanvas(windowWidth, windowHeight);
+//   console.log(bubbleSort(theNumbers));
+// }
+
+// function draw() {
+//   background(220);
+// }
+
+// function bubbleSort(someArray) {
+
+//   let status = true;
+
+//   while (status){
+
+//     status = false;
+//     for (let i = 0; i < someArray.length - 1; i++) {
+//       if (someArray[i] > someArray[i + 1]) {
+//         let temp = someArray[i];
+//         someArray[i] = someArray[i + 1];
+//         someArray[i + 1] = temp;
+//         status = true;
+//       }
+//     }
+
+//   }
+
+//   return someArray;
+
+// }
+
+// Selection Sort
+
+let small;
+let swapto;
+let theNumbers = [5, 15, 3, 8, 9, 1, 20, 7];
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  loadData();
+  console.log(selectionSort(theNumbers));
 }
 
 function draw() {
-  background(0);
-  for (let i = 1; i < 16; i++) {
-    for (let j = 1; j < 9; j++) {
-      rect(i * xspace, j * yspace, ssize, ssize);
-      line(width / 2, height / 2, i * xspace + ssize / 2, j * yspace + ssize / 2);
-    }
-  }
+  background(220);
 }
 
-function loadData() {
-  xspace = width / 16;
-  yspace = height / 9;
-  ssize = width / 500;
-  stroke(255);
-  strokeWeight(0.1);
+function selectionSort(someArray) {
+
+  for (let i = 0; i < someArray.length; i++) {
+
+    small = 500;
+
+    for (let j = i; j < someArray.length; j++) {
+
+      if (someArray[j] < small) {
+        small = someArray[j];
+        swapto = j;
+      }
+      
+      console.log(small);
+
+    }
+
+    let temp = someArray[i];
+    someArray[i] = someArray[swapto];
+    someArray[swapto] = temp;
+
+  }
+
+  return someArray;
+
 }
