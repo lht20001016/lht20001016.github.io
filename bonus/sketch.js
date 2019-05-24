@@ -60,8 +60,6 @@ function selectionSort(someArray) {
         small = someArray[j];
         swapto = j;
       }
-      
-      console.log(small);
 
     }
 

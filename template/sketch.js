@@ -1,6 +1,5 @@
 //source: https://bashooka.com/coding/web-background-animation-effects/
 
-// Utilities
 var Vector3 = {};
 var Matrix44 = {};
 Vector3.create = function(x, y, z) {
@@ -735,8 +734,8 @@ function setViewports() {
   let rtfunc = function (rtname, rtw, rth) {
     let rt = renderSpec[rtname];
     if(rt) {
-deleteRenderTarget(rt);
-}
+      deleteRenderTarget(rt);
+    }
     renderSpec[rtname] = createRenderTarget(rtw, rth);
   };
   rtfunc("mainRT", renderSpec.width, renderSpec.height);
@@ -754,8 +753,8 @@ var animating = true;
 function toggleAnimation(elm) {
   animating ^= true;
   if(animating) {
-animate();
-}
+    animate();
+  }
   if(elm) {
     elm.innerHTML = animating? "Stop":"Start";
   }
@@ -763,8 +762,8 @@ animate();
 
 function stepAnimation() {
   if(!animating) {
-animate();
-}
+    animate();
+  }
 }
 
 function animate() {
@@ -774,8 +773,8 @@ function animate() {
   timeInfo.prev = curdate;
     
   if(animating) {
-requestAnimationFrame(animate);
-}
+    requestAnimationFrame(animate);
+  }
   render();
 }
 
@@ -817,3 +816,22 @@ window.addEventListener("load", function(e) {
     w.setTimeout(c, 1000 / 60); 
   };
 })(window, "equestAnimationFrame");
+
+let s = function( sketch ) {
+
+  let x = 100; 
+  let y = 100;
+
+  sketch.setup = function() {
+    let shapeThing = sketch.createCanvas(200, 200);
+    shapeThing.position(0, 0);
+  };
+
+  sketch.draw = function() {
+    // sketch.background(0);
+    sketch.fill(255);
+    sketch.rect(x,y,50,50);
+  };
+};
+
+let myp5 = new p5(s);
