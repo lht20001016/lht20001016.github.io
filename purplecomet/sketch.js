@@ -1,10 +1,17 @@
-
-let k = [];
+var hit = false;
 
 function setup() {
-  createCanvas(windowWidth, windowHeight);
+  createCanvas(500, 500);
 }
 
 function draw() {
-  k = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  background(255);
+  fill(0);
+	rect(200,200,100,150);
+	rect(mouseX,mouseY,50,75);
+
+	hit = collideRectRect(200,200,100,150,mouseX,mouseY,50,75);
+
+	console.log("colliding? " + hit);
+
 }
